@@ -1,0 +1,139 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(210, 40%, 96%);
+  --foreground: hsl(210, 40%, 8%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(210, 40%, 8%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(210, 40%, 8%);
+  --primary: hsl(220, 90%, 56%);
+  --primary-foreground: hsl(0, 0%, 100%);
+  --secondary: hsl(210, 40%, 95%);
+  --secondary-foreground: hsl(210, 40%, 8%);
+  --muted: hsl(210, 40%, 95%);
+  --muted-foreground: hsl(210, 30%, 45%);
+  --accent: hsl(160, 84%, 39%);
+  --accent-foreground: hsl(0, 0%, 100%);
+  --destructive: hsl(0, 84%, 60%);
+  --destructive-foreground: hsl(0, 0%, 100%);
+  --border: hsl(210, 40%, 85%);
+  --input: hsl(210, 40%, 85%);
+  --ring: hsl(220, 90%, 56%);
+  --chart-1: hsl(220, 90%, 56%);
+  --chart-2: hsl(160, 84%, 39%);
+  --chart-3: hsl(42, 93%, 56%);
+  --chart-4: hsl(147, 79%, 42%);
+  --chart-5: hsl(341, 75%, 51%);
+  --sidebar: hsl(180, 7%, 97%);
+  --sidebar-foreground: hsl(210, 25%, 8%);
+  --sidebar-primary: hsl(220, 90%, 56%);
+  --sidebar-primary-foreground: hsl(0, 0%, 100%);
+  --sidebar-accent: hsl(160, 84%, 39%);
+  --sidebar-accent-foreground: hsl(0, 0%, 100%);
+  --sidebar-border: hsl(210, 40%, 85%);
+  --sidebar-ring: hsl(220, 90%, 56%);
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-serif: Georgia, serif;
+  --font-mono: "Courier New", monospace;
+  --radius: 8px;
+  --shadow-2xs: 0px 2px 0px 0px hsl(220, 90%, 56%, 0.00);
+  --shadow-xs: 0px 2px 0px 0px hsl(220, 90%, 56%, 0.00);
+  --shadow-sm: 0px 2px 0px 0px hsl(220, 90%, 56%, 0.00), 0px 1px 2px -1px hsl(220, 90%, 56%, 0.00);
+  --shadow: 0px 2px 0px 0px hsl(220, 90%, 56%, 0.00), 0px 1px 2px -1px hsl(220, 90%, 56%, 0.00);
+  --shadow-md: 0px 2px 0px 0px hsl(220, 90%, 56%, 0.00), 0px 2px 4px -1px hsl(220, 90%, 56%, 0.00);
+  --shadow-lg: 0px 2px 0px 0px hsl(220, 90%, 56%, 0.00), 0px 4px 6px -1px hsl(220, 90%, 56%, 0.00);
+  --shadow-xl: 0px 2px 0px 0px hsl(220, 90%, 56%, 0.00), 0px 8px 10px -1px hsl(220, 90%, 56%, 0.00);
+  --shadow-2xl: 0px 2px 0px 0px hsl(220, 90%, 56%, 0.00);
+  --tracking-normal: 0em;
+  --spacing: 0.25rem;
+}
+
+.dark {
+  --background: hsl(0, 0%, 0%);
+  --foreground: hsl(200, 7%, 91%);
+  --card: hsl(228, 10%, 10%);
+  --card-foreground: hsl(0, 0%, 85%);
+  --popover: hsl(0, 0%, 0%);
+  --popover-foreground: hsl(200, 7%, 91%);
+  --primary: hsl(220, 88%, 53%);
+  --primary-foreground: hsl(0, 0%, 100%);
+  --secondary: hsl(195, 15%, 95%);
+  --secondary-foreground: hsl(210, 25%, 8%);
+  --muted: hsl(0, 0%, 9%);
+  --muted-foreground: hsl(210, 3%, 46%);
+  --accent: hsl(160, 70%, 8%);
+  --accent-foreground: hsl(160, 88%, 53%);
+  --destructive: hsl(0, 91%, 54%);
+  --destructive-foreground: hsl(0, 0%, 100%);
+  --border: hsl(210, 5%, 15%);
+  --input: hsl(208, 28%, 18%);
+  --ring: hsl(220, 89%, 53%);
+  --chart-1: hsl(220, 88%, 53%);
+  --chart-2: hsl(160, 100%, 36%);
+  --chart-3: hsl(42, 93%, 56%);
+  --chart-4: hsl(147, 79%, 42%);
+  --chart-5: hsl(341, 75%, 51%);
+  --sidebar: hsl(228, 10%, 10%);
+  --sidebar-foreground: hsl(0, 0%, 85%);
+  --sidebar-primary: hsl(220, 89%, 53%);
+  --sidebar-primary-foreground: hsl(0, 0%, 100%);
+  --sidebar-accent: hsl(160, 70%, 8%);
+  --sidebar-accent-foreground: hsl(160, 88%, 53%);
+  --sidebar-border: hsl(206, 16%, 26%);
+  --sidebar-ring: hsl(220, 89%, 53%);
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-serif: Georgia, serif;
+  --font-mono: "Courier New", monospace;
+  --radius: 8px;
+  --shadow-2xs: 0px 2px 0px 0px hsl(220, 89%, 53%, 0.00);
+  --shadow-xs: 0px 2px 0px 0px hsl(220, 89%, 53%, 0.00);
+  --shadow-sm: 0px 2px 0px 0px hsl(220, 89%, 53%, 0.00), 0px 1px 2px -1px hsl(220, 89%, 53%, 0.00);
+  --shadow: 0px 2px 0px 0px hsl(220, 89%, 53%, 0.00), 0px 1px 2px -1px hsl(220, 89%, 53%, 0.00);
+  --shadow-md: 0px 2px 0px 0px hsl(220, 89%, 53%, 0.00), 0px 2px 4px -1px hsl(220, 89%, 53%, 0.00);
+  --shadow-lg: 0px 2px 0px 0px hsl(220, 89%, 53%, 0.00), 0px 4px 6px -1px hsl(220, 89%, 53%, 0.00);
+  --shadow-xl: 0px 2px 0px 0px hsl(220, 89%, 53%, 0.00), 0px 8px 10px -1px hsl(220, 89%, 53%, 0.00);
+  --shadow-2xl: 0px 2px 0px 0px hsl(220, 89%, 53%, 0.00);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+}
+
+.gradient-bg {
+  background: linear-gradient(135deg, hsl(220, 90%, 56%) 0%, hsl(260, 90%, 65%) 100%);
+}
+
+.terminal-bg {
+  background: hsl(220, 26%, 14%);
+  color: hsl(120, 100%, 85%);
+  font-family: 'Courier New', monospace;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: .5;
+  }
+}
