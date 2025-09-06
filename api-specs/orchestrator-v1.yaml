@@ -1,0 +1,7 @@
+openapi: 3.0.0
+info: { title: Kyros Orchestrator API, version: "1.0.0" }
+paths:
+  /v1/runs/plan:
+    post:
+      summary: Start a plan run
+      responses: { "200": { description: OK } }

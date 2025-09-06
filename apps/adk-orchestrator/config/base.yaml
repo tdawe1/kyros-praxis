@@ -1,0 +1,8 @@
+services:
+  orchestrator:
+    workers: 4
+    timeout_seconds: 300
+agents:
+  sandbox: { enabled: true, timeout_seconds: 30, memory_limit_mb: 512 }
+  memory:  { vector_store: false, history_limit: 100 }
+  tools:   { auto_discover: true, validation: strict }

@@ -1,6 +1,13 @@
-node_modules
-dist
+node_modules/
+dist/
+*.log
+.venv/
+__pycache__/
+.env
+.env.local
 .DS_Store
+collaboration/logs/
+data/
 server/public
 vite.config.ts.*
 *.tar.gz
