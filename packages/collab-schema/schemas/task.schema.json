@@ -1,0 +1,6 @@
+{ "$schema":"http://json-schema.org/draft-07/schema#","title":"Task","type":"object",
+  "properties":{"id":{"type":"string"},"version":{"type":"integer"},"title":{"type":"string"},
+    "status":{"enum":["new","claimed","in_progress","review","blocked","done"]},
+    "assignee":{"type":["string","null"]},"labels":{"type":"array","items":{"type":"string"}},
+    "dod":{"type":"array","items":{"type":"string"}}},
+  "required":["id","version","title","status"] }

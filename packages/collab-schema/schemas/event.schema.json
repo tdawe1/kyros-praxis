@@ -1,0 +1,3 @@
+{ "$schema":"http://json-schema.org/draft-07/schema#","title":"Event","type":"object",
+  "properties":{"ts":{"type":"string","format":"date-time"},"event":{"type":"string"},"data":{"type":"object"}},
+  "required":["ts","event"] }

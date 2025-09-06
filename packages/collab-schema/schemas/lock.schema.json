@@ -1,0 +1,4 @@
+{ "$schema":"http://json-schema.org/draft-07/schema#","title":"Lock","type":"object",
+  "properties":{"lock_id":{"type":"string"},"path":{"type":"string"},"owner":{"type":"string"},
+    "ttl_seconds":{"type":"integer"},"heartbeat_at":{"type":"string","format":"date-time"}},
+  "required":["lock_id","path","owner","ttl_seconds"] }

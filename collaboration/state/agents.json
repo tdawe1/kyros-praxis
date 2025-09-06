@@ -1,0 +1,6 @@
+[
+  {"id":"planner","name":"Planner","runner":"sdk","model":"gpt-5-high","version":1},
+  {"id":"impl-default","name":"Implementer (Default)","runner":"sdk","model":"gemini-2.5-pro","version":1},
+  {"id":"impl-deep","name":"Implementer (Deep)","runner":"sdk","model":"claude-4-sonnet","version":1},
+  {"id":"impl-claude-cli","name":"Implementer (Claude Code CLI)","runner":"cli","cmd":["claude-code"],"attachable":true,"version":1}
+]
