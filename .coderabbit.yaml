@@ -1,0 +1,35 @@
+# .coderabbit.yaml
+language: "en-GB"
+
+reviews:
+  profile: "assertive"                 # or "chill"
+  high_level_summary: true
+  commit_status: true                  # adds a status check
+  fail_commit_status: false            # set true to fail when CR can't review
+  changed_files_summary: true
+  estimate_code_review_effort: true
+  path_filters:
+    - "apps/**"
+    - "packages/**"
+    - "!collaboration/logs/**"
+    - "!**/*.lock"
+    - "!**/dist/**"
+  auto_review:
+    enabled: true                      # autorun on PR open/sync
+    auto_incremental_review: true      # re-run on each push
+    drafts: false
+    labels: ["!wip", "!skip-ai-review"]# opt-out label
+
+  finishing_touches:
+    docstrings: { enabled: true }
+    unit_tests: { enabled: false }     # flip on later if you like
+
+  pre_merge_checks:
+    title: { mode: "warning" }
+    docstrings: { mode: "warning", threshold: 60 }
+
+tools:
+  github-checks: { enabled: true }     # surfaces a Check entry
+  ruff: { enabled: true }
+  shellcheck: { enabled: true }
+  markdownlint: { enabled: true }
