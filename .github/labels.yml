@@ -1,0 +1,9 @@
+# .github/labels.yml
+# So you can sync labels quickly.
+
+- name: skip-ai-review
+  color: "b60205"
+  description: "Do not run Codex/CodeRabbit on this PR"
+- name: ai-review
+  color: "0e8a16"
+  description: "Force Codex/CodeRabbit to run"
