@@ -71,9 +71,6 @@ def test_orchestrator():
     finally:
         server.terminate()
         server.wait()
-    except Exception as e:
-        print(f"❌ Test failed: {e}")
-        return False
 
 def start_server():
     """Start the orchestrator server"""
@@ -92,15 +89,12 @@ def start_server():
 
 def main():
     """Main test function"""
-    server = None
     try:
-        server = start_server()
         success = test_orchestrator()
         return 0 if success else 1
-    finally:
-        if server:
-            server.terminate()
-            server.wait()
+    except Exception as e:
+        print(f"❌ Test execution failed: {e}")
+        return 1
 
 if __name__ == "__main__":
     sys.exit(main())
