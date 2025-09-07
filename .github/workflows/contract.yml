@@ -19,7 +19,7 @@ jobs:
           pip install schemathesis
       - name: Start orchestrator
         run: |
-          uvicorn apps.adk-orchestrator.main:app --host 0.0.0.0 --port 8080 &
+          uvicorn main:app --app-dir apps/adk-orchestrator --host 0.0.0.0 --port 8080 &
           echo $! > uvicorn.pid
           sleep 3
       - name: Schemathesis against /v1
