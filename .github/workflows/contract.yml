@@ -19,9 +19,16 @@ jobs:
           pip install schemathesis
       - name: Start orchestrator
         run: |
-          uvicorn main:app --app-dir apps/adk-orchestrator --host 0.0.0.0 --port 8080 &
+          cd apps/adk-orchestrator && uvicorn main:app --host 0.0.0.0 --port 8080 &
           echo $! > uvicorn.pid
-          sleep 3
+          # Wait for backend readiness
+          for i in {1..30}; do
+            if curl -fsS http://localhost:8080/readyz >/dev/null; then
+              break
+            fi
+            sleep 1
+          done
+          curl -fsS http://localhost:8080/healthz >/dev/null
       - name: Schemathesis against /v1
         run: |
           schemathesis run api-specs/orchestrator-v1.yaml --base-url http://localhost:8080 \
