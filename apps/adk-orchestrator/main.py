@@ -57,7 +57,7 @@ class AgentsConfig(BaseModel):
 
 
 class LogConfig(BaseModel):
-    json: bool = True
+    json_format: bool = True
 
 
 class ServicesConfig(BaseModel):
@@ -199,9 +199,10 @@ class AgentOrchestrator:
             }
 
         # Create agent context
+        tools_as_dicts = [tool.model_dump() for tool in self.tool_registry.list_all()]
         context = AgentContext(
             task=task,
-            tools=self.tool_registry.list_all(),
+            tools=tools_as_dicts,
             memory={},
             telemetry={"mode": mode, "timestamp": datetime.utcnow().isoformat()},
             tenant_id=task.get("tenant_id"),
@@ -209,7 +210,7 @@ class AgentOrchestrator:
 
         # Execute with the selected agent
         try:
-            result = await best_agent.execute(context)
+            result: Dict[str, Any] = await best_agent.execute(context)
 
             # Log the interaction
             log.info(
@@ -248,7 +249,8 @@ class AgentOrchestrator:
 
     async def get_agent_status(self) -> Dict[str, Any]:
         """Get status of all registered agents."""
-        return self.negotiator.get_agent_status()
+        status: Dict[str, Any] = self.negotiator.get_agent_status()
+        return status
 
     async def cleanup(self):
         """Clean up resources."""

@@ -18,7 +18,7 @@ class SubprocessSandbox(SandboxExecutor):
 
     def __init__(self, base_temp_dir: Optional[str] = None):
         self.base_temp_dir = base_temp_dir
-        self._temp_dirs = []
+        self._temp_dirs: list[str] = []
 
     async def execute(
         self,
@@ -48,6 +48,8 @@ class SubprocessSandbox(SandboxExecutor):
                     stdout="",
                     stderr=f"Unsupported language: {language}",
                     execution_time=time.time() - start_time,
+                    timed_out=False,
+                    memory_used=0,
                 )
 
             # Write code to file
@@ -76,18 +78,19 @@ class SubprocessSandbox(SandboxExecutor):
                 execution_time = time.time() - start_time
 
                 # Get memory usage if possible
-                memory_used = None
+                memory_used = 0
                 try:
                     if process.returncode is not None:
                         memory_used = self._get_memory_usage(process.pid)
                 except (psutil.NoSuchProcess, psutil.AccessDenied):
-                    pass
+                    memory_used = 0
 
                 return ExecutionResult(
                     exit_code=process.returncode or 0,
                     stdout=stdout.decode("utf-8", errors="replace"),
                     stderr=stderr.decode("utf-8", errors="replace"),
                     execution_time=execution_time,
+                    timed_out=False,
                     memory_used=memory_used,
                 )
 
@@ -106,6 +109,7 @@ class SubprocessSandbox(SandboxExecutor):
                     stderr="Execution timed out",
                     timed_out=True,
                     execution_time=execution_time,
+                    memory_used=0,
                 )
 
         except Exception as e:
@@ -115,6 +119,8 @@ class SubprocessSandbox(SandboxExecutor):
                 stdout="",
                 stderr=f"Execution error: {str(e)}",
                 execution_time=execution_time,
+                timed_out=False,
+                memory_used=0,
             )
 
     def _get_language_config(
@@ -142,14 +148,15 @@ class SubprocessSandbox(SandboxExecutor):
 
         return set_limits
 
-    def _get_memory_usage(self, pid: int) -> Optional[int]:
+    def _get_memory_usage(self, pid: int) -> int:
         """Get memory usage in MB for a process."""
         try:
             process = psutil.Process(pid)
             memory_info = process.memory_info()
-            return memory_info.rss // (1024 * 1024)  # Convert to MB
+            rss_bytes: int = memory_info.rss
+            return rss_bytes // (1024 * 1024)  # Convert to MB
         except (psutil.NoSuchProcess, psutil.AccessDenied):
-            return None
+            return 0
 
     async def cleanup(self) -> None:
         """Clean up temporary directories."""
