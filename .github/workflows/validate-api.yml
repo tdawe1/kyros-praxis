@@ -37,7 +37,7 @@ print(f'DEV_JWT={token}')
 PY
       - name: Start orchestrator
         run: |
-          uvicorn apps/adk-orchestrator.main:app --host 127.0.0.1 --port 8080 &
+          cd apps/adk-orchestrator && uvicorn main:app --host 127.0.0.1 --port 8080 &
           echo $! > uvicorn.pid
           for i in {1..30}; do
             if curl -fsS http://127.0.0.1:8080/healthz >/dev/null; then
