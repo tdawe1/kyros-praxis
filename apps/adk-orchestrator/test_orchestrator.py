@@ -1,25 +1,24 @@
 #!/usr/bin/env python3
 """
-Simple test script for the orchestrator API
+Hermetic test script for the orchestrator API using FastAPI TestClient
 """
 
-import requests
-import json
-import time
-import subprocess
 import sys
-import os
+from fastapi.testclient import TestClient
+
+# Import the FastAPI app
+from main import app
 
 def test_orchestrator():
-    """Test the orchestrator API endpoints"""
-    base_url = "http://localhost:8000"
+    """Test the orchestrator API endpoints using TestClient"""
+    client = TestClient(app)
     
-    print("🧪 Testing Orchestrator API...")
+    print("🧪 Testing Orchestrator API (hermetic)...")
     
     try:
         # Test health endpoint
         print("Testing /healthz...")
-        response = requests.get(f"{base_url}/healthz", timeout=5)
+        response = client.get("/healthz")
         assert response.status_code == 200
         data = response.json()
         assert data["ok"] == True
@@ -27,7 +26,7 @@ def test_orchestrator():
         
         # Test ready endpoint
         print("Testing /readyz...")
-        response = requests.get(f"{base_url}/readyz", timeout=5)
+        response = client.get("/readyz")
         assert response.status_code == 200
         data = response.json()
         assert data["ready"] == True
@@ -35,7 +34,7 @@ def test_orchestrator():
         
         # Test config endpoint
         print("Testing /v1/config...")
-        response = requests.get(f"{base_url}/v1/config", timeout=5)
+        response = client.get("/v1/config")
         assert response.status_code == 200
         config = response.json()
         assert "services" in config
@@ -56,7 +55,7 @@ def test_orchestrator():
             "labels": ["needs:deep-refactor"],
             "extra": {"priority": "high"}
         }
-        response = requests.post(f"{base_url}/v1/runs/plan", json=plan_data, timeout=5)
+        response = client.post("/v1/runs/plan", json=plan_data)
         assert response.status_code == 200
         result = response.json()
         assert "run_id" in result
@@ -72,32 +71,14 @@ def test_orchestrator():
         print(f"❌ Test failed: {e}")
         return False
 
-def start_server():
-    """Start the orchestrator server"""
-    print("🚀 Starting orchestrator server...")
-    process = subprocess.Popen(
-        [sys.executable, "main.py"],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        cwd=os.path.dirname(__file__)
-    )
-    
-    # Wait for server to start
-    time.sleep(3)
-    
-    return process
-
 def main():
-    """Main test function"""
-    server = None
+    """Main test function - now hermetic with TestClient"""
     try:
-        server = start_server()
         success = test_orchestrator()
         return 0 if success else 1
-    finally:
-        if server:
-            server.terminate()
-            server.wait()
+    except Exception as e:
+        print(f"❌ Test execution failed: {e}")
+        return 1
 
 if __name__ == "__main__":
     sys.exit(main())
