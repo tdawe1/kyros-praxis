@@ -1,9 +1,4 @@
-# In pyproject.toml (PEP 621 / Poetry)
-[project]
-dependencies = [
-  "pydantic>=2",
- "aiosqlite>=0.20",
-]
+import aiosqlite
 import json
 import os
 import uuid
