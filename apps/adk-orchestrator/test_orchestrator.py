@@ -12,16 +12,15 @@ import requests
 def test_orchestrator():
     """Test the orchestrator API endpoints"""
     base_url = "http://localhost:8000"
-    
     print("🧪 Testing Orchestrator API...")
-    
+    server = start_server()
     try:
         # Test health endpoint
         print("Testing /healthz...")
         response = requests.get(f"{base_url}/healthz", timeout=5)
         assert response.status_code == 200
         data = response.json()
-        assert data["ok"] == True
+        assert data.get("ok") is True
         print("✅ /healthz passed")
         
         # Test ready endpoint
@@ -29,7 +28,7 @@ def test_orchestrator():
         response = requests.get(f"{base_url}/readyz", timeout=5)
         assert response.status_code == 200
         data = response.json()
-        assert data["ready"] == True
+        assert data.get("ready") is True
         print("✅ /readyz passed")
         
         # Test config endpoint
@@ -66,7 +65,12 @@ def test_orchestrator():
         
         print("\n🎉 All tests passed!")
         return True
-        
+    except Exception as e:
+        print(f"❌ Test failed: {e}")
+        return False
+    finally:
+        server.terminate()
+        server.wait()
     except Exception as e:
         print(f"❌ Test failed: {e}")
         return False
