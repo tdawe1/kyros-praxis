@@ -21,7 +21,7 @@ def test_orchestrator():
         response = client.get("/healthz")
         assert response.status_code == 200
         data = response.json()
-        assert data["ok"] == True
+        assert data.get("ok") is True
         print("✅ /healthz passed")
         
         # Test ready endpoint
@@ -29,7 +29,7 @@ def test_orchestrator():
         response = client.get("/readyz")
         assert response.status_code == 200
         data = response.json()
-        assert data["ready"] == True
+        assert data.get("ready") is True
         print("✅ /readyz passed")
         
         # Test config endpoint

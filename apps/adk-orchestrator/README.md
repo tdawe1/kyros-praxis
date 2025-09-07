@@ -45,6 +45,8 @@ Environment variables can override any configuration value.
   
   ⚠️ **Security Warning**: This endpoint returns raw merged YAML configuration which may expose sensitive data including tokens, secrets, passwords, keys, and private_* entries. The server currently returns the full configuration without redaction. Consider implementing access control or sensitive key redaction before production deployment. See the handler implementation in `apps/adk-orchestrator/main.py:66` (`cfg()` function) for current behavior.
 
+⚠️ **Security Warning**: This endpoint returns raw merged YAML configuration which may expose sensitive data including tokens, secrets, passwords, keys, and private_* entries. In production, consider implementing access controls or filtering sensitive fields before exposure.
+
 #### Agent Runs
 - `POST /v1/runs/plan` - Start a planning run
 - `POST /v1/runs/implement` - Start an implementation run
