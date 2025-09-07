@@ -93,7 +93,7 @@ jobs:
           key: npm-${{ runner.os }}-${{ hashFiles('apps/console/package-lock.json', 'apps/terminal-daemon/package-lock.json') }}
       - name: Install
         run: |
-          cd apps/console && npm ci
+          cd apps/console && npm ci --include=dev
           cd ../terminal-daemon && npm ci
       - name: Lint (eslint) – optional
         run: |
