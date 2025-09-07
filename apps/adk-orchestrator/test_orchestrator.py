@@ -3,17 +3,19 @@
 Simple test script for the orchestrator API
 """
 
-import os
+import requests
+import json
+import time
 import subprocess
 import sys
-import time
+import os
 
-import requests
 def test_orchestrator():
     """Test the orchestrator API endpoints"""
     base_url = "http://localhost:8000"
+    
     print("🧪 Testing Orchestrator API...")
-    server = start_server()
+    
     try:
         # Test health endpoint
         print("Testing /healthz...")
@@ -65,36 +67,46 @@ def test_orchestrator():
         
         print("\n🎉 All tests passed!")
         return True
+        
     except Exception as e:
         print(f"❌ Test failed: {e}")
         return False
-    finally:
-        server.terminate()
-        server.wait()
 
 def start_server():
     """Start the orchestrator server"""
     print("🚀 Starting orchestrator server...")
     process = subprocess.Popen(
         [sys.executable, "main.py"],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.STDOUT,
         cwd=os.path.dirname(__file__)
     )
     
-    # Wait for server to start
-    time.sleep(3)
+    # Wait for server to be ready
+    for _ in range(30):
+        try:
+            r = requests.get("http://localhost:8000/healthz", timeout=1)
+            if r.ok and r.json().get("ok"):
+                break
+        except Exception:
+            pass
+        time.sleep(0.5)
+    else:
+        raise RuntimeError("Server did not become ready in time")
     
     return process
 
 def main():
     """Main test function"""
+    server = None
     try:
+        server = start_server()
         success = test_orchestrator()
         return 0 if success else 1
-    except Exception as e:
-        print(f"❌ Test execution failed: {e}")
-        return 1
+    finally:
+        if server:
+            server.terminate()
+            server.wait()
 
 if __name__ == "__main__":
     sys.exit(main())

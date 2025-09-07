@@ -89,6 +89,7 @@ async function validateApiSpec() {
       console.error('❌ Runtime schema missing paths from spec:', missingFromRuntime);
       throw new Error(`Missing endpoints: ${missingFromRuntime.join(', ')}`);
     }
+
     // Basic validation - check if key endpoints exist
     const requiredEndpoints = [
       '/healthz',
