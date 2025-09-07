@@ -1,25 +1,98 @@
 name: CI
-on: [push, pull_request]
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  build-and-test:
+  detect:
+    runs-on: ubuntu-latest
+    outputs:
+      python: ${{ steps.filter.outputs.python }}
+      node:   ${{ steps.filter.outputs.node }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            python:
+              - 'apps/adk-orchestrator/**'
+              - 'packages/**.py'
+              - 'packages/**/**.py'
+              - 'api-specs/**'
+            node:
+              - 'apps/console/**'
+              - 'apps/terminal-daemon/**'
+              - 'packages/**.ts'
+              - 'packages/**/**.ts'
+
+  python:
+    name: CI (python)
+    needs: detect
+    if: needs.detect.outputs.python == 'true'
+    runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:7-alpine
+        ports: [ "6379:6379" ]
+        options: >-
+          --health-cmd "redis-cli ping || exit 1"
+          --health-interval 5s --health-timeout 3s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: pip-${{ runner.os }}-${{ hashFiles('**/requirements.txt') }}
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r apps/adk-orchestrator/requirements.txt
+          pip install pytest pytest-cov schemathesis ruff mypy
+      - name: Lint (ruff)
+        run: ruff check apps/ packages/
+      - name: Type check (mypy)
+        run: mypy apps/ packages/
+      - name: Unit & integration tests
+        env:
+          REDIS_URL: redis://localhost:6379
+        run: |
+          pytest -q --maxfail=1 --disable-warnings --cov=apps --cov=packages --cov-report=xml
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-python
+          path: coverage.xml
+
+  node:
+    name: CI (node)
+    needs: detect
+    if: needs.detect.outputs.node == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with: { node-version: '20' }
-      - uses: actions/setup-python@v5
-        with: { python-version: '3.11' }
-      - name: Install terminal daemon deps
-        run: cd apps/terminal-daemon && npm ci || true
-      - name: Install orchestrator deps
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: |
+            apps/console/package.json
+            apps/terminal-daemon/package.json
+      - name: Install
         run: |
-          python -m pip install --upgrade pip
-          pip install -r apps/adk-orchestrator/requirements.txt
-      - name: Lint/Type/Test (placeholder)
-        run: echo "TODO: add lint/type/tests"
-  security-scan:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Secret scan (placeholder)
-        run: echo "TODO: detect-secrets scan"
+          cd apps/console && npm ci
+          cd ../terminal-daemon && npm ci
+      - name: Lint (eslint) – optional
+        run: |
+          cd apps/console && npx eslint . --max-warnings=0 || true
+      - name: Build (console) – guards TS
+        run: |
+          cd apps/console && npm run build --if-present

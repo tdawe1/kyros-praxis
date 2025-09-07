@@ -1,0 +1,32 @@
+name: Contract
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r apps/adk-orchestrator/requirements.txt
+          pip install schemathesis
+      - name: Start orchestrator
+        run: |
+          uvicorn apps.adk-orchestrator.main:app --host 0.0.0.0 --port 8080 &
+          echo $! > uvicorn.pid
+          sleep 3
+      - name: Schemathesis against /v1
+        run: |
+          schemathesis run api-specs/orchestrator-v1.yaml --base-url http://localhost:8080 \
+            --checks all --hypothesis-max-examples=50 \
+            --endpoint "/v1/runs/plan" --stateful=links
+      - name: Stop
+        if: always()
+        run: kill $(cat uvicorn.pid) || true
