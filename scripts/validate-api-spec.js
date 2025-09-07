@@ -53,9 +53,21 @@ async function validateApiSpec() {
       console.log('🛑 Server stopped');
     });
 
+// At top of file, update fs import and add YAML
+import { readFileSync, writeFileSync, unlinkSync, existsSync } from 'fs';
+import YAML from 'yaml'
+
+// …later, around lines 56–58…
+
     // Read the expected spec
-    const expectedSpec = readFileSync(API_SPEC_PATH, 'utf8');
-    
+    const specYaml = readFileSync(API_SPEC_PATH, 'utf8');
+    const expected = YAML.parse(specYaml);
+    const specPaths = Object.keys(expected.paths || {});
+    const missingFromRuntime = specPaths.filter((p) => !openApiSchema.paths?.[p]);
+    if (missingFromRuntime.length) {
+      console.error('❌ Runtime schema missing paths from spec:', missingFromRuntime);
+      process.exit(1);
+    }
     // Basic validation - check if key endpoints exist
     const requiredEndpoints = [
       '/healthz',
