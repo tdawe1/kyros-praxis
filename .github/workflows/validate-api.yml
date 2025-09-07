@@ -1,0 +1,109 @@
+name: API Specification Validation
+
+on:
+  push:
+    branches: [ main, feat/orchestrator-v1-api ]
+    paths:
+      - 'api-specs/**'
+      - 'apps/adk-orchestrator/**'
+      - 'scripts/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'api-specs/**'
+      - 'apps/adk-orchestrator/**'
+      - 'scripts/**'
+
+jobs:
+  validate-api:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        
+    - name: Install Node.js dependencies
+      run: npm ci
+      
+    - name: Install Python dependencies
+      run: |
+        cd apps/adk-orchestrator
+        pip install -r requirements.txt
+        
+    - name: Validate API specification
+      run: npm run validate:api
+      
+    - name: Test orchestrator endpoints
+      run: |
+        cd apps/adk-orchestrator
+        python -c "
+        import requests
+        import time
+        import subprocess
+        import sys
+        
+        # Start the server
+        server = subprocess.Popen([sys.executable, 'main.py'], 
+                                stdout=subprocess.PIPE, 
+                                stderr=subprocess.PIPE)
+        
+        try:
+            # Wait for server to start
+            time.sleep(5)
+            
+            # Test endpoints
+            base_url = 'http://localhost:8000'
+            
+            # Test health endpoints
+            health_response = requests.get(f'{base_url}/healthz')
+            assert health_response.status_code == 200
+            assert health_response.json()['ok'] == True
+            
+            ready_response = requests.get(f'{base_url}/readyz')
+            assert ready_response.status_code == 200
+            assert ready_response.json()['ready'] == True
+            
+            # Test config endpoint
+            config_response = requests.get(f'{base_url}/v1/config')
+            assert config_response.status_code == 200
+            config = config_response.json()
+            assert 'services' in config
+            assert 'agents' in config
+            assert 'log' in config
+            
+            # Test plan endpoint
+            plan_data = {
+                'pr': {
+                    'repo': 'test/repo',
+                    'pr_number': 123,
+                    'branch': 'feature/test',
+                    'head_sha': 'abc123'
+                },
+                'mode': 'plan',
+                'labels': [],
+                'extra': {}
+            }
+            plan_response = requests.post(f'{base_url}/v1/runs/plan', json=plan_data)
+            assert plan_response.status_code == 200
+            plan_result = plan_response.json()
+            assert 'run_id' in plan_result
+            assert 'status' in plan_result
+            assert 'started_at' in plan_result
+            
+            print('✅ All API endpoints validated successfully')
+            
+        finally:
+            server.terminate()
+            server.wait()
+        "
