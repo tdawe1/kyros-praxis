@@ -1,5 +1,6 @@
 import { apiRequest } from "./queryClient";
 import type { DashboardStats, RunWithAgent, AgentWithStatus, SystemHealthStatus } from "@/types";
+import { ApiRunSchema, toRunWithAgent } from "../../../apps/console/lib/normalizeRuns";
 
 export const api = {
   // Dashboard data
@@ -11,7 +12,8 @@ export const api = {
   // Runs
   getRecentRuns: async (): Promise<RunWithAgent[]> => {
     const response = await fetch('/api/runs/recent');
-    return response.json();
+    const data = ApiRunSchema.array().parse(await response.json());
+    return data.map(toRunWithAgent);
   },
 
   createRun: async (data: {

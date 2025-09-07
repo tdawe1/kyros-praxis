@@ -36,18 +36,20 @@ print(f'NEXT_PUBLIC_DEV_BEARER={token}')
 PY
       - name: Start services
         run: |
-          uvicorn apps/adk-orchestrator.main:app --host 127.0.0.1 --port 8080 &
+          cd apps/adk-orchestrator && uvicorn main:app --host 127.0.0.1 --port 8080 &
           echo $! > uvicorn.pid
-          (cd apps/terminal-daemon && node server.js) &
-          echo $! > daemon.pid
           (cd apps/console && PORT=3001 npm run dev) &
           echo $! > console.pid
+          (cd apps/terminal-daemon && node server.js) &
+          echo $! > daemon.pid
+          # Wait for orchestrator
           for i in {1..30}; do
             if curl -fsS http://127.0.0.1:8080/healthz >/dev/null; then
               break
             fi
             sleep 1
           done
+          # Wait for console
           for i in {1..60}; do
             if curl -fsS http://127.0.0.1:3001 >/dev/null; then
               break
@@ -59,9 +61,11 @@ PY
           cat > apps/console/e2e.spec.ts <<'TS'
           import { test, expect } from '@playwright/test';
           test('run plan returns JSON', async ({ page }) => {
-            await page.goto('http://localhost:3001/');
+            await page.goto('http://127.0.0.1:3001/');
             await page.getByRole('button', { name: 'Run Plan' }).click();
-            await expect(page.locator('pre')).toContainText('run_id');
+            const result = page.locator('pre');
+            await result.waitFor();
+            await expect(result).toContainText('run_id');
           });
           TS
           cd apps/console && npx playwright test e2e.spec.ts --reporter=list
