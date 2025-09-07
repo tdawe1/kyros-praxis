@@ -106,15 +106,30 @@ async function validateApiSpec() {
       throw new Error(`Missing required endpoints: ${missingEndpoints.join(', ')}`);
     }
 
+    // Helper function to resolve schema references
+    function resolveSchema(schema, openApiSchema) {
+      if (schema && schema.$ref) {
+        const refPath = schema.$ref.replace('#/', '').split('/');
+        let resolved = openApiSchema;
+        for (const segment of refPath) {
+          resolved = resolved[segment];
+        }
+        return resolved;
+      }
+      return schema;
+    }
+
     // Validate response schemas match
     const healthzResponse = openApiSchema.paths['/healthz']?.get?.responses?.['200']?.content?.['application/json']?.schema;
-    if (!healthzResponse || !healthzResponse.properties?.ok) {
+    const resolvedHealthzResponse = resolveSchema(healthzResponse, openApiSchema);
+    if (!resolvedHealthzResponse || !resolvedHealthzResponse.properties?.ok) {
       console.error('❌ /healthz endpoint schema validation failed');
       throw new Error('/healthz endpoint schema validation failed');
     }
 
     const readyzResponse = openApiSchema.paths['/readyz']?.get?.responses?.['200']?.content?.['application/json']?.schema;
-    if (!readyzResponse || !readyzResponse.properties?.ready) {
+    const resolvedReadyzResponse = resolveSchema(readyzResponse, openApiSchema);
+    if (!resolvedReadyzResponse || !resolvedReadyzResponse.properties?.ready) {
       console.error('❌ /readyz endpoint schema validation failed');
       throw new Error('/readyz endpoint schema validation failed');
     }
@@ -126,7 +141,8 @@ async function validateApiSpec() {
     }
 
     const planRequest = openApiSchema.paths['/v1/runs/plan']?.post?.requestBody?.content?.['application/json']?.schema;
-    if (!planRequest || !planRequest.required?.includes('pr') || !planRequest.required?.includes('mode')) {
+    const resolvedPlanRequest = resolveSchema(planRequest, openApiSchema);
+    if (!resolvedPlanRequest || !resolvedPlanRequest.required?.includes('pr') || !resolvedPlanRequest.required?.includes('mode')) {
       console.error('❌ /v1/runs/plan endpoint request schema validation failed');
       throw new Error('/v1/runs/plan endpoint request schema validation failed');
     }
