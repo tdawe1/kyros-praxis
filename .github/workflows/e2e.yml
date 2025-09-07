@@ -31,7 +31,22 @@ jobs:
           echo $! > daemon.pid
           (cd apps/console && PORT=3001 npm run dev) &
           echo $! > console.pid
-          sleep 8
+          # Wait for backend readiness
+          for i in {1..40}; do
+            if curl -fsS http://localhost:8080/readyz >/dev/null; then
+              break
+            fi
+            sleep 1
+          done
+          curl -fsS http://localhost:8080/healthz >/dev/null
+
+          # Wait for frontend to be up
+          for i in {1..60}; do
+            if curl -fsS http://localhost:3001/ >/dev/null; then
+              break
+            fi
+            sleep 1
+          done
       - name: Smoke test – click "Run Plan"
         run: |
           cat > apps/console/e2e.spec.ts <<'TS'
