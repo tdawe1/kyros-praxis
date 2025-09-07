@@ -48,6 +48,7 @@ paths:
             application/json:
               schema:
                 type: object
+                required: ["services", "agents", "log"]
                 properties:
                   services:
                     type: object
