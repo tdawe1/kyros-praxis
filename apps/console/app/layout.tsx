@@ -1,3 +1,4 @@
+
 import type { Metadata } from "next";
 import "./globals.css";
 
@@ -11,6 +12,7 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+main
   return (
     <html lang="en">
       <body>{children}</body>
