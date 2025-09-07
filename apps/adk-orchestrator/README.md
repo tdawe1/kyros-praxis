@@ -7,10 +7,9 @@ The Kyros Orchestrator provides a versioned API for managing agent runs and syst
 - **Versioned API**: `/v1` prefix for all API endpoints
 - **Health Checks**: `/healthz` and `/readyz` endpoints for monitoring
 - **Configuration Management**: `/v1/config` endpoint for system settings
-- **Agent Runs**: Support for plan, implement, critic, integrate, and pipeline modes
+- **Agent Runs**: Support for plan (implement, critic coming soon)
 - **Pydantic Settings**: Type-safe configuration management
 - **OpenAPI Specification**: Full API documentation in `api-specs/orchestrator-v1.yaml`
-
 ## Quick Start
 
 ### Development
