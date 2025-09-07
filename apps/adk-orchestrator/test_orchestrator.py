@@ -3,13 +3,12 @@
 Simple test script for the orchestrator API
 """
 
-import requests
-import json
-import time
+import os
 import subprocess
 import sys
-import os
+import time
 
+import requests
 def test_orchestrator():
     """Test the orchestrator API endpoints"""
     base_url = "http://localhost:8000"
