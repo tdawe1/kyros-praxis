@@ -1,4 +1,4 @@
-name: API Specification Validation
+name: Validate API Specification
 
 on:
   push:
@@ -6,104 +6,100 @@ on:
     paths:
       - 'api-specs/**'
       - 'apps/adk-orchestrator/**'
-      - 'scripts/**'
   pull_request:
     branches: [ main ]
     paths:
       - 'api-specs/**'
       - 'apps/adk-orchestrator/**'
-      - 'scripts/**'
 
 jobs:
   validate-api:
     runs-on: ubuntu-latest
     
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Set up Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-        cache: 'npm'
-        
+    - uses: actions/checkout@v4
+    
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.11'
-        
-    - name: Install Node.js dependencies
-      run: npm ci
-      
-    - name: Install Python dependencies
+    
+    - name: Install dependencies
       run: |
-        cd apps/adk-orchestrator
-        pip install -r requirements.txt
+        python -m pip install --upgrade pip
+        pip install fastapi uvicorn pydantic pydantic-settings PyYAML
+        pip install openapi-spec-validator
+    
+    - name: Validate OpenAPI spec
+      run: |
+        python -c "
+        import yaml
+        from openapi_spec_validator import validate_spec
         
-    - name: Validate API specification
-      run: npm run validate:api
-      
-    - name: Test orchestrator endpoints
+        # Load and validate the API spec
+        with open('api-specs/orchestrator-v1.yaml', 'r') as f:
+            spec = yaml.safe_load(f)
+        
+        try:
+            validate_spec(spec)
+            print('✅ OpenAPI specification is valid')
+        except Exception as e:
+            print(f'❌ OpenAPI specification validation failed: {e}')
+            exit(1)
+        "
+    
+    - name: Test API endpoints
       run: |
         cd apps/adk-orchestrator
         python -c "
-        import requests
-        import time
-        import subprocess
         import sys
+        sys.path.append('../../packages')
         
-        # Start the server
-        server = subprocess.Popen([sys.executable, 'main.py'], 
-                                stdout=subprocess.PIPE, 
-                                stderr=subprocess.PIPE)
+        from main import app
+        from fastapi.testclient import TestClient
         
-        try:
-            # Wait for server to start
-            time.sleep(5)
-            
-            # Test endpoints
-            base_url = 'http://localhost:8000'
-            
-            # Test health endpoints
-            health_response = requests.get(f'{base_url}/healthz')
-            assert health_response.status_code == 200
-            assert health_response.json()['ok'] == True
-            
-            ready_response = requests.get(f'{base_url}/readyz')
-            assert ready_response.status_code == 200
-            assert ready_response.json()['ready'] == True
-            
-            # Test config endpoint
-            config_response = requests.get(f'{base_url}/v1/config')
-            assert config_response.status_code == 200
-            config = config_response.json()
-            assert 'services' in config
-            assert 'agents' in config
-            assert 'log' in config
-            
-            # Test plan endpoint
-            plan_data = {
-                'pr': {
-                    'repo': 'test/repo',
-                    'pr_number': 123,
-                    'branch': 'feature/test',
-                    'head_sha': 'abc123'
-                },
-                'mode': 'plan',
-                'labels': [],
-                'extra': {}
-            }
-            plan_response = requests.post(f'{base_url}/v1/runs/plan', json=plan_data)
-            assert plan_response.status_code == 200
-            plan_result = plan_response.json()
-            assert 'run_id' in plan_result
-            assert 'status' in plan_result
-            assert 'started_at' in plan_result
-            
-            print('✅ All API endpoints validated successfully')
-            
-        finally:
-            server.terminate()
-            server.wait()
+        client = TestClient(app)
+        
+        # Test health endpoints
+        health_response = client.get('/healthz')
+        assert health_response.status_code == 200
+        assert health_response.json() == {'ok': True}
+        print('✅ /healthz endpoint working')
+        
+        ready_response = client.get('/readyz')
+        assert ready_response.status_code == 200
+        assert ready_response.json() == {'ready': True}
+        print('✅ /readyz endpoint working')
+        
+        # Test config endpoint
+        config_response = client.get('/v1/config')
+        assert config_response.status_code == 200
+        config_data = config_response.json()
+        assert 'services' in config_data
+        assert 'agents' in config_data
+        assert 'log' in config_data
+        print('✅ /v1/config endpoint working')
+        
+        # Test plan endpoint with valid data
+        plan_data = {
+            'pr': {
+                'repo': 'test/repo',
+                'pr_number': 123,
+                'branch': 'feature/test',
+                'head_sha': 'abc123'
+            },
+            'mode': 'plan',
+            'labels': ['test'],
+            'extra': {}
+        }
+        
+        plan_response = client.post('/v1/runs/plan', json=plan_data)
+        assert plan_response.status_code == 200
+        plan_result = plan_response.json()
+        assert 'run_id' in plan_result
+        assert 'status' in plan_result
+        assert 'started_at' in plan_result
+        print('✅ /v1/runs/plan endpoint working')
+        
+        print('🎉 All API endpoints validated successfully!')
         "
