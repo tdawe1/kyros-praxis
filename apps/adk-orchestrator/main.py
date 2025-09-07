@@ -442,14 +442,19 @@ async def get_agents_status():
 # Include the v1 API router
 app.include_router(api)
 
+# Response models for basic endpoints
+class HealthResponse(BaseModel):
+    ok: bool = True
 
-@app.get("/healthz")
+class ReadyResponse(BaseModel):
+    ready: bool = True
+
+@app.get("/healthz", response_model=HealthResponse)
 def healthz():
     """Health check endpoint"""
     return {"ok": True}
 
-
-@app.get("/readyz")
+@app.get("/readyz", response_model=ReadyResponse)
 def readyz():
     """Readiness check endpoint"""
     return {"ready": True}
@@ -464,4 +469,8 @@ def get_config():
 @app.on_event("shutdown")
 async def shutdown_event():
     """Clean up resources on shutdown"""
-    await orchestrator.cleanup()  # Test comment for path filtering
+    await orchestrator.cleanup()
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
