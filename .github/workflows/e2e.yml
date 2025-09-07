@@ -25,7 +25,7 @@ jobs:
           cd apps/console && npx playwright install --with-deps
       - name: Start services
         run: |
-          uvicorn apps.adk-orchestrator.main:app --host 0.0.0.0 --port 8080 &
+          uvicorn --app-dir apps/adk-orchestrator main:app --host 0.0.0.0 --port 8080 &
           echo $! > uvicorn.pid
           (cd apps/terminal-daemon && node server.js) &
           echo $! > daemon.pid
