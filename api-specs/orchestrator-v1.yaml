@@ -1,7 +1,198 @@
 openapi: 3.0.0
-info: { title: Kyros Orchestrator API, version: "1.0.0" }
+info:
+  title: Kyros Orchestrator API
+  version: "1.0.0"
+  description: API for managing agent runs and system configuration
+servers:
+  - url: http://localhost:8000
+    description: Development server
 paths:
+  /healthz:
+    get:
+      summary: Health check endpoint
+      description: Returns the health status of the orchestrator
+      responses:
+        "200":
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+  /readyz:
+    get:
+      summary: Readiness check endpoint
+      description: Returns the readiness status of the orchestrator
+      responses:
+        "200":
+          description: Service is ready
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ready:
+                    type: boolean
+                    example: true
+  /v1/config:
+    get:
+      summary: Get orchestrator configuration
+      description: Returns the current configuration settings
+      responses:
+        "200":
+          description: Configuration retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  services:
+                    type: object
+                    properties:
+                      orchestrator:
+                        type: object
+                        properties:
+                          workers:
+                            type: integer
+                          timeout_seconds:
+                            type: integer
+                  agents:
+                    type: object
+                    properties:
+                      sandbox:
+                        type: object
+                        properties:
+                          enabled:
+                            type: boolean
+                          timeout_seconds:
+                            type: integer
+                          memory_limit_mb:
+                            type: integer
+                      memory:
+                        type: object
+                        properties:
+                          vector_store:
+                            type: boolean
+                          history_limit:
+                            type: integer
+                      tools:
+                        type: object
+                        properties:
+                          auto_discover:
+                            type: boolean
+                          validation:
+                            type: string
+                  log:
+                    type: object
+                    properties:
+                      json:
+                        type: boolean
   /v1/runs/plan:
     post:
       summary: Start a plan run
-      responses: { "200": { description: OK } }
+      description: Initiates a new planning run for a pull request
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - pr
+                - mode
+              properties:
+                pr:
+                  type: object
+                  required:
+                    - repo
+                    - pr_number
+                    - branch
+                    - head_sha
+                  properties:
+                    repo:
+                      type: string
+                      description: Repository name
+                      example: "owner/repo"
+                    pr_number:
+                      type: integer
+                      description: Pull request number
+                      example: 123
+                    branch:
+                      type: string
+                      description: Branch name
+                      example: "feature/new-feature"
+                    head_sha:
+                      type: string
+                      description: Head commit SHA
+                      example: "abc123def456"
+                    html_url:
+                      type: string
+                      description: HTML URL to the pull request
+                      example: "https://github.com/owner/repo/pull/123"
+                mode:
+                  type: string
+                  enum: ["plan", "implement", "critic", "integrate", "pipeline"]
+                  description: Run mode
+                  example: "plan"
+                labels:
+                  type: array
+                  items:
+                    type: string
+                  description: Labels for the run
+                  example: ["needs:deep-refactor", "complex"]
+                extra:
+                  type: object
+                  description: Additional parameters
+                  example: {"priority": "high"}
+      responses:
+        "200":
+          description: Run started successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - run_id
+                  - status
+                  - started_at
+                properties:
+                  run_id:
+                    type: string
+                    description: Unique identifier for the run
+                    example: "550e8400-e29b-41d4-a716-446655440000"
+                  status:
+                    type: string
+                    description: Current status of the run
+                    example: "started"
+                  started_at:
+                    type: string
+                    format: date-time
+                    description: ISO timestamp when the run started
+                    example: "2024-01-15T10:30:00Z"
+                  notes:
+                    type: string
+                    description: Additional notes about the run
+                    example: "[plan] owner/repo#123 (feature/new-feature) planner=gpt-5-high impl=gemini-2.5-pro"
+        "422":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        loc:
+                          type: array
+                          items:
+                            type: string
+                        msg:
+                          type: string
+                        type:
+                          type: string
