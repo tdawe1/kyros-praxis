@@ -7,10 +7,9 @@ The Kyros Orchestrator provides a versioned API for managing agent runs and syst
 - **Versioned API**: `/v1` prefix for all API endpoints
 - **Health Checks**: `/healthz` and `/readyz` endpoints for monitoring
 - **Configuration Management**: `/v1/config` endpoint for system settings
-- **Agent Runs**: Support for plan, implement, critic, integrate, and pipeline modes
+- **Agent Runs**: Support for plan (implement, critic coming soon)
 - **Pydantic Settings**: Type-safe configuration management
 - **OpenAPI Specification**: Full API documentation in `api-specs/orchestrator-v1.yaml`
-
 ## Quick Start
 
 ### Development
@@ -43,6 +42,8 @@ Environment variables can override any configuration value.
 
 #### Configuration
 - `GET /v1/config` - Get current configuration
+  
+  ⚠️ **Security Warning**: This endpoint returns raw merged YAML configuration which may expose sensitive data including tokens, secrets, passwords, keys, and private_* entries. The server currently returns the full configuration without redaction. Consider implementing access control or sensitive key redaction before production deployment. See the handler implementation in `apps/adk-orchestrator/main.py:66` (`cfg()` function) for current behavior.
 
 ⚠️ **Security Warning**: This endpoint returns raw merged YAML configuration which may expose sensitive data including tokens, secrets, passwords, keys, and private_* entries. In production, consider implementing access controls or filtering sensitive fields before exposure.
 

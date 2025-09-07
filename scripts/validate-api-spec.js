@@ -25,7 +25,6 @@ async function validateApiSpec() {
   
   let serverProcess = null;
   const tempSchemaPath = join(projectRoot, 'temp-openapi.json');
-  
   try {
     // Start the orchestrator server
     console.log('🚀 Starting orchestrator server...');
