@@ -15,90 +15,42 @@ on:
 jobs:
   validate-api:
     runs-on: ubuntu-latest
-
+    env:
+      BASE_URL: http://127.0.0.1:8080
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install fastapi uvicorn pydantic pydantic-settings PyYAML openapi-spec-validator httpx aiosqlite PyJWT
+      - name: Generate dev JWT
+        run: |
+          python - <<'PY' >> $GITHUB_ENV
+import datetime, jwt
+token = jwt.encode({'sub': 'dev', 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=5)}, 'dev-secret', algorithm='HS256')
+print(f'DEV_JWT={token}')
+PY
+      - name: Start orchestrator
+        run: |
+          uvicorn apps/adk-orchestrator.main:app --host 127.0.0.1 --port 8080 &
+          echo $! > uvicorn.pid
+          for i in {1..30}; do
+            if curl -fsS http://127.0.0.1:8080/healthz >/dev/null; then
+              break
+            fi
+            sleep 1
+          done
+          curl -fsS http://127.0.0.1:8080/healthz >/dev/null
+      - name: Validate API
+        env:
+          DEV_JWT: ${{ env.DEV_JWT }}
+        run: python scripts/validate-api.py
+      - name: Stop
+        if: always()
+        run: kill $(cat uvicorn.pid) || true
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
-        cache: 'pip'
-        
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install fastapi uvicorn pydantic pydantic-settings PyYAML openapi-spec-validator httpx aiosqlite
-    - name: Validate OpenAPI spec
-      run: |
-        python -c "
-        import yaml
-        from openapi_spec_validator import validate_spec
-        
-        # Load and validate the API spec
-        with open('api-specs/orchestrator-v1.yaml', 'r') as f:
-            spec = yaml.safe_load(f)
-        
-        try:
-            validate_spec(spec)
-            print('✅ OpenAPI specification is valid')
-        except Exception as e:
-            print(f'❌ OpenAPI specification validation failed: {e}')
-            exit(1)
-        "
-    
-    - name: Test API endpoints
-      run: |
-        cd apps/adk-orchestrator
-        python -c "
-        import sys
-        sys.path.append('../../packages')
-        
-        from main import app
-        from fastapi.testclient import TestClient
-        
-        client = TestClient(app)
-        
-        # Test health endpoints
-        health_response = client.get('/healthz')
-        assert health_response.status_code == 200
-        assert health_response.json() == {'ok': True}
-        print('✅ /healthz endpoint working')
-        
-        ready_response = client.get('/readyz')
-        assert ready_response.status_code == 200
-        assert ready_response.json() == {'ready': True}
-        print('✅ /readyz endpoint working')
-        
-        # Test config endpoint
-        config_response = client.get('/v1/config')
-        assert config_response.status_code == 200
-        config_data = config_response.json()
-        assert 'services' in config_data
-        assert 'agents' in config_data
-        assert 'log' in config_data
-        print('✅ /v1/config endpoint working')
-        
-        # Test plan endpoint with valid data
-        plan_data = {
-            'pr': {
-                'repo': 'test/repo',
-                'pr_number': 123,
-                'branch': 'feature/test',
-                'head_sha': 'abc123'
-            },
-            'mode': 'plan',
-            'labels': ['test'],
-            'extra': {}
-        }
-        
-        plan_response = client.post('/v1/runs/plan', json=plan_data)
-        assert plan_response.status_code == 200
-        plan_result = plan_response.json()
-        assert 'run_id' in plan_result
-        assert 'status' in plan_result
-        assert 'started_at' in plan_result
-        print('✅ /v1/runs/plan endpoint working')
-        
-        print('🎉 All API endpoints validated successfully!')
-        "
