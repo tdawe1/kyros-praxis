@@ -19,12 +19,12 @@ Kyros coordinates multiple AI and CLI agents to plan, implement, review, and int
 
 ## Runtime at a glance
 
-* **Console (Next.js)**: UI and PR runners
-* **Orchestrator (FastAPI)**: `/v1/*` runs, state machine, events, validation, budgeting
-* **Terminal Daemon (node-pty WS)**: local shell sessions behind `TerminalService` (not Internet-exposed)
-* **Storage**: Repositories + EventStore (SQLite file `data/kyros.db` by default)
-* **Event bus**: in-process pub/sub (Redis Streams adapter later)
-* **Config**: `apps/adk-orchestrator/config/{base,development,production}.yaml`
+- **Console (Next.js)**: UI and PR runners
+- **Orchestrator (FastAPI)**: `/v1/*` runs, state machine, events, validation, budgeting
+- **Terminal Daemon (node-pty WS)**: local shell sessions behind `TerminalService` (not Internet-exposed)
+- **Storage**: Repositories + EventStore (SQLite file `data/kyros.db` by default)
+- **Event bus**: in-process pub/sub (Redis Streams adapter later)
+- **Config**: `apps/adk-orchestrator/config/{base,development,production}.yaml`
 
 ---
 
@@ -131,32 +131,32 @@ A timeout-limited subprocess implementation ships at `sandbox/subprocess_executo
 
 ## State & events
 
-* **Tasks** and **leases** live in small JSON documents for local collaboration; authoritative persistence is via repos/EventStore.
-* **Leases, not locks**: TTL + heartbeat; stale leases are reclaimable. Keep files small to reduce conflicts.  
-* **Events** are append-only JSON lines (machine log). Human `logs/log.md` is generated from events. Typical events: `task_claimed`, `file_locked`, `tests_run`, `review_feedback`, `merged`, `error`.  
+- **Tasks** and **leases** live in small JSON documents for local collaboration; authoritative persistence is via repos/EventStore.
+- **Leases, not locks**: TTL + heartbeat; stale leases are reclaimable. Keep files small to reduce conflicts.
+- **Events** are append-only JSON lines (machine log). Human `logs/log.md` is generated from events. Typical events: `task_claimed`, `file_locked`, `tests_run`, `review_feedback`, `merged`, `error`.
 
 **State write protocol (atomic + optimistic)**
 
 1. Read current file and compute an ETag (sha256).
 2. Validate and write to a temp file; `os.replace(temp, target)` atomically swaps.
-3. If ETag changed, re-read and retry with backoff.  
+3. If ETag changed, re-read and retry with backoff.
 
 ---
 
 ## Workflow orchestration (lightweight DAG)
 
-* Orchestrator executes small DAGs (Plan → Implement → Critic → Integrate), checkpointing after each node.
-* Retries with backoff; circuit-break on repeated failure.
-* Compensation hooks (e.g., revert branch) can be wired per node.
+- Orchestrator executes small DAGs (Plan → Implement → Critic → Integrate), checkpointing after each node.
+- Retries with backoff; circuit-break on repeated failure.
+- Compensation hooks (e.g., revert branch) can be wired per node.
 
 ---
 
 ## Validation gates (Critic)
 
-* **Code**: formatter/linter/type checker
-* **Tests**: unit + optional integration
-* **Security**: secret scan baseline; optional SAST
-* **DoD**: enforce acceptance criteria per task
+- **Code**: formatter/linter/type checker
+- **Tests**: unit + optional integration
+- **Security**: secret scan baseline; optional SAST
+- **DoD**: enforce acceptance criteria per task
 
 > A minimal validator interface lives in `packages/validation/contracts.py`.
 
@@ -164,23 +164,23 @@ A timeout-limited subprocess implementation ships at `sandbox/subprocess_executo
 
 ## Terminal Daemon & CLI agents
 
-* The daemon is local-only, accessed via `TerminalService` interface (WebSocket implementation in the console later).
-* CLI agents (e.g., Claude Code CLI) use a **runner** that proxies stdin/stdout through `TerminalService`, so we can later swap to containers or remote hosts without changing call sites.
+- The daemon is local-only, accessed via `TerminalService` interface (WebSocket implementation in the console later).
+- CLI agents (e.g., Claude Code CLI) use a **runner** that proxies stdin/stdout through `TerminalService`, so we can later swap to containers or remote hosts without changing call sites.
 
 ---
 
 ## Implementer strategy & model routing
 
-* Default implementer uses Gemini; tasks labeled `needs:deep-refactor` or similar trigger Claude Sonnet.
-* Strategy considers tenant budgets, recent failure rate, and task complexity.
+- Default implementer uses Gemini; tasks labeled `needs:deep-refactor` or similar trigger Claude Sonnet.
+- Strategy considers tenant budgets, recent failure rate, and task complexity.
 
 ---
 
 ## Security & tenancy
 
-* JWT (or dev header) injects a `TenantContext` with rate limits and model caps.
-* **Never** log secrets or raw chain-of-thought; store only `rationale_summary`.
-* Rate limit by tenant; budget ceilings enforced before long runs.
+- JWT (or dev header) injects a `TenantContext` with rate limits and model caps.
+- **Never** log secrets or raw chain-of-thought; store only `rationale_summary`.
+- Rate limit by tenant; budget ceilings enforced before long runs.
 
 ---
 
@@ -225,24 +225,24 @@ registry.register(ToolSchema(
 
 ### 3) Wire into the orchestrator
 
-* Add to the agent registry used by the workflow node.
-* Persist interaction: call `AgentMemoryStore.store_interaction(...)` after each node.
-* Emit `agent_started/agent_output/agent_error/agent_completed` events.
+- Add to the agent registry used by the workflow node.
+- Persist interaction: call `AgentMemoryStore.store_interaction(...)` after each node.
+- Emit `agent_started/agent_output/agent_error/agent_completed` events.
 
 ### 4) Tests
 
-* Unit-test your agent with a fake ToolRegistry and in-memory memory store.
-* Contract test the `/v1` endpoint that triggers your agent (e.g., Schemathesis on `api-specs/orchestrator-v1.yaml`).
+- Unit-test your agent with a fake ToolRegistry and in-memory memory store.
+- Contract test the `/v1` endpoint that triggers your agent (e.g., Schemathesis on `api-specs/orchestrator-v1.yaml`).
 
 ---
 
 ## Agent workflow (field guide)
 
 1. **Sync & claim** the next `queued` task with satisfied deps. Create branch `feat/<task-id>-slug`.
-2. **Lease only** files you will edit; TTL ≈ 15m; heartbeat ~5m. Reclaim stale leases if needed.  
-3. **Implement in small diffs**; commit frequently with messages like `feat(task-007-01): short summary`.  
-4. **Request review**; critic runs gates and either `changes_requested` or `approved`.  
-5. **Integrate**: `approved → merging → done`; update changelog; release leases.  
+2. **Lease only** files you will edit; TTL ≈ 15m; heartbeat ~5m. Reclaim stale leases if needed.
+3. **Implement in small diffs**; commit frequently with messages like `feat(task-007-01): short summary`.
+4. **Request review**; critic runs gates and either `changes_requested` or `approved`.
+5. **Integrate**: `approved → merging → done`; update changelog; release leases.
 
 **Task state machine**
 
@@ -278,9 +278,11 @@ Key knobs (defaults in `config/base.yaml`):
 ## Appendices
 
 ### Event names (suggested)
+
 - `task_created`, `task_claimed`, `status_changed`, `file_locked`, `lease_renewed`, `locks_reclaimed`, `tests_run`, `pr_opened`, `review_requested`, `review_feedback`, `approved`, `merged`, `released`, `agent_started`, `agent_output`, `agent_error`, `agent_completed`.
 
 ### Collaboration files (dev-friendly)
+
 - `collaboration/state/tasks.json`
 - `collaboration/state/locks.json`
 - `collaboration/state/agents.json`
@@ -292,3 +294,24 @@ Key knobs (defaults in `config/base.yaml`):
 ---
 
 If you want, I can open a PR in `tdawe1/kyros-console` that adds this file and the missing stubs (`agent_sdk`, `validation`, etc.) in a few focused commits.
+
+---
+
+## Cursor Rules & how agents use them
+
+Kyros includes a small, high-signal Cursor ruleset:
+
+- **Project base:** `.cursor/rules/base.mdc`
+- **Security/Tenancy:** `.cursor/rules/security-tenancy.mdc`
+- **Orchestrator (FastAPI):** `apps/adk-orchestrator/.cursor/rules/fastapi.mdc`
+- **Console (Next.js App Router):** `apps/console/.cursor/rules/next-app-router.mdc`
+- **Terminal Daemon:** `apps/terminal-daemon/.cursor/rules/daemon-pty.mdc`
+- **Final Review Gate:** `.cursor/rules/final-review.mdc`
+
+**How it works:** Cursor auto-attaches rules found under `.cursor/rules` (and nested app folders) when files in those areas are referenced. Keep rules concise; they act as on-disk system prompts for contributors and AI agents.
+
+**Agent usage:**
+
+- **Planner / Implementer:** The app-specific rules auto-attach in Cursor when editing those areas. Follow their patterns and the Security/Tenancy guardrails.
+- **Critic:** Use the **Final Review Gate** rule when a PR is labeled `final`. It expects required CI checks to be green and enforces security/tenancy before returning APPROVE/DENY.
+- **Integrator:** Ensure Final Review passed (Codex/CodeRabbit checks + our CI). If APPROVE, proceed with merge; if DENY, apply the minimal "required_changes".
