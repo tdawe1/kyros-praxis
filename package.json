@@ -8,7 +8,10 @@
     "build": "vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
     "start": "NODE_ENV=production node dist/index.js",
     "check": "tsc",
-    "db:push": "drizzle-kit push"
+    "db:push": "drizzle-kit push",
+    "validate:api": "node scripts/validate-api-spec.js",
+    "test:orchestrator": "cd apps/adk-orchestrator && python -m pytest -v",
+    "dev:orchestrator": "cd apps/adk-orchestrator && uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
