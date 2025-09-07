@@ -1,4 +1,4 @@
-name: Validate API Specification
+name: Contract
 
 on:
   push:
