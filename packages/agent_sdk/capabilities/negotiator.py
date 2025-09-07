@@ -76,7 +76,7 @@ class CapabilityNegotiator:
 
         # Score each agent
         best_agent = None
-        best_score = -1
+        best_score = -1.0
         missing_capabilities = requirements.capabilities.copy()
 
         for agent in candidate_agents:
