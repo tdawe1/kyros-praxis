@@ -22,10 +22,11 @@ const ORCHESTRATOR_PATH = join(projectRoot, 'apps', 'adk-orchestrator');
 async function validateApiSpec() {
   console.log('🔍 Validating API specification...');
   
+  let serverProcess;
   try {
     // Start the orchestrator server
     console.log('🚀 Starting orchestrator server...');
-    const serverProcess = spawn('python', ['main.py'], {
+    serverProcess = spawn('python', ['main.py'], {
       cwd: ORCHESTRATOR_PATH,
       stdio: ['pipe', 'pipe', 'pipe']
     });
@@ -33,9 +34,26 @@ async function validateApiSpec() {
     // Wait for server to start
     await new Promise((resolve) => setTimeout(resolve, 3000));
 
-    // Fetch the OpenAPI schema
+    // Fetch the OpenAPI schema with timeout
     console.log('📋 Fetching OpenAPI schema...');
-    const response = await fetch('http://localhost:8000/openapi.json');
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => {
+      controller.abort();
+    }, 10000); // 10 second timeout
+
+    let response;
+    try {
+      response = await fetch('http://localhost:8000/openapi.json', {
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
+    } catch (error) {
+      clearTimeout(timeoutId);
+      if (error.name === 'AbortError') {
+        throw new Error('Fetch request timed out after 10 seconds');
+      }
+      throw error;
+    }
     
     if (!response.ok) {
       throw new Error(`Failed to fetch OpenAPI schema: ${response.status} ${response.statusText}`);
@@ -46,12 +64,6 @@ async function validateApiSpec() {
     // Write schema to temporary file for comparison
     const tempSchemaPath = join(projectRoot, 'temp-openapi.json');
     writeFileSync(tempSchemaPath, JSON.stringify(openApiSchema, null, 2));
-
-    // Kill the server
-    serverProcess.kill();
-    serverProcess.on('close', () => {
-      console.log('🛑 Server stopped');
-    });
 
     // Read the expected spec
     const expectedSpec = readFileSync(API_SPEC_PATH, 'utf8');
@@ -98,8 +110,12 @@ async function validateApiSpec() {
       process.exit(1);
     }
 
-    // Clean up
-    unlinkSync(tempSchemaPath);
+    // Clean up temp file
+    try {
+      unlinkSync(tempSchemaPath);
+    } catch (error) {
+      // Ignore cleanup errors
+    }
 
     console.log('✅ API specification validation passed!');
     console.log('📊 Validated endpoints:');
@@ -110,6 +126,34 @@ async function validateApiSpec() {
   } catch (error) {
     console.error('❌ API specification validation failed:', error.message);
     process.exit(1);
+  } finally {
+    // Ensure server process is always cleaned up
+    if (serverProcess && !serverProcess.killed) {
+      console.log('🛑 Cleaning up server process...');
+      serverProcess.kill('SIGTERM');
+      
+      // Wait for graceful shutdown, then force kill if needed
+      await new Promise((resolve) => {
+        const timeout = setTimeout(() => {
+          if (serverProcess && !serverProcess.killed) {
+            console.log('🔥 Force killing server process...');
+            serverProcess.kill('SIGKILL');
+          }
+          resolve();
+        }, 5000);
+        
+        if (serverProcess) {
+          serverProcess.on('close', () => {
+            clearTimeout(timeout);
+            console.log('🛑 Server stopped');
+            resolve();
+          });
+        } else {
+          clearTimeout(timeout);
+          resolve();
+        }
+      });
+    }
   }
 }
 
