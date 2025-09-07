@@ -1,67 +1,120 @@
-# Kyros Orchestrator
+# Kyros Orchestrator API
 
-The Kyros Orchestrator is a FastAPI-based service that manages agent runs and provides system configuration.
+The Kyros Orchestrator provides a versioned API for managing agent runs and system configuration.
 
 ## Features
 
-- **Versioned API**: RESTful API with `/v1` prefix
-- **Health Endpoints**: `/healthz` and `/readyz` for health checks
-- **Configuration Management**: `/v1/config` endpoint with pydantic-settings
-- **Run Management**: `/v1/runs/plan` endpoint for starting planning runs
-- **OpenAPI Specification**: Full API documentation at `/docs`
+- **Versioned API**: `/v1` prefix for all API endpoints
+- **Health Checks**: `/healthz` and `/readyz` endpoints for monitoring
+- **Configuration Management**: `/v1/config` endpoint for system settings
+- **Agent Runs**: Support for plan, implement, critic, integrate, and pipeline modes
+- **Pydantic Settings**: Type-safe configuration management
+- **OpenAPI Specification**: Full API documentation in `api-specs/orchestrator-v1.yaml`
 
 ## Quick Start
 
-1. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
+### Development
 
-2. Run the server:
-   ```bash
-   uvicorn main:app --host 0.0.0.0 --port 8000 --reload
-   ```
-
-3. Test the API:
-   ```bash
-   python test_orchestrator.py
-   ```
-
-## API Endpoints
-
-### Health Checks
-- `GET /healthz` - Health status
-- `GET /readyz` - Readiness status
-
-### Configuration
-- `GET /v1/config` - Get current configuration
-
-### Runs
-- `POST /v1/runs/plan` - Start a planning run
-
-## Configuration
-
-Configuration is loaded from YAML files in the `config/` directory:
-- `base.yaml` - Base configuration
-- `development.yaml` - Development overrides
-
-Environment variables can also be used to override configuration values.
-
-## Development
-
-Run the development server:
 ```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Run the development server
+uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+
+# Or use the npm script
 npm run dev:orchestrator
 ```
 
-Validate API specification:
+### Configuration
+
+Configuration is loaded from YAML files in the `config/` directory:
+
+- `config/base.yaml` - Base configuration
+- `config/development.yaml` - Development overrides
+
+Environment variables can override any configuration value.
+
+### API Endpoints
+
+#### Health Checks
+- `GET /healthz` - Health check
+- `GET /readyz` - Readiness check
+
+#### Configuration
+- `GET /v1/config` - Get current configuration
+
+#### Agent Runs
+- `POST /v1/runs/plan` - Start a planning run
+- `POST /v1/runs/implement` - Start an implementation run
+- `POST /v1/runs/critic` - Start a critique run
+
+#### Agent Management
+- `GET /v1/agents/status` - Get agent status
+
+## Validation
+
+The API specification is validated against the OpenAPI spec:
+
 ```bash
-npm run validate:api
+# Validate locally
+npm run validate-api
+
+# Or run the script directly
+python scripts/validate-api.py
 ```
 
-## Testing
+## Example Usage
 
-Run the test suite:
+### Start a Plan Run
+
 ```bash
-npm run test:orchestrator
+curl -X POST "http://localhost:8000/v1/runs/plan" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "pr": {
+      "repo": "owner/repo",
+      "pr_number": 123,
+      "branch": "feature/new-feature",
+      "head_sha": "abc123def456"
+    },
+    "mode": "plan",
+    "labels": ["needs:deep-refactor"],
+    "extra": {"priority": "high"}
+  }'
 ```
+
+### Get Configuration
+
+```bash
+curl "http://localhost:8000/v1/config"
+```
+
+## Architecture
+
+The orchestrator integrates with the Kyros Agent SDK to:
+
+- Manage agent lifecycle
+- Route tasks to appropriate agents
+- Handle capability negotiation
+- Provide sandboxed execution environments
+- Maintain agent memory and state
+
+## Development
+
+### Adding New Endpoints
+
+1. Add the endpoint to the API router in `main.py`
+2. Update the OpenAPI specification in `api-specs/orchestrator-v1.yaml`
+3. Add tests to the validation script
+4. Run validation to ensure everything works
+
+### Configuration Schema
+
+The configuration uses Pydantic models for type safety:
+
+- `ServicesConfig` - Service-level settings
+- `AgentsConfig` - Agent configuration
+- `LogConfig` - Logging settings
+
+All configuration is validated at startup and can be overridden via environment variables.
