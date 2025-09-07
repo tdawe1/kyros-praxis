@@ -77,13 +77,22 @@ def start_server():
     print("🚀 Starting orchestrator server...")
     process = subprocess.Popen(
         [sys.executable, "main.py"],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.STDOUT,
         cwd=os.path.dirname(__file__)
     )
     
-    # Wait for server to start
-    time.sleep(3)
+    # Wait for server to be ready
+    for _ in range(30):
+        try:
+            r = requests.get("http://localhost:8000/healthz", timeout=1)
+            if r.ok and r.json().get("ok"):
+                break
+        except Exception:
+            pass
+        time.sleep(0.5)
+    else:
+        raise RuntimeError("Server did not become ready in time")
     
     return process
 

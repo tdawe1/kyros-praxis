@@ -47,12 +47,19 @@ async function validateApiSpec() {
     const tempSchemaPath = join(projectRoot, 'temp-openapi.json');
     writeFileSync(tempSchemaPath, JSON.stringify(openApiSchema, null, 2));
 
-    // Kill the server
-    serverProcess.kill();
-    serverProcess.on('close', () => {
-      console.log('🛑 Server stopped');
+    // Stop server and wait for exit
+    await new Promise((resolve) => {
+      const timer = setTimeout(() => {
+        try { serverProcess.kill('SIGKILL'); } catch {}
+        resolve();
+      }, 5000);
+      serverProcess.once('close', () => {
+        clearTimeout(timer);
+        console.log('🛑 Server stopped');
+        resolve();
+      });
+      try { serverProcess.kill('SIGTERM'); } catch {}
     });
-
     // Read the expected spec
     const expectedSpec = readFileSync(API_SPEC_PATH, 'utf8');
     

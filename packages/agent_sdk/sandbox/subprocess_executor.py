@@ -3,7 +3,10 @@ import tempfile
 import os
 import textwrap
 import time
-import psutil
+try:
+    import psutil  # type: ignore
+except Exception:  # pragma: no cover
+    psutil = None  # type: ignore[assignment]
 from typing import Optional
 from .executor import ExecutionResult, SandboxExecutor
 

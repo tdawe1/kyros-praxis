@@ -1,4 +1,9 @@
-import aiosqlite
+# In pyproject.toml (PEP 621 / Poetry)
+[project]
+dependencies = [
+  "pydantic>=2",
+ "aiosqlite>=0.20",
+]
 import json
 import os
 import uuid
@@ -18,7 +23,9 @@ class SQLiteMemoryStore(AgentMemoryStore):
         if self._initialized:
             return
             
-        os.makedirs(os.path.dirname(self.db_path), exist_ok=True)
+        dirpath = os.path.dirname(self.db_path)
+        if dirpath:
+            os.makedirs(dirpath, exist_ok=True)
         async with aiosqlite.connect(self.db_path) as db:
             await db.execute("""
                 CREATE TABLE IF NOT EXISTS agent_interactions(
@@ -120,18 +127,18 @@ class SQLiteMemoryStore(AgentMemoryStore):
         
         if since:
             conditions.append("timestamp >= ?")
-            params.append(since.isoformat())
-        
+            # Match SQLite CURRENT_TIMESTAMP format
+            params.append(since.strftime("%Y-%m-%d %H:%M:%S"))
         where_clause = " AND ".join(conditions) if conditions else "1=1"
         params.append(limit)
         
-        query = f"""
-            SELECT id, agent_id, task_id, context, result, timestamp 
-            FROM agent_interactions 
-            WHERE {where_clause} 
-            ORDER BY timestamp DESC 
-            LIMIT ?
-        """
+        query = (
+            "SELECT id, agent_id, task_id, context, result, timestamp "
+            "FROM agent_interactions "
+            f"{'WHERE ' + where_clause if where_clause else ''} "
+            "ORDER BY timestamp DESC "
+            "LIMIT ?"
+        )
         
         async with aiosqlite.connect(self.db_path) as db:
             async with db.execute(query, params) as cursor:

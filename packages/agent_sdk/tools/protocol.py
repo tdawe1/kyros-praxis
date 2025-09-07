@@ -55,7 +55,7 @@ class ToolRegistry:
         
         matching_tools = []
         for tool in self._tools.values():
-            if not tool.capabilities or any(cap in capabilities for cap in tool.capabilities):
+            if not tool.capabilities or all(cap in capabilities for cap in tool.capabilities):
                 matching_tools.append(tool)
         return matching_tools
     
