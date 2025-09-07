@@ -391,4 +391,4 @@ def get_config():
 @app.on_event("shutdown")
 async def shutdown_event():
     """Clean up resources on shutdown"""
-    await orchestrator.cleanup()
+    await orchestrator.cleanup()# Test comment for path filtering
