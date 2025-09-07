@@ -1,4 +1,4 @@
-name: Contract
+name: Validate API Specification
 
 on:
   push:
@@ -18,18 +18,17 @@ jobs:
     
     steps:
     - uses: actions/checkout@v4
-    
+
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: '3.11'
-    
+        cache: 'pip'
+        
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install fastapi uvicorn pydantic pydantic-settings PyYAML
-        pip install openapi-spec-validator
-    
+        pip install fastapi uvicorn pydantic pydantic-settings PyYAML openapi-spec-validator httpx aiosqlite
     - name: Validate OpenAPI spec
       run: |
         python -c "
