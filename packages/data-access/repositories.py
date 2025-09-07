@@ -1,11 +1,13 @@
 from abc import ABC, abstractmethod
-from typing import Protocol, Iterable, Any
+from typing import Protocol
+
 
 class UnitOfWork(Protocol):
     async def __aenter__(self): ...
     async def __aexit__(self, exc_type, exc, tb): ...
     async def commit(self): ...
     async def rollback(self): ...
+
 
 class TaskRepository(ABC):
     @abstractmethod
@@ -15,5 +17,8 @@ class TaskRepository(ABC):
     @abstractmethod
     async def list(self, **filters): ...
 
+
 class LockRepository(ABC): ...
+
+
 class AgentRepository(ABC): ...
