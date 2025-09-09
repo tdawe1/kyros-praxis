@@ -1,0 +1,6 @@
+{
+  "name": "coordination-protocol",
+  "type": "protobuf",
+  "schema": "syntax = \"proto3\";\npackage kyros.agent;\nmessage CoordinateEvent {\n  string event_type = 1;\n  string agent_id = 2;\n  map<string, string> payload = 3;\n  int64 timestamp = 4;\n}\n",
+  "checkpoints": true
+}

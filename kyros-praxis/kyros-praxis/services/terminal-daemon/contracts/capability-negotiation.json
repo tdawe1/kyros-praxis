@@ -1,0 +1,10 @@
+{
+  "type": "object",
+  "properties": {
+    "capabilities": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "negotiate": {"type": "boolean"}
+  }
+}

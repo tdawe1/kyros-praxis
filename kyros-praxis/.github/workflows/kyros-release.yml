@@ -1,0 +1,13 @@
+name: kyros-release
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Release placeholder
+        run: echo "Release pipeline placeholder"
+

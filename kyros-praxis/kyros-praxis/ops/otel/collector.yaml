@@ -1,0 +1,20 @@
+receivers:
+  otlp:
+    protocols:
+      http:
+      grpc:
+exporters:
+  logging:
+    loglevel: info
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      exporters: [logging]
+    metrics:
+      receivers: [otlp]
+      exporters: [logging]
+    logs:
+      receivers: [otlp]
+      exporters: [logging]
+

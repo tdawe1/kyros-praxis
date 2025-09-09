@@ -1,0 +1,8 @@
+syntax = "proto3";
+package kyros.agent;
+message CoordinateEvent {
+  string event_type = 1;
+  string agent_id = 2;
+  map<string, string> payload = 3;
+  int64 timestamp = 4;
+}

@@ -1,0 +1,12 @@
+{
+  "name": "Kyros Praxis",
+  "build": {
+    "dockerfile": "./dockerfile"
+  },
+  "customizations": {
+    "vscode": {
+      "settings": {},
+      "extensions": ["ms-python.python", "ms-vscode.vscode-typescript-next"]
+    }
+  }
+}
