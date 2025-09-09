@@ -1,7 +1,11 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends, status
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
 from typing import Dict
 from datetime import datetime
+from jose import JWTError, jwt
+from passlib.context import CryptContext
+import os
 
 app = FastAPI(title="Kyros Service Registry", version="1.0.0")
 
@@ -22,8 +26,39 @@ class ServiceHealthCheck(BaseModel):
     timestamp: datetime
 
 
+SECRET_KEY = os.environ.get("SECRET_KEY", "your-secret-key-change-in-prod")
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
+
+security = HTTPBearer()
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+
+async def get_current_user(
+    credentials: HTTPAuthorizationCredentials = Depends(security)
+):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        payload = jwt.decode(
+            credentials.credentials, SECRET_KEY, algorithms=[ALGORITHM]
+        )
+        user_id: str = payload.get("sub")
+        if user_id is None:
+            raise credentials_exception
+    except JWTError:
+        raise credentials_exception
+    return {"user_id": user_id}
+
+
 @app.post("/register")
-async def register_service(service: ServiceRegistration):
+async def register_service(
+    service: ServiceRegistration,
+    current_user: dict = Depends(get_current_user)
+):
     # Register service
     registered_services[service.name] = {
         "name": service.name,
@@ -80,6 +115,7 @@ async def list_services():
         healthy_services.append(healthy_service)
     return {"services": healthy_services}
 
+
 @app.get("/discovery")
 async def discovery():
     # Discovery endpoint for service lookup
@@ -87,6 +123,7 @@ async def discovery():
         "services": registered_services,
         "timestamp": datetime.utcnow()
     }
+
 
 @app.get("/lookup/{capability}")
 async def lookup_by_capability(capability: str):
