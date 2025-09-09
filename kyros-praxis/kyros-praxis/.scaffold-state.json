@@ -1,0 +1,12 @@
+{
+  "scaffolded": [
+    "scaffold:core",
+    "scaffold:agent-sdk",
+    "scaffold:console",
+    "scaffold:orchestrator",
+    "scaffold:terminal-daemon",
+    "scaffold:service-registry",
+    "scaffold:migration-engine",
+    "scaffold:telemetry"
+  ]
+}

@@ -1,0 +1,12 @@
+name: kyros-scan
+on:
+  pull_request:
+  workflow_dispatch:
+jobs:
+  security-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: SBOM placeholder
+        run: echo "Generate SBOM placeholder"
+

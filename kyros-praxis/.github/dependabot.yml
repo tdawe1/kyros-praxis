@@ -1,0 +1,11 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/kyros-praxis"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "pip"
+    directory: "/kyros-praxis/services/orchestrator"
+    schedule:
+      interval: "weekly"
+

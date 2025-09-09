@@ -1,0 +1,10 @@
+{
+  "name": "@kyros/codegen",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "src/index.js",
+  "bin": {
+    "kyros-codegen": "../../tools/kyros-codegen.ts"
+  }
+}
