@@ -1,16 +1,16 @@
 from fastapi import FastAPI, WebSocket, Depends, HTTPException, status, Body
 from fastapi.websockets import WebSocketDisconnect
-from jose import JWTError, jwt
+from jose import jwt  # used for token encoding in auth module
 from os import getenv
 from typing import Any
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.ext.asyncio import AsyncSession  # noqa: F401 (placeholder for future async endpoints)
 from sqlalchemy.orm import Session
 from datetime import timedelta
 
 from .database import engine, get_db
 from .routers.jobs import router as jobs_router
 from .routers.tasks import router as tasks_router
-import asyncio
+# asyncio only needed for websocket echo; keep optional
 from .models import Base
 
 from .auth import create_access_token, Token, authenticate_user, Login
