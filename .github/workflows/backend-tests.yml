@@ -37,12 +37,14 @@ jobs:
         run: |
           cd kyros-praxis
           python - << 'PY'
+          import os
           from fastapi.testclient import TestClient
           from services.orchestrator.main import app
           from services.orchestrator.database import SessionLocal
           from services.orchestrator.models import User
           from services.orchestrator.auth import pwd_context
           
+          # (env provided by workflow)
           s = SessionLocal()
           if not s.query(User).filter(User.email=='ci@example.com').first():
               s.add(User(email='ci@example.com', password_hash=pwd_context.hash('password')))
@@ -61,5 +63,18 @@ jobs:
           assert list_resp.status_code == 200, list_resp.text
           assert list_resp.json().get('kind')=='tasks'
           assert 'ETag' in list_resp.headers
+
+          # Jobs Day-1 smoke: create + get by id + list
+          hdrs = {'Authorization': f'Bearer {token}', 'X-API-Key': 'ci-key'}
+          j_create = c.post('/jobs', json={'title':'ci job'}, headers=hdrs)
+          assert j_create.status_code == 200, j_create.text
+          assert 'ETag' in j_create.headers
+          job_id = j_create.json()['job_id']
+          j_get = c.get(f'/jobs/{job_id}', headers=hdrs)
+          assert j_get.status_code == 200 and j_get.json()['id'] == job_id, j_get.text
+          assert 'ETag' in j_get.headers
+          j_list = c.get('/jobs', headers=hdrs)
+          assert j_list.status_code == 200 and 'jobs' in j_list.json(), j_list.text
+          assert 'ETag' in j_list.headers
           print('STEEL_THREAD_SMOKE_OK')
           PY

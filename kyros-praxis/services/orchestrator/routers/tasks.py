@@ -6,28 +6,17 @@ from sqlalchemy.orm import Session
 from ..database import get_db
 from ..models import Task
 from ..auth import get_current_user, User
-
+from ..utils.validation import validate_task_input, TaskCreate
 import json
 import hashlib
 
 router = APIRouter()
 
-class TaskCreate(BaseModel):
-    title: str
-    description: str
-
-
-class TaskResponse(BaseModel):
-    id: str
-    title: str
-    description: str
-    version: int
-    created_at: str
-
 
 @router.post("/collab/tasks")
-def create_task(task: TaskCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    db_task = Task(**task.dict())
+async def create_task(task: TaskCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    validated_input = validate_task_input(task.dict())
+    db_task = Task(**validated_input.dict())
     db.add(db_task)
     db.commit()
     db.refresh(db_task)
@@ -40,19 +29,13 @@ def create_task(task: TaskCreate, db: Session = Depends(get_db), current_user: U
     }
     canonical = json.dumps(task_dict, sort_keys=True)
     etag = hashlib.sha256(canonical.encode()).hexdigest()
-    response = JSONResponse(content={
-        "id": db_task.id,
-        "title": db_task.title,
-        "description": db_task.description,
-        "version": db_task.version,
-        "created_at": db_task.created_at.isoformat()
-    })
+    response = JSONResponse(content=task_dict)
     response.headers["ETag"] = etag
     return response
 
 
 @router.get("/collab/state/tasks")
-def list_tasks(db: Session = Depends(get_db)):
+async def list_tasks(db: Session = Depends(get_db)):
     tasks = db.query(Task).all()
     items = []
     for t in tasks:
