@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 from typing import Optional
 
 class BaseTaskJobCreate(BaseModel):
