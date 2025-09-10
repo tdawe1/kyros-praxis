@@ -17,6 +17,38 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: CI placeholder
-        run: echo "Kyros CI placeholder (no-clash)"
-
+      - name: Install backend dependencies
+        run: |
+          cd services/orchestrator
+          pip install -r requirements.txt
+      - name: Lint backend
+        run: |
+          cd services/orchestrator
+          ruff check .
+      - name: Test backend
+        run: |
+          cd services/orchestrator
+          pytest
+      - name: Install frontend dependencies
+        run: |
+          cd services/console
+          npm ci
+      - name: Lint frontend
+        run: |
+          cd services/console
+          npm run lint
+      - name: Test frontend
+        run: |
+          cd services/console
+          npm test
+      - name: Security scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          scan-ref: '.'
+      - name: Upload security scan results
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'trivy-results.sarif'
