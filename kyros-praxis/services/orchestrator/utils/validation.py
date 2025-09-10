@@ -3,8 +3,9 @@ from typing import Optional
 
 
 class BaseTaskJobCreate(BaseModel):
-    title: str
-    description: Optional[str] = None
+    model_config = ConfigDict(str_strip_whitespace=True, extra="forbid")
+    title: Annotated[str, Field(min_length=1, max_length=200)]
+    description: Optional[Annotated[str, Field(max_length=2000)]] = None
 
 
 class TaskCreate(BaseTaskJobCreate):
