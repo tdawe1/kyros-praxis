@@ -9,6 +9,13 @@ engine = create_engine(DATABASE_URL, echo=True)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
+# Ensure tables exist on import to support test seeding prior to app startup
+try:
+    from .models import Base  # type: ignore
+    Base.metadata.create_all(bind=engine)
+except Exception:
+    pass
+
 def get_db():
     db = SessionLocal()
     try:
