@@ -1,7 +1,7 @@
 from sqlalchemy import select
 from typing import List
 from sqlalchemy.ext.asyncio import AsyncSession
-from models import Job, Event
+from ..models import Job, Event
 
 async def get_jobs(session: AsyncSession) -> List[Job]:
     result = await session.execute(select(Job))

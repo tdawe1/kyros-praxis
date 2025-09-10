@@ -28,10 +28,13 @@
   - Protect `POST /collab/tasks` with `Authorization: Bearer`.
 - Error handling:
   - Central handlers for 401/403/404/422 → `{type, message, details?, request_id}`.
+  - API key guard for selected routes (e.g., jobs) via `X-API-Key` header validated against `API_KEYS` env.
+  - Rate limiting: SlowAPI limiter (default 60/min) keyed on API key with `REDIS_URL` storage (`memory://` default for local).
 - Tests:
   - Unauthed create → 401.
   - Authed create → 200; invalid payload → 422 structured.
 - Acceptance: end‑to‑end auth → create → list → health via curl.
+  - Jobs endpoints require `X-API-Key`; tasks list stays public; task create requires JWT.
 
 ### PR3 — Postgres, Alembic, Compose
 - Alembic: `alembic init`, `env.py` wired to settings, initial migration for `User`/`Task`.
@@ -91,4 +94,3 @@ graph LR
 ### Risks & Deferrals
 - Repo‑wide tests may fail due to unrelated packages; run orchestrator tests with its own `pytest.ini`.
 - Full leases/concurrency, Celery workers, backpressure SSE: schedule after the thread.
-

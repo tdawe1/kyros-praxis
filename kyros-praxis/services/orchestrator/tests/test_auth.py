@@ -3,12 +3,11 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
-from main import app
-from database import get_db
-from models import Base, User
-from auth import pwd_context
-
-from auth import authenticate_user
+from services.orchestrator.main import app
+from services.orchestrator.database import get_db
+from services.orchestrator.models import Base, User
+from services.orchestrator.auth import pwd_context
+from services.orchestrator.auth import authenticate_user
 
 engine = create_engine(
     "sqlite:///./test.db",
