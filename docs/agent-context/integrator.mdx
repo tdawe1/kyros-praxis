@@ -1,0 +1,58 @@
+---
+title: Integrator Context Pack
+status: v0.1 (P0)
+---
+
+# ... existing code ...
+
+## Context Packs Integration
+
+Wire context packs from docs/schemas/context-pack.json into prompts to ensure alignment with project plans and DoD. Validate loaded packs against the schema before integrating into the workflow.
+
+## Handoff Cards and Functions
+
+Integrate handoff cards matching docs/schemas/handoff-card.yaml, generated using agents/scripts/handoff.py functions like generate_handoff. Emit events for handoffs via POST /collab/events with details like {ts, event: "handoff", actor, target, details: handoff_card}.
+
+## ETag for Updates (Backend)
+- Compute ETag as strong hash of canonicalized JSON + monotonic version.
+- On PATCH, require If-Match header; verify and write via atomic replace (temp file + fsync + rename); return 412 on mismatch with client retry using jitter.
+
+## TanStack Query for Frontend
+- Install @tanstack/react-query via npm i @tanstack/react-query.
+- Wire TanStack Query Provider in root layout for data fetching with mutation invalidation and optimistic updates for interactions like task transitions.
+
+## Guardrails and Invariants
+
+- Minimal Diffs: Ensure ≤200 LOC changes unless migrations; keep diffs readable and reviewable.
+- DoD: Verify tests updated, pre-commit passing (format/lint/type/secrets), docs updated in same PR, critic review passed, events emitted where relevant.
+- Invariants: Enforce ETags on updates for optimistic concurrency; use atomic writes for state changes; emit append-only events for transitions to maintain observability.
+- Plan-Sync: Reject changes if matching plan file (e.g., backend-current-plan.md or frontend-current-plan.md) is not updated in the same PR.
+
+Goals
+- Backend: Wire endpoints/models with ETag and pass PR1 tests. Paths touched: services/orchestrator/main.py (app, routes, session wiring), services/orchestrator/models.py (SQLAlchemy Base + models), services/orchestrator/auth.py (login route, JWT helpers, dependencies), services/orchestrator/errors.py (exception handlers), services/orchestrator/tests/ (unit/contract tests), alembic/ (env + versions after PR3).
+- Frontend: Wire pages with TanStack Query and WS integration. Paths touched: services/console/app/page.tsx (dashboard), services/console/src/lib/auth.ts (Next-Auth OIDC), services/console/src/lib/ws.ts (WebSocket hook).
+- Migration Impact: Alembic init and initial schema for User/Task; upgrade head on Postgres for PR3. No impact for frontend.
+- Risks: Backend race conditions on ETag (mitigated by atomic replace + 412). Frontend integration gaps (check WS to localhost:8000). Migration rollback if PR3 fails.
+- Open Decisions: Verify plan-sync for backend (update kyros-praxis/backend-current-plan.md) and frontend (update kyros-praxis/frontend-current-plan.md).
+- DoD: Tests updated, pre-commit passing (format/lint/type/secrets), docs updated, critic review, events emitted where relevant.
+
+Inputs
+- Paths Touched: Backend - services/orchestrator/main.py, services/orchestrator/models.py, services/orchestrator/auth.py, services/orchestrator/errors.py, services/orchestrator/tests/, alembic/. Frontend - services/console/app/page.tsx, services/console/src/lib/auth.ts, services/console/src/lib/ws.ts.
+- Migration Impact: Backend PR3: Alembic init, env.py wired to settings, initial migration for User/Task; compose up -d postgres; alembic upgrade head. Ensure no breaking changes for frontend.
+
+Deliverables
+- Prompts for Implementer/Critic start with preface including Handoff Card.
+- Enable read-only MCP Git/FS access for diff-aware prompts (cite exact paths and changed files).
+
+Exit Criteria
+- Prompts include all context packs and Handoff Card.
+- CI verifies plan-sync (reject if plan file not updated in same PR).
+
+Steel Thread Smoke Tests
+- Backend: curl http://localhost:8000/healthz (expect 200 {status:"ok"}); curl -X POST http://localhost:8000/auth/login -H "Content-Type: application/json" -d '{"email":"dev@example.com","password":"password"}' (expect 200 {access_token}); curl -X POST http://localhost:8000/collab/tasks -H "Authorization: Bearer token" -H "Content-Type: application/json" -d '{"title":"test"}' (expect 200 {id,title,description,version} + ETag).
+- Frontend: npm run dev (port 3000); verify dashboard loads, auth flow, WS connection in console.
+
+Guardrails (enforce)
+- Reject if matching plan file not updated in same PR.
+- Prefer ≤200 LOC diffs unless migrations.
+

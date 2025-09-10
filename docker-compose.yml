@@ -1,0 +1,83 @@
+version: '3.8'
+
+services:
+  kyros-praxis-postgres:
+    image: postgres:15
+    container_name: kyros-praxis-postgres
+    environment:
+      POSTGRES_DB: kyros
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  kyros-praxis-redis:
+    image: redis:7-alpine
+    container_name: kyros-praxis-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  kyros-praxis-console:
+    build: ./kyros-praxis/services/console
+    container_name: kyros-praxis-console
+    ports:
+      - "3001:3000"
+    volumes:
+      - ./kyros-praxis/services/console/.env:/app/.env:ro
+    environment:
+      - DATABASE_URL=postgresql://postgres:password@kyros-praxis-postgres:5432/kyros
+      - REDIS_URL=redis://kyros-praxis-redis:6379
+      - NEXTAUTH_URL=http://localhost:3001
+      - NEXTAUTH_SECRET=your-nextauth-secret
+      - API_URL=http://kyros-praxis-orchestrator:8000
+    depends_on:
+      - kyros-praxis-postgres
+      - kyros-praxis-redis
+      - kyros-praxis-orchestrator
+
+  kyros-praxis-orchestrator:
+    build: ./kyros-praxis/services/orchestrator
+    container_name: kyros-praxis-orchestrator
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./kyros-praxis/services/orchestrator/.env:/app/.env:ro
+    environment:
+      - DB_HOST=kyros-praxis-postgres
+      - DB_PORT=5432
+      - DB_NAME=kyros
+      - DB_USER=postgres
+      - DB_PASSWORD=password
+      - REDIS_HOST=kyros-praxis-redis
+      - REDIS_PORT=6379
+      - SECRET_KEY=your-secret-key-change-in-prod
+    depends_on:
+      - kyros-praxis-postgres
+      - kyros-praxis-redis
+    command: uvicorn main:app --host 0.0.0.0 --port 8000
+
+  kyros-praxis-service-registry:
+    build: ./kyros-praxis/packages/service-registry
+    container_name: kyros-praxis-service-registry
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./kyros-praxis/packages/service-registry/.env:/app/.env:ro
+    environment:
+      - DB_HOST=kyros-praxis-postgres
+      - DB_PORT=5432
+      - DB_NAME=kyros
+      - DB_USER=postgres
+      - DB_PASSWORD=password
+      - SECRET_KEY=your-secret-key-change-in-prod
+    depends_on:
+      - kyros-praxis-postgres
+    command: uvicorn main:app --host 0.0.0.0 --port 9000
+
+volumes:
+  postgres_data:
+  redis_data:

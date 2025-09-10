@@ -1,0 +1,49 @@
+# Handoff Card Schema
+# Format for subtask delegation in agent workflows, supporting bundling into prompts via codex.context.json.
+# References project invariants: ETags (SHA-256 of canonical JSON), atomic writes, emit events for transitions.
+
+$schema: 'http://json-schema.org/draft-07/schema#'
+title: Handoff Card Schema
+description: Structured format for delegating subtasks between modes, including parent context and superseding statements to reduce drift.
+type: object
+properties:
+  mode:
+    type: string
+    description: Target mode slug (e.g., 'code', 'architect').
+  message:
+    type: string
+    description: Initial message or instructions for the handoff.
+  context:
+    type: string
+    description: Encapsulated context from parent task, including relevant plans (e.g., backend-current-plan.md ETag algo).
+  scope:
+    type: string
+    description: Scoped description of the subtask.
+  completion_signal:
+    type: string
+    description: Signal for task completion (e.g., 'attempt_completion with summary').
+  parent_context:
+    type: string
+    description: Reference to parent task context.
+  dependencies:
+    type: array
+    items:
+      type: string
+    description: List of dependencies or prior steps.
+  superseding_statement:
+    type: string
+    description: Statement superseding general instructions.
+required: [mode, message, context, scope, completion_signal, parent_context, dependencies, superseding_statement]
+examples:
+  - mode: code
+    message: Implement the schema based on this handoff.
+    context: |
+      Parent Task Context: The overall goal is to review and implement a plan for standardizing agent context packs...
+    scope: Finalize schemas for context packs and handoff cards.
+    completion_signal: Use attempt_completion with a result summarizing the schemas created/updated...
+    parent_context: The overall goal is to review and implement a plan for standardizing agent context packs...
+    dependencies: 
+      - Updated .mdx templates
+      - Reference to backend-current-plan.md ETag as SHA-256 of canonical JSON
+    superseding_statement: |
+      These specific instructions supersede any conflicting general instructions in architect mode.

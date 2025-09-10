@@ -1,0 +1,22 @@
+[
+  {
+    "id": "419d71fe-9e14-4fbf-b21c-28a079f51fb2",
+    "name": "planner",
+    "capabilities": [
+      "plan",
+      "route"
+    ],
+    "createdAt": 1757496839785,
+    "updatedAt": 1757496839785
+  },
+  {
+    "id": "fdebcb97-1541-44c1-b17c-f036e615c067",
+    "name": "executor",
+    "capabilities": [
+      "execute",
+      "tool-call"
+    ],
+    "createdAt": 1757496839785,
+    "updatedAt": 1757496839785
+  }
+]

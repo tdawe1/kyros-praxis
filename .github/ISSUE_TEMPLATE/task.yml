@@ -1,0 +1,23 @@
+name: Task
+description: Define a new task
+labels: [task]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Description
+        Describe the task here.
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected behavior
+      description: Describe the expected outcome of the task.
+    validations:
+      required: true
+
+  - type: textarea
+    id: related-prs
+    attributes:
+      label: Related PRs or tasks
+      description: Link to any related PRs or tasks.

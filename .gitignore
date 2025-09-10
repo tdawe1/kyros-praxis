@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.python-version
+.venv/
+venv/
+.eggs/
+*.egg-info/
+.mypy_cache/
+.pytest_cache/
+
+# Node
+node_modules/
+.npm/
+.pnpm-store/
+.next/
+dist/
+build/
+
+# OS/editor
+.DS_Store
+.idea/
+.vscode/
+
+# Env
+.env
+.env.*
+
+# Misc
+coverage/
+
+# Local canonicalization symlink + backups
+services/_deprecated/
+packages/_deprecated/
+
+# Tooling and local state
+.kilocode/
+.kilocodemodes
+collaboration/state/
+archive/
+
+# Ignore large migration patch artifacts
+tools/migration/patches/*.patch
+
+# Ignore large migration patch artifacts
+tools/migration/patches/*.patch
+kyros-praxis/qdrant/storage/

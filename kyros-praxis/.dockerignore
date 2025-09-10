@@ -1,0 +1,33 @@
+# Exclude heavy and sensitive files from Docker build contexts
+
+# VCS and editor
+.git
+.gitignore
+.vscode
+.idea
+*.swp
+
+# Node
+node_modules
+**/node_modules
+dist
+.next
+
+# Python
+**/__pycache__
+**/.pytest_cache
+**/venv
+.venv
+
+# Envs & local overrides
+.env
+*.env
+mcp-servers.local.json
+
+# Qdrant persistent data (may be owned by root)
+qdrant/storage
+qdrant/storage/**
+
+# OS junk
+.DS_Store
+Thumbs.db

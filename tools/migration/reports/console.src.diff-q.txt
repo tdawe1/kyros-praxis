@@ -1,0 +1,57 @@
+Only in services/_deprecated/console.20250910-032402/app: agents
+Only in services/_deprecated/console.20250910-032402/app: api
+Files services/_deprecated/console.20250910-032402/app/layout.tsx and kyros-praxis/services/console/app/layout.tsx differ
+Files services/_deprecated/console.20250910-032402/app/page.tsx and kyros-praxis/services/console/app/page.tsx differ
+Files services/_deprecated/console.20250910-032402/contracts/api-client.yaml and kyros-praxis/services/console/contracts/api-client.yaml differ
+Only in kyros-praxis/services/console/contracts: auth.json
+Only in services/_deprecated/console.20250910-032402/contracts: auth.yaml
+Files services/_deprecated/console.20250910-032402/Dockerfile and kyros-praxis/services/console/Dockerfile differ
+Files services/_deprecated/console.20250910-032402/.env.example and kyros-praxis/services/console/.env.example differ
+Only in services/_deprecated/console.20250910-032402: generated
+Only in kyros-praxis/services/console: index.js
+Files services/_deprecated/console.20250910-032402/.next/app-build-manifest.json and kyros-praxis/services/console/.next/app-build-manifest.json differ
+Files services/_deprecated/console.20250910-032402/.next/build-manifest.json and kyros-praxis/services/console/.next/build-manifest.json differ
+Only in services/_deprecated/console.20250910-032402/.next/cache: next-devtools-config.json
+Only in services/_deprecated/console.20250910-032402/.next/cache: .rscinfo
+Only in kyros-praxis/services/console/.next/cache: swc
+Only in kyros-praxis/services/console/.next/cache: .tsbuildinfo
+Files services/_deprecated/console.20250910-032402/.next/cache/webpack/client-development/0.pack.gz and kyros-praxis/services/console/.next/cache/webpack/client-development/0.pack.gz differ
+Only in kyros-praxis/services/console/.next/cache/webpack/client-development: 1.pack.gz
+Files services/_deprecated/console.20250910-032402/.next/cache/webpack/client-development/index.pack.gz and kyros-praxis/services/console/.next/cache/webpack/client-development/index.pack.gz differ
+Only in kyros-praxis/services/console/.next/cache/webpack/client-development: index.pack.gz.old
+Only in kyros-praxis/services/console/.next/cache/webpack: client-production
+Only in kyros-praxis/services/console/.next/cache/webpack: edge-server-production
+Only in kyros-praxis/services/console/.next/cache/webpack: server-development
+Only in kyros-praxis/services/console/.next/cache/webpack: server-production
+Only in services/_deprecated/console.20250910-032402/.next: prerender-manifest.json
+Only in services/_deprecated/console.20250910-032402/.next: routes-manifest.json
+Only in kyros-praxis/services/console/.next/server: app
+Files services/_deprecated/console.20250910-032402/.next/server/app-paths-manifest.json and kyros-praxis/services/console/.next/server/app-paths-manifest.json differ
+Files services/_deprecated/console.20250910-032402/.next/server/middleware-build-manifest.js and kyros-praxis/services/console/.next/server/middleware-build-manifest.js differ
+Files services/_deprecated/console.20250910-032402/.next/server/next-font-manifest.js and kyros-praxis/services/console/.next/server/next-font-manifest.js differ
+Files services/_deprecated/console.20250910-032402/.next/server/next-font-manifest.json and kyros-praxis/services/console/.next/server/next-font-manifest.json differ
+Files services/_deprecated/console.20250910-032402/.next/server/server-reference-manifest.json and kyros-praxis/services/console/.next/server/server-reference-manifest.json differ
+Only in kyros-praxis/services/console/.next/server: vendor-chunks
+Only in kyros-praxis/services/console/.next/server: webpack-runtime.js
+Only in kyros-praxis/services/console/.next/static/chunks: app
+Only in kyros-praxis/services/console/.next/static/chunks: app-pages-internals.js
+Only in kyros-praxis/services/console/.next/static/chunks: main-app.js
+Only in kyros-praxis/services/console/.next/static/chunks: webpack.js
+Only in kyros-praxis/services/console/.next/static: css
+Files services/_deprecated/console.20250910-032402/.next/static/development/_buildManifest.js and kyros-praxis/services/console/.next/static/development/_buildManifest.js differ
+Only in kyros-praxis/services/console/.next/static: media
+Only in kyros-praxis/services/console/.next/static: webpack
+Files services/_deprecated/console.20250910-032402/.next/trace and kyros-praxis/services/console/.next/trace differ
+Only in kyros-praxis/services/console/.next/types: app
+Only in services/_deprecated/console.20250910-032402/.next/types: cache-life.d.ts
+Only in services/_deprecated/console.20250910-032402/.next/types: routes.d.ts
+Only in services/_deprecated/console.20250910-032402/.next/types: validator.ts
+Files services/_deprecated/console.20250910-032402/next.config.js and kyros-praxis/services/console/next.config.js differ
+Files services/_deprecated/console.20250910-032402/next-env.d.ts and kyros-praxis/services/console/next-env.d.ts differ
+Files services/_deprecated/console.20250910-032402/package.json and kyros-praxis/services/console/package.json differ
+Files services/_deprecated/console.20250910-032402/package-lock.json and kyros-praxis/services/console/package-lock.json differ
+Only in services/_deprecated/console.20250910-032402/src/lib: auth.config.ts
+Only in services/_deprecated/console.20250910-032402/src/lib: auth.ts
+Only in services/_deprecated/console.20250910-032402/src/lib: env.ts
+Files services/_deprecated/console.20250910-032402/src/lib/ws.ts and kyros-praxis/services/console/src/lib/ws.ts differ
+Files services/_deprecated/console.20250910-032402/tsconfig.json and kyros-praxis/services/console/tsconfig.json differ

@@ -1,0 +1,52 @@
+---
+title: Critic Context Pack
+status: v0.1 (P0)
+---
+
+## Purpose
+- Enforce DoD, minimal diffs, and plan-sync at review.
+
+## Goals
+- Backend: Verify PR1 tests pass (test_healthz_ok: 200 OK; test_create_task_and_list: ETag present). Ensure logging for auth, guards, errors (401/403/404/422 structured responses).
+- Frontend: Verify tests for dashboard load, auth flow, WS integration. Ensure npm run dev works, missing deps installed.
+- Risks: Backend race conditions on ETag (check atomic replace + 412). Frontend integration gaps (check WS connections).
+- Open Decisions: Verify plan-sync for backend (update kyros-praxis/backend-current-plan.md) and frontend (update kyros-praxis/frontend-current-plan.md).
+- DoD: Tests updated, pre-commit passing (format/lint/type/secrets), docs updated, critic review, events emitted where relevant.
+
+## Context Packs Integration
+
+Check that context packs from docs/schemas/context-pack.json are loaded and used in prompts, validated against the schema to ensure alignment with project plans and DoD.
+
+## Handoff Cards and Functions
+
+Verify handoff cards match docs/schemas/handoff-card.yaml schema, are generated using agents/scripts/handoff.py functions like generate_handoff, and events are emitted for handoffs via POST /collab/events with details like {ts, event: "handoff", actor, target, details: handoff_card}.
+
+Example for Backend ETag (from backend-current-plan.md):
+- Compute ETag as strong hash of canonicalized JSON + monotonic version.
+- On PATCH, require If-Match; verify and write via atomic replace (temp file + fsync + rename); return 412 on mismatch with client retry using jitter.
+
+Example for Frontend TanStack (from frontend-current-plan.md):
+- Install @tanstack/react-query via npm i @tanstack/react-query.
+- Wire TanStack Query Provider in root layout for data fetching with mutation invalidation and optimistic updates for interactions like task transitions.
+
+## Guardrails and Invariants
+
+- Minimal Diffs: Check for ≤200 LOC changes unless migrations; ensure diffs are readable and reviewable.
+- DoD: Verify tests updated, pre-commit passing (format/lint/type/secrets), docs updated in same PR, critic review passed, events emitted where relevant.
+- Invariants: Ensure ETags on updates for optimistic concurrency; atomic writes for state changes; append-only events for transitions to maintain observability.
+
+## Inputs
+- Acceptance tests: Backend - test_healthz_ok (200 OK), test_create_task_and_list (ETag present). Frontend - unit tests for components/hooks (dashboard load, auth flow).
+- Logging/DoD Checklists: Tests: All PR1 tests pass locally and in CI. Pre-commit: format/lint/type/secrets passing. Docs: Updated in same PR. Critic: Self-review passed. Events: Emitted for state transitions.
+- Plan-sync: Reject if matching plan file not updated in same PR (e.g., backend-current-plan.md for TDS-1).
+
+Deliverables
+- Brief decision: Accept | Changes Requested (+ bullets for ≤3 targeted edits).
+- Use Bounded Self-Critique rubric: Score 0–1 for correctness, completeness vs DoD, safety/secrets, observability (events/logs, ETags/leases), readability & minimal diff.
+
+Exit Criteria
+- PR meets DoD or has minimal targeted edits.
+- Plan-sync verified: No deviations without ADR.
+
+MCP Usage
+- Use read-only Git/FS MCP to cite exact paths and changed files.

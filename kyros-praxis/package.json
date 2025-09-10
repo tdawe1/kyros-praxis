@@ -1,0 +1,31 @@
+{
+  "name": "kyros-monorepo",
+  "version": "1.0.0",
+  "description": "Kyros production-grade monorepo with declarative architecture",
+  "main": "index.js",
+  "bin": {
+    "kyros-scaffold": "./bin/scaffold.js"
+  },
+  "scripts": {
+    "scaffold": "node bin/scaffold.js",
+    "scaffold:init": "node bin/scaffold.js init",
+    "scaffold:generate": "node bin/scaffold.js generate",
+    "scaffold:validate": "node bin/scaffold.js validate"
+  },
+  "devDependencies": {
+    "child_process": "^1.0.2",
+    "commander": "^12.0.0",
+    "fs-extra": "^11.2.0",
+    "js-yaml": "^4.1.0"
+  },
+  "keywords": [
+    "monorepo",
+    "kyros",
+    "declarative"
+  ],
+  "author": "Kyros Team",
+  "license": "MIT",
+  "dependencies": {
+    "@sentry/nextjs": "^10.11.0"
+  }
+}

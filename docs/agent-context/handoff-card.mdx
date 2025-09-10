@@ -1,0 +1,60 @@
+---
+title: Handoff Card Guide
+description: Usage and examples for the v1 Handoff Card schema to standardize agent handoffs.
+---
+
+# Schema Overview
+
+The Handoff Card is a JSON object that anchors Orchestrator-to-workhorse handoffs to plans, tests, and invariants, preventing scope creep. It ensures every subtask includes key details for alignment with DoD (tests, docs, critic review) and minimal diffs. Reference: [handoff-card.schema.json](../schemas/handoff-card.schema.json).
+
+Integrates with context packs: e.g., Critic role validates handoff cards in replies before accepting changes.
+
+# Fields
+
+- **task_id** (string, required): Unique task identifier (e.g., "TDS-1").
+- **scope** (string, required): Concise subtask description.
+- **acceptance** (array of strings, required): Acceptance criteria, like test names.
+- **contracts** (array of strings, required): Relevant API contracts or endpoints.
+- **invariants** (array of strings, required): Project invariants to uphold (e.g., ETags, atomic writes).
+- **touchpoints** (array of strings, required): Files/directories to modify.
+- **commands** (array of strings, optional): Dev commands for running/testing.
+- **docs_to_update** (array of strings, optional): Docs to update in the same PR.
+
+# Examples
+
+## TDS-1: Collab API Steel Thread (PR1)
+
+```json
+{
+  "task_id": "TDS-1",
+  "scope": "Implement persistence, ETag, and health for tasks with SQLite.",
+  "acceptance": ["test_healthz_ok", "test_create_task_and_list"],
+  "contracts": ["/healthz", "POST /collab/tasks", "GET /collab/state/tasks"],
+  "invariants": ["Strong ETag = sha256(canonical_json)", "Day-1 sync SQLAlchemy"],
+  "touchpoints": ["services/orchestrator/main.py", "models.py", "tests/"],
+  "commands": ["uvicorn services.orchestrator.main:app --reload --port 8000", "pytest -c services/orchestrator/pytest.ini -q"],
+  "docs_to_update": ["backend-current-plan.md"]
+}
+```
+
+## TDS-3: Jobs Vertical Slice
+
+```json
+{
+  "task_id": "TDS-3",
+  "scope": "Implement auth to export flow for jobs with Postgres models.",
+  "acceptance": ["test_jobs_crud", "test_variant_accept_export"],
+  "contracts": ["POST /jobs", "GET /jobs/{id}", "POST /export/{variant_id}"],
+  "invariants": ["Atomic writes with ETags", "JWT auth on all endpoints"],
+  "touchpoints": ["services/orchestrator/jobs.py", "models.py", "routers/jobs.py"],
+  "commands": ["alembic upgrade head", "pytest services/orchestrator/tests/jobs/"],
+  "docs_to_update": ["backend-current-plan.md", "docs/architecture/jobs.md"]
+}
+```
+
+# Validation
+
+- Use JSON Schema draft-07 for validation; required fields must be present, arrays contain only strings.
+- Examples above conform to the schema (no additional properties, valid types).
+- Tools: Validate with `ajv` or online validators; integrate into scripts for handoff checks (e.g., agents/scripts/handoff.py).
+- Errors: Missing required fields trigger failures; ensure arrays are non-empty where semantically required.

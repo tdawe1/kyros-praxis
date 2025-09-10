@@ -1,0 +1,19 @@
+Only in services/_deprecated/console.20250910-032402/app: agents
+Only in services/_deprecated/console.20250910-032402/app: api
+Files services/_deprecated/console.20250910-032402/app/layout.tsx and kyros-praxis/services/console/app/layout.tsx differ
+Files services/_deprecated/console.20250910-032402/app/page.tsx and kyros-praxis/services/console/app/page.tsx differ
+Files services/_deprecated/console.20250910-032402/contracts/api-client.yaml and kyros-praxis/services/console/contracts/api-client.yaml differ
+Only in kyros-praxis/services/console/contracts: auth.json
+Only in services/_deprecated/console.20250910-032402/contracts: auth.yaml
+Files services/_deprecated/console.20250910-032402/Dockerfile and kyros-praxis/services/console/Dockerfile differ
+Files services/_deprecated/console.20250910-032402/.env.example and kyros-praxis/services/console/.env.example differ
+Only in kyros-praxis/services/console: index.js
+Files services/_deprecated/console.20250910-032402/next.config.js and kyros-praxis/services/console/next.config.js differ
+Files services/_deprecated/console.20250910-032402/next-env.d.ts and kyros-praxis/services/console/next-env.d.ts differ
+Files services/_deprecated/console.20250910-032402/package.json and kyros-praxis/services/console/package.json differ
+Files services/_deprecated/console.20250910-032402/package-lock.json and kyros-praxis/services/console/package-lock.json differ
+Only in services/_deprecated/console.20250910-032402/src/lib: auth.config.ts
+Only in services/_deprecated/console.20250910-032402/src/lib: auth.ts
+Only in services/_deprecated/console.20250910-032402/src/lib: env.ts
+Files services/_deprecated/console.20250910-032402/src/lib/ws.ts and kyros-praxis/services/console/src/lib/ws.ts differ
+Files services/_deprecated/console.20250910-032402/tsconfig.json and kyros-praxis/services/console/tsconfig.json differ

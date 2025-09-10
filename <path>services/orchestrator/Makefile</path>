@@ -1,0 +1,10 @@
+.PHONY: db-upgrade compose-up compose-down
+
+db-upgrade:
+	cd services/orchestrator && alembic upgrade head
+
+compose-up:
+	cd services/orchestrator && docker compose up -d
+
+compose-down:
+	cd services/orchestrator && docker compose down

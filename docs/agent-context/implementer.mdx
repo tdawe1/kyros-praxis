@@ -1,0 +1,60 @@
+---
+title: Implementer Context Pack (Backend day-1)
+status: v0.1 (P0)
+---
+
+## Context Packs Integration
+
+Use context packs loaded from docs/schemas/context-pack.json to align implementation with project plans and DoD. Validate against the schema to ensure consistency before proceeding.
+
+## Handoff Cards and Functions
+
+When delegating or completing work, generate handoff cards matching docs/schemas/handoff-card.yaml using agents/scripts/handoff.py functions like generate_handoff. Emit events for handoffs via POST /collab/events with details like {ts, event: "handoff", actor, target, details: handoff_card}.
+
+Example for Backend ETag (from backend-current-plan.md):
+- Compute ETag as strong hash of canonicalized JSON + monotonic version.
+- On PATCH, require If-Match; verify and write via atomic replace (temp file + fsync + rename); return 412 on mismatch with client retry using jitter.
+
+Example for Frontend TanStack (from frontend-current-plan.md):
+- Install @tanstack/react-query via npm i @tanstack/react-query.
+- Wire TanStack Query Provider in root layout for data fetching with mutation invalidation and optimistic updates for interactions like task transitions.
+
+## Guardrails and Invariants
+
+- Minimal Diffs: Prefer ≤200 LOC changes unless migrations; keep diffs readable and reviewable.
+- DoD: For each update, ensure tests updated, pre-commit passing (format/lint/type/secrets), docs updated in same PR, critic review passed, events emitted where relevant.
+- Invariants: Enforce ETags on updates for optimistic concurrency; use atomic writes for state changes; emit append-only events for transitions to maintain observability.
+
+Purpose
+- Implement steel-thread endpoints with strong ETag and pass PR1 tests.
+
+Goals
+- Backend: Implement endpoints like GET /healthz returning {status:"ok"}, POST /collab/tasks with ETag header (SHA-256 of canonical JSON), GET /collab/state/tasks with ETag for payload. Use sync SQLAlchemy with SQLite for Day-1.
+- Frontend: Align frontend to plan, complete core pages, ensure local dev/test env.
+- Risks: Backend race conditions on ETag (mitigated by atomic replace + 412). Frontend missing deps (install @tanstack/react-query).
+- Open Decisions: DB mode Day 1: sync SQLite; Day 2: switchable Postgres. Frontend stack (keep Next.js; add Tailwind if needed).
+- DoD: Tests updated, pre-commit passing, docs updated, critic review, events emitted where relevant.
+
+Inputs
+- Endpoint contracts: GET /healthz -> 200 {status:"ok"}; POST /auth/login -> 200 {access_token, token_type}; POST /collab/tasks (auth) -> 200 {id,title,description,version} + ETag; GET /collab/state/tasks -> 200 {kind:"tasks", items:[...]} + ETag.
+- Directory touchpoints (Kyros): Backend - services/orchestrator/main.py (app, routes, session wiring), services/orchestrator/models.py (SQLAlchemy Base + models), services/orchestrator/auth.py (login route, JWT helpers, dependencies), services/orchestrator/errors.py (exception handlers), services/orchestrator/tests/ (unit/contract tests), alembic/ (env + versions after PR3). Frontend - services/console/app/page.tsx (dashboard), services/console/src/lib/auth.ts (Next-Auth OIDC), services/console/src/lib/ws.ts (WebSocket hook).
+- Commands: Backend - uvicorn services.orchestrator.main:app --reload --port 8000; pytest -c services/orchestrator/pytest.ini -q; docker compose up -d postgres (after PR3); alembic upgrade head (after PR3). Frontend - npm run dev (port 3000); npm i @tanstack/react-query.
+- Curl samples: curl http://localhost:8000/healthz (expect 200 {status:"ok"}); curl -X POST http://localhost:8000/auth/login -H "Content-Type: application/json" -d '{"email":"dev@example.com","password":"password"}' (expect 200 {access_token}); curl -X POST http://localhost:8000/collab/tasks -H "Authorization: Bearer token" -H "Content-Type: application/json" -d '{"title":"test"}' (expect 200 {id,title,description,version} + ETag).
+
+Deliverables
+- Minimal diff PR implementing or adjusting endpoints/models only.
+- Update `kyros-praxis/backend-current-plan.md` with what changed and why. For frontend, update `kyros-praxis/frontend-current-plan.md` if stack changes.
+
+Exit Criteria
+- All PR1 tests pass locally and in CI.
+- ETags are stable across identical content and change when content changes.
+
+MCP Usage
+- Use read-only Git/FS MCP to cite exact paths and changed files.
+
+TanStack/WS Deltas (Frontend)
+- Install @tanstack/react-query via npm i @tanstack/react-query.
+- Wire TanStack Query Provider in root layout.
+- Add pages (Agents, Tasks Kanban, Leases, Events) with data-testid attributes.
+- Ensure npm run dev works on port 3000; verify WS integration with backend at localhost:8000.
+

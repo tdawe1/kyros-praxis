@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://kyros.local/agent.schema.json",
+  "title": "Kyros Agent Protocol",
+  "type": "object",
+  "required": ["id", "capabilities"],
+  "properties": {
+    "id": { "type": "string" },
+    "capabilities": { "type": "array", "items": { "type": "string" } },
+    "heartbeat": { "type": "object", "additionalProperties": true }
+  }
+}

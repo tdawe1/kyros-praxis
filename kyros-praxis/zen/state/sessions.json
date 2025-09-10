@@ -1,0 +1,16 @@
+{
+  "sessions": [
+    {
+      "id": "728d8e54-baf8-4986-9480-e9a036470e9e",
+      "agentIds": [],
+      "tags": [
+        "demo"
+      ],
+      "kv": {},
+      "status": "open",
+      "ttlMs": 600000,
+      "createdAt": 1757496839785,
+      "updatedAt": 1757496853087
+    }
+  ]
+}

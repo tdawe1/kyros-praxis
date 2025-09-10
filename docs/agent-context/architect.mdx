@@ -1,0 +1,63 @@
+---
+title: Architect Context Pack
+status: v0.1 (P0)
+---
+
+Summary
+- Align work to PR1 steel-thread DoD and TDS cards.
+- Prevent drift via explicit guardrails and diff-aware reviews.
+
+Goals
+- Backend: Deliver a runnable steel thread: Auth → Create Task → List Tasks → Health, all local, no external APIs. Strong ETag on reads/writes; foundation for conditional updates later. Tests cover the thread and run in isolation from other packages.
+- Frontend: Align frontend to plan, complete core pages, ensure local dev/test env, and prepare for backend integration within 1 week assuming 1 full-time developer.
+- Risks: Backend race conditions on ETag (mitigated by server-side atomic replace + 412 handling; client retry with jitter). SSE scale (fall back to long-poll; server keep-alives; filter at source). Frontend dependency inconsistency (update package.json to include @tanstack/react-query). Limited features (add missing pages). Integration gaps (fix auth, WS integration).
+- Open Decisions: Backend Day 1: SQLite, sync SQLAlchemy; Day 2: switchable Postgres via Alembic + docker-compose. Frontend stack confirmation (keep Next.js app router; add Tailwind alongside Carbon if needed).
+- DoD: Tests updated, pre-commit passing (format/lint/type/secrets), docs updated, critic review, events emitted where relevant.
+
+## Context Packs Integration
+
+Load context packs from docs/schemas/context-pack.json to ensure alignment with project plans and DoD. Use the schema to validate loaded packs before applying.
+
+## Handoff Cards and Functions
+
+When delegating, generate handoff cards matching docs/schemas/handoff-card.yaml using agents/scripts/handoff.py functions like generate_handoff. Emit events for handoffs via POST /collab/events with details like {ts, event: "handoff", actor, target, details: handoff_card}.
+
+Example for Backend ETag (from backend-current-plan.md):
+- Compute ETag as strong hash of canonicalized JSON + monotonic version.
+- On PATCH, require If-Match; verify and write via atomic replace (temp file + fsync + rename); return 412 on mismatch.
+
+Example for Frontend TanStack (from frontend-current-plan.md):
+- Install @tanstack/react-query via npm i @tanstack/react-query.
+- Wire TanStack Query Provider in root layout for data fetching with mutation invalidation and optimistic updates.
+
+## Guardrails and Invariants
+
+- Minimal Diffs: Prefer ≤200 LOC changes unless migrations; keep diffs readable.
+- DoD: For each update, ensure tests updated, pre-commit passing (format/lint/type/secrets), docs updated in same PR, critic review passed, events emitted where relevant.
+- Invariants: Enforce ETags on updates for optimistic concurrency; use atomic writes for state changes; emit append-only events for transitions.
+
+Inputs
+- Current plans: `kyros-praxis/backend-current-plan.md`, `kyros-praxis/frontend-current-plan.md`.
+- DoD (PR1 steel thread): healthz; create/list with strong ETag; tests green.
+- MCP Git/FS read-only context: cite real file paths and diffs.
+
+Deliverables
+- Role-aligned prompts and handoff specs.
+- Handoff Card schema and examples.
+- Guardrails baked into Critic/Integrator.
+
+Exit Criteria
+- Context docs present in `docs/agent-context/`.
+- Handoff Cards validate against schema and are used in Orchestrator → Implementer/Critic.
+- Critic/Integrator templates enforce plan-update and minimal-diff rules.
+
+Guardrails (embed verbatim in prompts)
+- Minimal Diffs: Prefer ≤200 modified LOC unless migrations.
+- Plan Updates: Reject handoff if matching plan file isn’t updated in the same PR.
+- Cite Paths: Cite actual file paths from MCP Git/FS.
+- DoD Binding: Treat PR1 tests as the only DoD for the steel thread.
+
+References
+- Handoff schema: `docs/agent-context/handoff-card.schema.json`.
+- Examples: `examples/handoff/tds-1.json`, `examples/handoff/tds-3.json`.
+

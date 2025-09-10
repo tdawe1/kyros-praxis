@@ -1,0 +1,14 @@
+Only in kyros-praxis/packages/service-registry: alembic
+Only in kyros-praxis/packages/service-registry: alembic.ini
+Only in kyros-praxis/packages/service-registry: contracts
+Files packages/_deprecated/service-registry.20250910-032402/Dockerfile and kyros-praxis/packages/service-registry/Dockerfile differ
+Only in kyros-praxis/packages/service-registry: .dockerignore
+File packages/_deprecated/service-registry.20250910-032402/.env is a directory while file kyros-praxis/packages/service-registry/.env is a regular file
+Only in kyros-praxis/packages/service-registry: .env.example
+Files packages/_deprecated/service-registry.20250910-032402/main.py and kyros-praxis/packages/service-registry/main.py differ
+Only in kyros-praxis/packages/service-registry: __pycache__
+Only in kyros-praxis/packages/service-registry: README.md
+Only in kyros-praxis/packages/service-registry: requirements.txt
+Only in kyros-praxis/packages/service-registry: services.db
+Only in kyros-praxis/packages/service-registry: tests
+Only in kyros-praxis/packages/service-registry: venv

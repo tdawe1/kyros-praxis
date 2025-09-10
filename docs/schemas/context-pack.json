@@ -1,0 +1,58 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Context Pack Schema",
+  "description": "Structured format for agent context packs to reduce context drift, including project invariants like ETags (SHA-256 of canonical JSON), atomic writes, and event emission.",
+  "type": "object",
+  "properties": {
+    "goals": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "High-level objectives for the role or task."
+    },
+    "risks": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Identified risks and mitigations."
+    },
+    "open_decisions": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Pending decisions requiring resolution."
+    },
+    "dod": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Definition of Done criteria, including tests, docs, critic review, events emitted."
+    },
+    "guardrails": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Constraints and invariants, e.g., enforce ETags on updates, atomic writes, leases with TTL/heartbeat, append-only events."
+    },
+    "required_inputs": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Inputs needed for the task or role."
+    },
+    "role_specific_content": {
+      "type": "object",
+      "description": "Role-aligned content, e.g., TDS items for Orchestrator, directory touchpoints for Implementer.",
+      "additionalProperties": true
+    }
+  },
+  "required": ["goals", "risks", "open_decisions", "dod", "guardrails", "required_inputs", "role_specific_content"],
+  "examples": [
+    {
+      "goals": ["Shape repo-level changes and service boundaries; keep diffs small."],
+      "risks": ["Race conditions on ETag → server-side atomic replace + 412 handling; client retry w/ jitter."],
+      "open_decisions": ["Defer Celery/Redis, leases, and complex SSE to after the thread is green."],
+      "dod": ["Tests updated, pre-commit passing (format/lint/type/secrets), docs updated, critic review, events emitted where relevant."],
+      "guardrails": ["Align with stack: FastAPI + Celery + Postgres/Redis; React + Vite + TS.", "Collab invariants: ETags on updates; atomic writes; leases with TTL/heartbeat; append-only events.", "Prefer adapter layers over invasive rewrites; document deviations in docs/DEVIATIONS.md."],
+      "required_inputs": ["Parent task context, subtask scope."],
+      "role_specific_content": {
+        "tds_items": ["T-100: Collab API with ETag + SSE (backend)"],
+        "directory_touchpoints": ["services/orchestrator/main.py: app, routes, session wiring.", "services/orchestrator/models.py: SQLAlchemy Base + models."]
+      }
+    }
+  ]
+}

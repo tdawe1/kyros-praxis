@@ -1,0 +1,219 @@
+# Kyros Monorepo Architecture Manifest
+# Declarative definition of services, contracts, dependencies, and configurations.
+# Drives scaffolding, validation, and deployment. Idempotent via checkpoints.
+
+version: '1.0'
+monorepo:
+  name: kyros
+  root: '.'
+  packages:
+    - name: core
+      path: packages/core
+      type: library
+      language: typescript  # Shared types, DI container, validation utils
+      dependencies: []
+    - name: agent-sdk
+      path: packages/agent-sdk
+      type: library
+      language: typescript
+      dependencies: [core]
+      contracts:
+        - name: coordination-protocol
+          type: protobuf  # Or JSON schema for agent events
+          schema: |
+            syntax = "proto3";
+            package kyros.agent;
+            message CoordinateEvent {
+              string event_type = 1;
+              string agent_id = 2;
+              map<string, string> payload = 3;
+              int64 timestamp = 4;
+            }
+          checkpoints: true  # Idempotent via event IDs
+    - name: console
+      path: services/console
+      type: app
+      language: typescript
+      framework: nextjs
+      port: 3000
+      dependencies: [core, agent-sdk]
+      contracts:
+        - name: api-client
+          type: openapi
+          version: 3.0.0
+          paths:
+            /orchestrator/jobs:
+              get:
+                summary: List jobs
+                responses:
+                  200:
+                    description: Job list
+                    content:
+                      application/json:
+                        schema:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id: {type: string}
+                              status: {type: string}
+              post:
+                summary: Create job
+                requestBody:
+                  content:
+                    application/json:
+                      schema:
+                        type: object
+                        properties:
+                          spec: {type: object}
+                responses:
+                  201:
+                    description: Created job
+        - name: auth
+          type: jwt
+          issuer: kyros
+          audience: console
+      observability:
+        tracing: opentelemetry
+        metrics: prometheus
+        logs: structured-json
+    - name: orchestrator
+      path: services/orchestrator
+      type: app
+      language: python
+      framework: fastapi
+      port: 8000
+      dependencies: [core]  # Python equiv if needed
+      contracts:
+        - name: api
+          type: openapi
+          version: 3.0.0
+          paths:
+            /jobs:
+              post:
+                summary: Orchestrate job
+                requestBody:
+                  content:
+                    application/json:
+                      schema:
+                        type: object
+                        properties:
+                          agent_id: {type: string}
+                          task: {type: string}
+                responses:
+                  202:
+                    description: Accepted
+            /events:
+              post:
+                summary: Emit event
+                requestBody:
+                  content:
+                    application/json:
+                      schema:
+                        type: object
+                        properties:
+                          type: {type: string}
+                          payload: {type: object}
+              get:
+                summary: Stream events
+                responses:
+                  200:
+                    description: SSE stream
+      di_container: true  # Dependency injection
+      event_sourced: true
+      database: postgres
+      migrations: alembic
+    - name: terminal-daemon
+      path: services/terminal-daemon
+      type: app
+      language: typescript
+      framework: express
+      port: 8080
+      dependencies: [core, agent-sdk]
+      contracts:
+        - name: capability-negotiation
+          type: websocket
+          schema: |
+            {
+              "type": "object",
+              "properties": {
+                "capabilities": {
+                  "type": "array",
+                  "items": {"type": "string"}
+                },
+                "negotiate": {"type": "boolean"}
+              }
+            }
+        - name: pty-session
+          type: websocket
+          schema: |
+            {
+              "type": "object",
+              "properties": {
+                "command": {"type": "string"},
+                "args": {"type": "array", "items": {"type": "string"}},
+                "env": {"type": "object"}
+              }
+            }
+      uses: node-pty
+    - name: service-registry
+      path: packages/service-registry
+      type: library
+      language: python
+      dependencies: [core]
+      contracts:
+        - name: discovery
+          type: http
+          endpoints:
+            /register: post  # Service registration
+            /health/{service}: get  # Health check
+    - name: migration-engine
+      path: packages/migration-engine
+      type: library
+      language: python
+      dependencies: [core]
+      uses: alembic
+      target: postgres
+      idempotent: true
+    - name: telemetry
+      path: packages/telemetry
+      type: library
+      language: python  # For BE, with JS equiv
+      dependencies: [core]
+      uses: opentelemetry
+      exports:
+        - tracing
+        - metrics
+        - logs
+
+# Global Config
+databases:
+  postgres:
+    host: localhost
+    port: 5432
+    name: kyros
+    user: kyros
+    password: ${KYROS_DB_PASSWORD}  # No hardcode
+
+caches:
+  redis:
+    host: localhost
+    port: 6379
+
+observability:
+  tracing:
+    exporter: jaeger
+    service_name: kyros-monorepo
+  metrics:
+    port: 9090
+
+dev:
+  hot_reload: true
+  docker_compose: true
+  tools:
+    - nodemon  # For Node services
+    - uvicorn  # For FastAPI
+
+checkpoints:
+  enabled: true
+  storage: postgres  # For idempotency

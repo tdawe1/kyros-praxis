@@ -1,0 +1,11 @@
+# .codex/config.yaml
+# OpenAI Codex (2025) local usage config. Uses OPENAI_API_KEY from env.
+defaults:
+  model: "gpt-5-high"  # planner role
+  style: "plans_and_patches"
+  max_output_tokens: 2048
+env:
+  key_env: "OPENAI_API_KEY"
+roles:
+  planner:
+    system: "You are a precise planner. Output numbered steps and acceptance criteria."

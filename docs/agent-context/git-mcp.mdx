@@ -1,0 +1,31 @@
+# Git MCP Server
+
+## Overview
+The Git MCP (Model Context Protocol) server provides read-only access to the Git repository at `/kyros-praxis`. It is enabled for diff-aware prompts, allowing agents like Architect and Critic to cite actual changes and file paths without mutating the repo. Write operations are blocked to ensure safety.
+
+## Configuration
+- **Enabled**: Yes (via `.kilocode/mcp.json`).
+- **Repository**: `/kyros-praxis`.
+- **Mode**: Read-only.
+- **Always Allowed Commands**:
+  - `status`: Shows the working tree status.
+  - `show`: Shows commit information and changes.
+  - `diff --name-only HEAD`: Lists files changed relative to HEAD.
+  - `rev-parse`: Parses revision specifications.
+  - `ls-files`: Lists files in the index.
+
+## Usage
+Agents can use these commands to query the Git state via the MCP protocol. Examples:
+
+- **List files changed**: `git diff --name-only HEAD`
+- **View commit details**: `git show <commit-hash>`
+- **Check status**: `git status`
+- **Parse revisions**: `git rev-parse HEAD`
+- **List indexed files**: `git ls-files`
+
+All other Git commands are disabled.
+
+## Testing
+To test, use the MCP client to call one of the allowed commands, e.g., `git status`, and verify the response contains the expected output without errors.
+
+For more details on MCP protocol, refer to the [MCP specification](https://modelcontextprotocol.io/specification/2024-11-05/basic_protocol/).

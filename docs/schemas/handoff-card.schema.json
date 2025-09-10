@@ -1,0 +1,59 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Handoff Card",
+  "type": "object",
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "description": "Unique identifier for the task (e.g., TDS-1)."
+    },
+    "scope": {
+      "type": "string",
+      "description": "Brief description of the subtask scope."
+    },
+    "acceptance": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of acceptance criteria, such as test names."
+    },
+    "contracts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of API contracts or endpoints involved."
+    },
+    "invariants": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of project invariants or constraints to uphold."
+    },
+    "touchpoints": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of files or directories to touch."
+    },
+    "commands": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Optional list of dev commands for running or testing."
+    },
+    "docs_to_update": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Optional list of docs files to update in the same PR."
+    }
+  },
+  "required": ["task_id", "scope", "acceptance", "contracts", "invariants", "touchpoints"],
+  "additionalProperties": false
+}
