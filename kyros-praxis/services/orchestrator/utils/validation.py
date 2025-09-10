@@ -15,7 +15,7 @@ def validate_task_input(task_data: dict) -> TaskCreate:
     try:
         return TaskCreate(**task_data)
     except ValueError as e:
-        raise ValueError(f"Invalid task input: {e}")
+        raise ValueError(f"Invalid task input: {e}") from e
 
 def validate_job_input(job_data: dict) -> JobCreate:
     try:
