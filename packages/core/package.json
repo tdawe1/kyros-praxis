@@ -1,0 +1,25 @@
+{
+  "name": "@kyros/core",
+  "version": "1.0.0",
+  "description": "Kyros core library with DI container, shared types, and validation utils",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "ts-node src/index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "inversify": "^6.1.0",
+    "reflect-metadata": "^0.2.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.5",
+    "typescript": "^5.6.3",
+    "ts-node": "^10.9.2"
+  },
+  "keywords": ["di", "types", "validation", "kyros"],
+  "author": "Kyros Team",
+  "license": "MIT"
+}

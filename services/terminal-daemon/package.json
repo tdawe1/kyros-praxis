@@ -1,0 +1,33 @@
+{
+  "name": "@kyros/terminal-daemon",
+  "version": "1.0.0",
+  "description": "Kyros Terminal Daemon with node-pty and capability negotiation",
+  "main": "dist/server.js",
+  "types": "dist/server.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "ts-node src/server.ts",
+    "start": "node dist/server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "ws": "^8.18.0",
+    "node-pty": "^1.0.0",
+    "cors": "^2.8.5",
+    "helmet": "^7.1.0",
+    "express-rate-limit": "^7.4.0",
+    "zod": "^3.23.8",
+    "jose": "^5.9.3"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/ws": "^8.5.12",
+    "@types/cors": "^2.8.17",
+    "@types/helmet": "^4.0.0",
+    "typescript": "^5.6.3",
+    "ts-node": "^10.9.2"
+  },
+  "keywords": ["terminal", "pty", "websocket", "kyros"],
+  "author": "Kyros Team",
+  "license": "MIT"
+}

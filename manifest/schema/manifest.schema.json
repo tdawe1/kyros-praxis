@@ -1,0 +1,13 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://kyros.local/manifest.schema.json",
+  "title": "Kyros Manifest",
+  "type": "object",
+  "required": ["version", "services"],
+  "properties": {
+    "version": { "type": "string" },
+    "services": { "type": "array", "items": { "type": "object" } },
+    "contracts": { "type": "array", "items": { "type": "object" } },
+    "metadata": { "type": "object" }
+  }
+}

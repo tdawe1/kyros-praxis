@@ -1,0 +1,7 @@
+# Separate manifest for generator scaffolding (does not replace existing manifest.yaml)
+version: 0.1.0
+services: []
+contracts: []
+metadata:
+  note: placeholder manifest to enable tooling bootstrap
+

@@ -1,0 +1,59 @@
+# Deduplicated Tasks
+
+- Source A: 154 rows
+- Source B: 154 rows
+- Unique (by Title): 51 rows
+
+## Tasks
+
+- Collab API with ETag + SSE (TDS-1) — In Progress, P0, Due: 12 September 2025
+- Channel rate limiting + API-key validation middleware (TDS-9) — In Progress, P1, Due: 26 September 2025
+- Slack slash commands + deep link to tasks/jobs (TDS-8) — In Progress, P1, Due: 26 September 2025
+- Remote Control UI (Real-Time/Scheduled/Triggers) + activity feed (TDS-7) — Backlog, P1, Due: 26 September 2025
+- Omnichannel hub (WS/Email/API/Slack/Webhook) + audit log (TDS-6) — Backlog, P1, Due: 26 September 2025
+- Docs & Runbooks + ADR template (TDS-5) — Backlog, P0, Due: 26 September 2025
+- Playwright flows (Collab + Jobs) + data-testid (TDS-4) — Backlog, P0, Due: 24 September 2025
+- Jobs vertical slice (auth→job→variant→accept→export) (TDS-3) — Backlog, P0, Due: 23 September 2025
+- Console pages: Agents/Tasks/Leases/Events (TDS-12) — Backlog, P0, Due: 19 September 2025
+- Celery runner + safe executor (TDS-13) — Backlog, P0, Due: 12 September 2025
+- Email Commander + parsing + response loop (TDS-19) — Backlog, P1, Due: 26 September 2025
+- Design BYOK connection object & crypto (TDS-66) — Status N/A, P0, Due: N/A
+- API: POST/GET/DELETE /v1/connections (TDS-67) — Status N/A, P0, Due: N/A
+- API: POST /v1/connections/{id}/test (TDS-68) — Status N/A, P0, Due: N/A
+- Policy engine (MVP) (TDS-69) — Status N/A, P0, Due: N/A
+- Budget accounting (MVP) (TDS-70) — Status N/A, P0, Due: N/A
+- Jobs model & enqueue (TDS-71) — Status N/A, P0, Due: N/A
+- Events stream (SSE) (TDS-72) — Status N/A, P0, Due: N/A
+- Worker skeleton (OpenAI) (TDS-73) — Status N/A, P0, Due: N/A
+- Console: Settings/Connections (skeleton) (TDS-74) — Status N/A, P0, Due: N/A
+- Console: Jobs list/detail (skeleton) (TDS-75) — Status N/A, P0, Due: N/A
+- Mock provider toggle (TDS-76) — Status N/A, P0, Due: N/A
+- Critic pass (Sprint 0) (TDS-77) — Status N/A, P0, Due: N/A
+- Policy UI (TDS-78) — Status N/A, P1, Due: N/A
+- Usage & Cost surfacing (TDS-79) — Status N/A, P1, Due: N/A
+- Provider adapters (Anthropic/Gemini) (TDS-80) — Status N/A, P1, Due: N/A
+- E2E: Jobs happy path (TDS-81) — Status N/A, P1, Due: N/A
+- Settings polish & audit (TDS-82) — Status N/A, P1, Due: N/A
+- Demo seed & toggle (TDS-83) — Status N/A, P2, Due: N/A
+- Premium: Codex connector (alpha) (TDS-84) — Status N/A, P2, Due: N/A
+- Critic pass (Sprint 1) (TDS-85) — Status N/A, P0, Due: N/A
+- Docker Compose (PG, Redis, API, Worker, Web) (TDS-97) — Status N/A, P0, Due: N/A
+- Alembic init & initial schema (TDS-98) — Status N/A, P0, Due: N/A
+- Structured logging baseline (TDS-99) — Status N/A, P0, Due: N/A
+- Crypto service (AES-GCM envelope) (TDS-100) — Status N/A, P0, Due: N/A
+- Connections API CRUD + Test (TDS-101) — Status N/A, P0, Due: N/A
+- Queue & Worker skeleton (NOOP + idempotency) (TDS-102) — Status N/A, P0, Due: N/A
+- Jobs API accept + GET + idempotency (TDS-103) — Status N/A, P0, Due: N/A
+- SSE stub with backpressure (TDS-104) — Status N/A, P0, Due: N/A
+- UI skeleton: Connections & Jobs (wire only) (TDS-105) — Status N/A, P0, Due: N/A
+- Aggregated /health endpoint (TDS-106) — Status N/A, P1, Due: N/A
+- Job cancellation (stub) (TDS-107) — Status N/A, P1, Due: N/A
+- SSE client reconnection policy (TDS-108) — Status N/A, P0, Due: N/A
+- OpenAI adapter & usage metering (TDS-109) — Status N/A, P0, Due: N/A
+- Policy engine (6 cases) + UI controls (TDS-110) — Status N/A, P0, Due: N/A
+- Budget enforcement (TDS-111) — Status N/A, P0, Due: N/A
+- SSE real streaming with backpressure (TDS-112) — Status N/A, P0, Due: N/A
+- Circuit breaker around provider calls (TDS-113) — Status N/A, P1, Due: N/A
+- UI polish: Jobs + Connections (TDS-114) — Status N/A, P1, Due: N/A
+- E2E: happy & failure paths (Playwright) (TDS-115) — Status N/A, P1, Due: N/A
+- 3 concurrent jobs load test (TDS-116) — Status N/A, P1, Due: N/A

@@ -1,0 +1,32 @@
+{
+  "mcpServers": {
+    "github": {
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "YOUR_GITHUB_PERSONAL_ACCESS_TOKEN",
+        "GITHUB_TOOLSETS": "YOUR_GITHUB_TOOLSETS_OPTIONAL",
+        "GITHUB_READ_ONLY": "true"
+      }
+    },
+    "composer-trade": {
+      "env": {
+        "COMPOSER_API_KEY": "YOUR_COMPOSER_API_KEY",
+        "COMPOSER_SECRET_KEY": "YOUR_COMPOSER_SECRET_KEY"
+      }
+    },
+    "notion": {
+      "env": {
+        "OPENAPI_MCP_HEADERS": "Authorization: Bearer YOUR_NOTION_TOKEN"
+      }
+    },
+    "exa": {
+      "env": {
+        "EXA_API_KEY": "YOUR_EXA_API_KEY"
+      }
+    },
+    "context7": {
+      "env": {
+        "DEFAULT_MINIMUM_TOKENS": ""
+      }
+    }
+  }
+}
