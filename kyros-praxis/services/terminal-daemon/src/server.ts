@@ -12,6 +12,7 @@ import { randomUUID } from 'crypto';
 const PORT = Number(process.env.PORT || 8080);
 const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || '*').split(',').map(s => s.trim());
 const JWKS_URL = process.env.JWKS_URL || '';
+const JWT_SECRET = process.env.JWT_SECRET || '';
 const AUTH_ISSUER = process.env.AUTH_ISSUER || '';
 const AUTH_AUDIENCE = process.env.AUTH_AUDIENCE || '';
 const PTY_ALLOW = (process.env.PTY_ALLOW || 'bash,sh').split(',').map(s => s.trim()).filter(Boolean);
@@ -38,12 +39,22 @@ const wss = new WebSocketServer({ server, path: '/ws' });
 // JWT verification
 const jwks = JWKS_URL ? createRemoteJWKSet(new URL(JWKS_URL)) : null;
 async function verifyJwt(token: string) {
-  if (!jwks) throw new Error('JWKS not configured');
-  const { payload } = await jwtVerify(token, jwks, {
-    issuer: AUTH_ISSUER || undefined,
-    audience: AUTH_AUDIENCE || undefined,
-  });
-  return payload;
+  if (jwks) {
+    const { payload } = await jwtVerify(token, jwks, {
+      issuer: AUTH_ISSUER || undefined,
+      audience: AUTH_AUDIENCE || undefined,
+    });
+    return payload;
+  }
+  if (JWT_SECRET) {
+    const secret = new TextEncoder().encode(JWT_SECRET);
+    const { payload } = await jwtVerify(token, secret, {
+      issuer: AUTH_ISSUER || undefined,
+      audience: AUTH_AUDIENCE || undefined,
+    });
+    return payload;
+  }
+  throw new Error('Auth not configured');
 }
 
 interface TerminalSession {
