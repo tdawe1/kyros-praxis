@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from ..database import get_db
 from ..models import Task
 from ..auth import get_current_user, User
-from .utils.validation import validate_task_input, TaskCreate
+from ..utils.validation import validate_task_input, TaskCreate
 import json
 import hashlib
 
