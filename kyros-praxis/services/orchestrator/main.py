@@ -16,12 +16,20 @@ from models import Base
 
 from auth import create_access_token, Token, authenticate_user, oauth2_scheme, Login
 
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from middleware import api_key_validator, rate_limiter
+
 SECRET_KEY = getenv("SECRET_KEY")  # Remove fallback for production readiness
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 
 app = FastAPI(title="Orchestrator API", version="0.1.0")
+
+REDIS_URL = getenv("REDIS_URL", "redis://localhost:6379")
+app.state.limiter = Limiter(key_func=lambda request: request.headers.get("X-API-Key") or "anonymous", storage_uri=REDIS_URL)
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 
 @app.get("/")
@@ -105,9 +113,9 @@ async def http_exception_handler_422(request, exc):
 
 
 # Routers
-app.include_router(jobs_router)
+app.include_router(jobs_router, dependencies=[Depends(api_key_validator), Depends(rate_limiter)])
 app.include_router(events_router)
-app.include_router(tasks_router)
+app.include_router(tasks_router, dependencies=[Depends(api_key_validator), Depends(rate_limiter)])
 
 if __name__ == "__main__":
     import uvicorn
