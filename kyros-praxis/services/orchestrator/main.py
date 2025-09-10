@@ -1,4 +1,4 @@
-from fastapi import FastAPI, WebSocket, Depends, HTTPException, status, Body
+from fastapi import FastAPI, WebSocket, Depends, HTTPException, status
 from fastapi.websockets import WebSocketDisconnect
 from jose import jwt  # used for token encoding in auth module
 from os import getenv
@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 from datetime import timedelta
 
 from .database import engine, get_db
+from sqlalchemy import text
 from .routers.jobs import router as jobs_router
 from .routers.tasks import router as tasks_router
 # asyncio only needed for websocket echo; keep optional
@@ -58,7 +59,7 @@ async def health():
 @app.get("/healthz")
 def healthz(db = Depends(get_db)):
     try:
-        db.execute("SELECT 1")
+        db.execute(text("SELECT 1"))
         return {"status": "ok"}
     except Exception:
         raise HTTPException(status_code=500, detail="Database unavailable")
