@@ -152,10 +152,13 @@ Add Omnichannel tasks:
 
 **Jobs API**
 
-- `POST /jobs` → `{id, status:"queued"}`; `GET /jobs` and `/jobs/{id}`
+- `POST /jobs` accepts JSON {title, description?} and responds with `{job_id, status}` (e.g., "queued"); includes ETag header set to job.id.
+- `GET /jobs` and `/jobs/{id}`
 - `GET/PUT /variants/{id}`
 - `POST /export/{variant_id}` (download or JSON)
-- `POST/GET /schedule` (cron or ISO schedule).&#x20;
+- `POST/GET /schedule` (cron or ISO schedule).
+
+Note: All responses include an ETag header set to the job.id.
 
 **Auth/Security**
 
@@ -164,7 +167,7 @@ Add Omnichannel tasks:
 **Examples (using curl for local dev at http://localhost:8000)**
 
 - List tasks with ETag caching: `curl -H "If-None-Match: etag-val" http://localhost:8000/collab/state/tasks` → 304 if unchanged, else 200 with body and new ETag.
-- Create job with auth: `curl -X POST -H "Authorization: Bearer jwt-token" -H "Content-Type: application/json" -d '{"name":"test-job"}' http://localhost:8000/jobs` → `{id, status: "queued"}`.
+- Create job with auth: `curl -X POST -H "Authorization: Bearer jwt-token" -H "Content-Type: application/json" -d '{"title":"test-job"}' http://localhost:8000/jobs` → `{"job_id":"<id>","status":"accepted"}`. Note: Response includes ETag header, e.g., "ETag: <etag-value>".
 - Generate Swagger docs: Use contracts/api.yaml in FastAPI app; access interactive docs at http://localhost:8000/docs.
 
 ---
