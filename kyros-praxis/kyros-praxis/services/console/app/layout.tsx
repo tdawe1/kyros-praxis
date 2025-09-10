@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import React from 'react';
 import { Inter } from 'next/font/google';
-import '@kyros/core/src/index'; // Initialize DI container
 
 const inter = Inter({ subsets: ['latin'] });
 

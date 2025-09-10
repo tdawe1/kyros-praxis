@@ -14,10 +14,7 @@
     "emitDecoratorMetadata": true,
     "resolveJsonModule": true,
     "moduleResolution": "node",
-    "types": ["node"],
-    "paths": {
-      "@kyros/core/*": ["../../../packages/core/dist/*"]
-    }
+    "types": ["node"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
