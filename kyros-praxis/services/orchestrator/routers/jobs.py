@@ -1,85 +1,95 @@
 from fastapi import APIRouter, HTTPException, Depends, Body
 from fastapi.responses import JSONResponse
-from sqlalchemy.ext.asyncio import AsyncSession
-from ..utils.validation import validate_job_input, JobCreate
-# Lazy wrapper to avoid importing asyncpg unless these endpoints are invoked
-async def get_db_session_wrapper():
-    from ..repositories.database import get_db_session as _inner
-    async for s in _inner():
-        yield s
+from pydantic import BaseModel
+from typing import List
+from sqlalchemy import select
+from sqlalchemy.orm import Session
+
+from ..database import get_db
+from ..models import Job
 from ..auth import get_current_user, User
+from ..utils.validation import JobCreate
+import json
+import hashlib
 
 
-async def _create_job(session: AsyncSession, title: str):
-    # Map Day-1 JobCreate.title -> Job.name
-    from ..models import Job
-    job = Job(name=title)
-    session.add(job)
-    await session.commit()
-    await session.refresh(job)
-    return job
+class JobResponse(BaseModel):
+    id: str
+    name: str
+    status: str
+
+
+class JobListResponse(BaseModel):
+    jobs: List[JobResponse]
+
 
 router = APIRouter()
 
-@router.post("/jobs")
-async def create_job(
+
+@router.post("/jobs", response_model=JobResponse)
+def create_job(
     job_input: JobCreate = Body(...),
-    session: AsyncSession = Depends(get_db_session_wrapper),
+    db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    validated_input = validate_job_input(job_input.dict())
-    try:
-        job = await _create_job(session, validated_input.title)
-        response = JSONResponse(
-            content={"job_id": str(job.id), "status": "accepted"}
-        )
-        response.headers["ETag"] = str(job.id)
-        return response
-    except Exception:
-        await session.rollback()
-        raise HTTPException(status_code=500, detail="Job creation failed")
-
-
-@router.delete("/jobs/{job_id}")
-async def delete_job(
-    job_id: str,
-    session: AsyncSession = Depends(get_db_session_wrapper),
-    current_user: User = Depends(get_current_user),
-):
-    # Day-1: not implemented; return 501 to clearly indicate not implemented
-    raise HTTPException(status_code=501, detail="Not implemented")
-
-
-@router.get("/jobs")
-async def get_jobs_endpoint(
-    session: AsyncSession = Depends(get_db_session_wrapper),
-    current_user: User = Depends(get_current_user),
-):
-    from ..repositories.jobs import get_jobs as _get_jobs
-    jobs = await _get_jobs(session)
-    response = JSONResponse(
-        content={
-            "jobs": [
-                {"id": str(j.id), "name": j.name, "status": j.status}
-                for j in jobs
-            ]
-        }
-    )
-    response.headers["ETag"] = "list-version-1"
+    job = Job(name=job_input.title)
+    db.add(job)
+    db.commit()
+    db.refresh(job)
+    job_dict = {"job_id": str(job.id), "status": job.status}
+    canonical = json.dumps(job_dict, sort_keys=True)
+    etag = hashlib.sha256(canonical.encode()).hexdigest()
+    response = JSONResponse(content=job_dict)
+    response.headers["ETag"] = etag
     return response
 
 
-@router.get("/jobs/{job_id}")
-async def get_job_by_id(
-    job_id: str,
-    session: AsyncSession = Depends(get_db_session_wrapper),
+@router.get("/jobs", response_model=JobListResponse)
+def list_jobs(
+    db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    from ..models import Job
-    obj = await session.get(Job, job_id)
-    if not obj:
+    jobs = db.execute(select(Job)).scalars().all()
+    items = []
+    for j in jobs:
+        items.append({
+            "id": str(j.id),
+            "name": j.name,
+            "status": j.status
+        })
+    canonical = json.dumps(items, sort_keys=True)
+    etag = hashlib.sha256(canonical.encode()).hexdigest()
+    response = JSONResponse(content={"jobs": items})
+    response.headers["ETag"] = etag
+    return response
+
+
+@router.delete("/jobs/{job_id}")
+def delete_job(
+    job_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    job = db.get(Job, job_id)
+    if not job:
         raise HTTPException(status_code=404, detail="Job not found")
-    content = {"id": str(obj.id), "name": obj.name, "status": obj.status}
-    response = JSONResponse(content=content)
-    response.headers["ETag"] = str(obj.id)
+    db.delete(job)
+    db.commit()
+    return {"message": "Job deleted"}
+
+
+@router.get("/jobs/{job_id}", response_model=JobResponse)
+def get_job_by_id(
+    job_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    job = db.get(Job, job_id)
+    if not job:
+        raise HTTPException(status_code=404, detail="Job not found")
+    job_dict = {"id": str(job.id), "name": job.name, "status": job.status}
+    canonical = json.dumps(job_dict, sort_keys=True)
+    etag = hashlib.sha256(canonical.encode()).hexdigest()
+    response = JSONResponse(content=job_dict)
+    response.headers["ETag"] = etag
     return response

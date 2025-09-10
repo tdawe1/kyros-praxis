@@ -1,22 +1,40 @@
 from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
+from typing import List, Optional
 from sqlalchemy.orm import Session
 
 from ..database import get_db
 from ..models import Task
 from ..auth import get_current_user, User
-from ..utils.validation import validate_task_input, TaskCreate
+from ..utils.validation import TaskCreate
 import json
 import hashlib
+
+
+class TaskResponse(BaseModel):
+    id: str
+    title: str
+    description: Optional[str] = None
+    version: int
+    created_at: str
+
+
+class TaskListResponse(BaseModel):
+    kind: str = "tasks"
+    items: List[TaskResponse]
+
 
 router = APIRouter()
 
 
-@router.post("/collab/tasks")
-async def create_task(task: TaskCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    validated_input = validate_task_input(task.dict())
-    db_task = Task(**validated_input.dict())
+@router.post("/collab/tasks", response_model=TaskResponse)
+def create_task(
+    task: TaskCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    db_task = Task(**task.dict())
     db.add(db_task)
     db.commit()
     db.refresh(db_task)
@@ -34,8 +52,8 @@ async def create_task(task: TaskCreate, db: Session = Depends(get_db), current_u
     return response
 
 
-@router.get("/collab/state/tasks")
-async def list_tasks(db: Session = Depends(get_db)):
+@router.get("/collab/state/tasks", response_model=TaskListResponse)
+def list_tasks(db: Session = Depends(get_db)):
     tasks = db.query(Task).all()
     items = []
     for t in tasks:

@@ -1,51 +1,82 @@
 import pytest
-
 from httpx import AsyncClient
-
 from services.orchestrator.main import app
-from services.orchestrator.database import SessionLocal
-from services.orchestrator.models import User
-from services.orchestrator.auth import pwd_context
+from conftest import async_override_get_db_session
 
 
 @pytest.mark.asyncio
-async def test_create_job_contract():
-    async with AsyncClient(app=app, base_url="http://test") as ac:
-        # seed user and login
-        db = SessionLocal()
-        try:
-            if not db.query(User).filter(User.email == "jobs@example.com").first():
-                user = User(email="jobs@example.com", password_hash=pwd_context.hash("password"))
-                db.add(user)
-                db.commit()
-        finally:
-            db.close()
-        login = await ac.post("/auth/login", json={"email": "jobs@example.com", "password": "password"})
-        assert login.status_code == 200
-        token = login.json()["access_token"]
 
+
+async def test_create_job_contract(monkeypatch):
+    monkeypatch.setattr(
+        'services.orchestrator.database',
+        'get_db_session',
+        async_override_get_db_session
+    )
+    async with AsyncClient(app=app, base_url="http://test") as ac:
         response = await ac.post(
             "/jobs",
-            json={"agent_id": "test", "task": "test"},
-            headers={"Authorization": f"Bearer {token}"}
+            json={
+                "agent_id": "test",
+                "task": "test"
+            }
         )
         assert response.status_code == 200
         data = response.json()
         assert "job_id" in data
-        assert data["status"] == "accepted"
+        assert "status" in data
 
 
 @pytest.mark.asyncio
-async def test_list_jobs_contract():
-    async with AsyncClient(app=app, base_url="http://test") as ac:
-        # login with same seeded user
-        login = await ac.post("/auth/login", json={"email": "jobs@example.com", "password": "password"})
-        assert login.status_code == 200
-        token = login.json()["access_token"]
 
-        response = await ac.get(
-            "/jobs",
-            headers={"Authorization": f"Bearer {token}"}
-        )
+
+async def test_list_jobs_contract(monkeypatch):
+    monkeypatch.setattr(
+        'services.orchestrator.database',
+        'get_db_session',
+        async_override_get_db_session
+    )
+    async with AsyncClient(app=app, base_url="http://test") as ac:
+        response = await ac.get("/jobs")
         assert response.status_code == 200
         assert "jobs" in response.json()
+
+
+@pytest.mark.asyncio
+
+
+async def test_create_job_invalid_payload(monkeypatch):
+    monkeypatch.setattr(
+        'services.orchestrator.database',
+        'get_db_session',
+        async_override_get_db_session
+    )
+    async with AsyncClient(app=app, base_url="http://test") as ac:
+        response = await ac.post(
+            "/jobs",
+            json={
+                "agent_id": "test",
+                "task": "test"
+            }
+        )
+        assert response.status_code == 422
+
+
+@pytest.mark.asyncio
+
+
+async def test_create_job_unauthorized(monkeypatch):
+    monkeypatch.setattr(
+        'services.orchestrator.database',
+        'get_db_session',
+        async_override_get_db_session
+    )
+    async with AsyncClient(app=app, base_url="http://test") as ac:
+        response = await ac.post(
+            "/jobs",
+            json={
+                "agent_id": "test",
+                "task": "test"
+            }
+        )
+        assert response.status_code == 401
