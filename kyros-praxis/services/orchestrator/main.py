@@ -67,7 +67,7 @@ def healthz(db = Depends(get_db)):
 
 @app.post("/auth/login", response_model=Token)
 def login_for_access_token(
-    login: Login = Body(...),
+    login: Login,
     db: Session = Depends(get_db)
 ):
     user = authenticate_user(db, login.email, login.password)
