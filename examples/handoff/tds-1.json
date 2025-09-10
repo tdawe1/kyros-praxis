@@ -1,0 +1,28 @@
+{
+  "task_id": "TDS-1",
+  "title": "Collab API with ETag + SSE",
+  "description": "Backend implementation for collaboration API with ETag support and SSE events.",
+  "status": "in-progress",
+  "scope": "Implement endpoints for task CRUD with ETag headers and SSE for events.",
+  "acceptance": [
+    "GET /collab/state/{kind} returns data with ETag.",
+    "POST /collab/tasks creates task and returns ETag.",
+    "PATCH /collab/tasks/{id} validates ETag.",
+    "GET /collab/events/tail streams events."
+  ],
+  "contracts": [
+    "GET /collab/state/{kind} → {data, etag}",
+    "POST /collab/tasks → {id}",
+    "PATCH /collab/tasks/{id} with If-Match: <etag> → {ok, etag}",
+    "GET /collab/events/tail?since=<ts> → SSE stream"
+  ],
+  "invariants": [
+    "ETags computed as SHA-256 of canonical JSON.",
+    "Atomic writes guarded by If-Match.",
+    "Events append-only JSONL."
+  ],
+  "touchpoints": [
+    "services/orchestrator/routers/tasks.py",
+    "services/orchestrator/main.py"
+  ]
+}
