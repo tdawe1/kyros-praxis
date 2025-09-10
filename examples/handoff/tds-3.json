@@ -1,0 +1,6 @@
+{
+  "id": "tds-3",
+  "title": "Jobs vertical slice",
+  "description": "Implementation of jobs vertical slice (auth→job→variant→accept→export).",
+  "status": "backlog"
+}
