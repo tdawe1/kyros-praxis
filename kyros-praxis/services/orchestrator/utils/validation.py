@@ -21,4 +21,4 @@ def validate_job_input(job_data: dict) -> JobCreate:
     try:
         return JobCreate(**job_data)
     except ValueError as e:
-        raise ValueError(f"Invalid job input: {e}")
+        raise ValueError(f"Invalid job input: {e}") from e
