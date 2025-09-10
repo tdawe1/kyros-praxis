@@ -70,7 +70,7 @@ jobs:
           j_create = c.post('/jobs', json={'title':'ci job'}, headers=hdrs)
           assert j_create.status_code == 200, j_create.text
           assert 'ETag' in j_create.headers
-          job_id = j_create.json()['job_id']
+         job_id = j_create.json()['id']
           j_get = c.get(f'/jobs/{job_id}', headers=hdrs)
           assert j_get.status_code == 200 and j_get.json()['id'] == job_id, j_get.text
           assert 'ETag' in j_get.headers
