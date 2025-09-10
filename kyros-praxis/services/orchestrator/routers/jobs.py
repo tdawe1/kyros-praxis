@@ -1,11 +1,10 @@
 from fastapi import APIRouter, HTTPException, Depends
-from typing import List
 
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from ..auth import get_current_user, User
 
-from ..models import Job
+# (No direct Job import needed at import-time)
 
 async def get_db_session():
     # Lazy import to avoid loading async drivers during unrelated tests

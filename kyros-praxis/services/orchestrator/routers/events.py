@@ -3,7 +3,6 @@ from pydantic import BaseModel
 from ..auth import get_current_user
 import json
 from datetime import datetime
-import os
 import asyncio
 import hashlib
 from pathlib import Path

@@ -13,7 +13,7 @@ from .routers.tasks import router as tasks_router
 import asyncio
 from .models import Base
 
-from .auth import create_access_token, Token, authenticate_user, oauth2_scheme, Login
+from .auth import create_access_token, Token, authenticate_user, Login
 
 try:
     from slowapi import Limiter, _rate_limit_exceeded_handler

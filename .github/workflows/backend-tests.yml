@@ -33,7 +33,7 @@ jobs:
           pip install -r kyros-praxis/services/orchestrator/requirements.txt
           pip install ruff==0.6.9
       - name: Lint (ruff)
-        run: ruff check kyros-praxis/services/orchestrator --exclude tests
+        run: ruff check kyros-praxis/services/orchestrator --exclude "**/tests/**"
       - name: Run steel-thread acceptance tests (orchestrator)
         run: |
           cd kyros-praxis/services/orchestrator
