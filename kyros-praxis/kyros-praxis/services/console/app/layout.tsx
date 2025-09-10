@@ -1,3 +1,5 @@
+import './globals.css';
+import { Providers } from './providers';
 import type { Metadata } from 'next';
 import React from 'react';
 import { Inter } from 'next/font/google';
@@ -20,9 +22,11 @@ export default function RootLayout({
         <nav className="bg-blue-600 p-4 text-white">
           <h1 className="text-xl font-bold">Kyros Console</h1>
         </nav>
-        <main className="p-4">
-          {children}
-        </main>
+        <Providers>
+          <main className="p-4">
+            {children}
+          </main>
+        </Providers>
       </body>
     </html>
   );

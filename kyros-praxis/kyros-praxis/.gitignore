@@ -16,3 +16,5 @@ dist/
 *.log
 coverage/
 
+# MCP local overrides
+mcp-servers.local.json

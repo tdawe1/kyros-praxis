@@ -30,3 +30,13 @@ build/
 
 # Misc
 coverage/
+
+# Local canonicalization symlink + backups
+services/_deprecated/
+packages/_deprecated/
+
+# Tooling and local state
+.kilocode/
+.kilocodemodes
+collaboration/state/
+archive/

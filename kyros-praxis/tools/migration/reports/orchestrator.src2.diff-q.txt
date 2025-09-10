@@ -1,0 +1,29 @@
+Only in kyros-praxis/services/orchestrator: alembic
+Only in kyros-praxis/services/orchestrator: alembic.ini
+Files services/_deprecated/orchestrator.20250910-032402/auth.py and kyros-praxis/services/orchestrator/auth.py differ
+Only in services/_deprecated/orchestrator.20250910-032402: config.py
+Only in kyros-praxis/services/orchestrator: contracts
+Files services/_deprecated/orchestrator.20250910-032402/database.py and kyros-praxis/services/orchestrator/database.py differ
+Only in services/_deprecated/orchestrator.20250910-032402: DEPRECATED.md
+Files services/_deprecated/orchestrator.20250910-032402/Dockerfile and kyros-praxis/services/orchestrator/Dockerfile differ
+Only in kyros-praxis/services/orchestrator: .dockerignore
+Only in kyros-praxis/services/orchestrator: .env.example
+Files services/_deprecated/orchestrator.20250910-032402/__init__.py and kyros-praxis/services/orchestrator/__init__.py differ
+Files services/_deprecated/orchestrator.20250910-032402/main.py and kyros-praxis/services/orchestrator/main.py differ
+Files services/_deprecated/orchestrator.20250910-032402/models.py and kyros-praxis/services/orchestrator/models.py differ
+Only in kyros-praxis/services/orchestrator: models.py.bak
+Only in kyros-praxis/services/orchestrator: README.md
+Only in kyros-praxis/services/orchestrator/repositories: database.py
+Files services/_deprecated/orchestrator.20250910-032402/repositories/__init__.py and kyros-praxis/services/orchestrator/repositories/__init__.py differ
+Only in kyros-praxis/services/orchestrator/repositories: jobs.py
+Files services/_deprecated/orchestrator.20250910-032402/requirements.txt and kyros-praxis/services/orchestrator/requirements.txt differ
+Only in kyros-praxis/services/orchestrator/routers: events.py
+Files services/_deprecated/orchestrator.20250910-032402/routers/__init__.py and kyros-praxis/services/orchestrator/routers/__init__.py differ
+Only in kyros-praxis/services/orchestrator/routers: jobs.py
+Only in kyros-praxis/services/orchestrator/routers: tasks.py
+Only in kyros-praxis/services/orchestrator/tests: conftest.py
+Only in kyros-praxis/services/orchestrator/tests: contract
+Files services/_deprecated/orchestrator.20250910-032402/tests/unit/__init__.py and kyros-praxis/services/orchestrator/tests/unit/__init__.py differ
+Files services/_deprecated/orchestrator.20250910-032402/tests/unit/test_endpoints.py and kyros-praxis/services/orchestrator/tests/unit/test_endpoints.py differ
+Only in kyros-praxis/services/orchestrator/tests/unit: test_models.py
+Only in kyros-praxis/services/orchestrator/tests/unit: test_repo.py

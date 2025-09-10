@@ -2,6 +2,7 @@ from fastapi import FastAPI, WebSocket, Depends, HTTPException
 from fastapi.websockets import WebSocketDisconnect
 from jose import JWTError, jwt
 from os import getenv
+from typing import Any
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database import engine, get_db_session
@@ -10,17 +11,11 @@ from routers.events import router as events_router
 from routers.tasks import router as tasks_router
 from models import Base
 
-SECRET_KEY = getenv("SECRET_KEY", "your-secret-key-change-in-prod")
+SECRET_KEY = getenv("SECRET_KEY")  # Remove fallback for production readiness
 ALGORITHM = "HS256"
 
 app = FastAPI(title="Orchestrator API", version="0.1.0")
 
-
-@app.on_event("startup")
-async def on_startup() -> None:
-    # Ensure tables exist for local/dev and tests; Alembic will manage in real DBs
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
 
 @app.get("/")
 async def root():
@@ -40,16 +35,16 @@ async def healthz(session: AsyncSession = Depends(get_db_session)):
     raise HTTPException(status_code=500, detail="Database unavailable")
 
 @app.websocket("/ws")
-async def websocket_endpoint(websocket: WebSocket):
-  await websocket.accept()
-  await websocket.send_json({"type": "connected", "message": "WebSocket connected"})
+async def websocket_endpoint(websocket: WebSocket) -> None:
+    await websocket.accept()
+    await websocket.send_json({"type": "connected", "message": "WebSocket connected"})
 
-  try:
-    while True:
-      data = await websocket.receive_json()
-      await websocket.send_json({"type": "echo", "payload": data})
-  except WebSocketDisconnect:
-    pass
+    try:
+        while True:
+            data: dict[str, Any] = await websocket.receive_json()
+            await websocket.send_json({"type": "echo", "payload": data})
+    except WebSocketDisconnect:
+        await websocket.close(code=1000)
 
 
 # Routers
