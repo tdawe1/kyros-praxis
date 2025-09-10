@@ -47,3 +47,4 @@ tools/migration/patches/*.patch
 # Ignore large migration patch artifacts
 tools/migration/patches/*.patch
 kyros-praxis/qdrant/storage/
+tools/migration/patches_local/

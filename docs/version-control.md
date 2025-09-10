@@ -2,6 +2,12 @@
 
 This document outlines the version control strategy for the Kyros Praxis project, including branching model, commit conventions, pull request workflows, code reviews, and merge strategies. This strategy ensures consistent, high-quality contributions and enforces best practices for collaboration.
 
+## Repository
+
+- GitHub: https://github.com/tdawe1/kyros-praxis
+- Clone: `git clone https://github.com/tdawe1/kyros-praxis.git`
+- Remote: ensure `origin` points to the above URL. Update via `git remote set-url origin https://github.com/tdawe1/kyros-praxis.git`.
+
 ## Branching Model
 
 We use a trunk-based development model with GitFlow elements for releases, adapted for a monorepo with multiple services (backend/frontend). 

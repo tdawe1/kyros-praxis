@@ -63,6 +63,9 @@ This section is a compact contract for autonomous agents.
 
 ### Checkpoints & Git
 
+- GitHub repo: https://github.com/tdawe1/kyros-praxis
+- Clone: `git clone https://github.com/tdawe1/kyros-praxis.git`
+- Remote: `origin` must point to `https://github.com/tdawe1/kyros-praxis.git` (verify with `git remote -v`; set with `git remote set-url origin https://github.com/tdawe1/kyros-praxis.git`).
 - Repo root: `kyros-praxis/` (project .git inside).
 - Branch naming: `agents/<task-id>-<slug>` (e.g., `agents/T-101-jobs-form`).
 - PRs must reference a task ID and link to created GitHub issues when enabled.

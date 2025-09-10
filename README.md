@@ -2,6 +2,10 @@
 
 This repository tracks two living plans that guide implementation. Keep these up to date beyond the initial planning phase — when scope or milestones change, update the plan files in the same PR.
 
+Repository
+- GitHub: https://github.com/tdawe1/kyros-praxis
+- Clone: `git clone https://github.com/tdawe1/kyros-praxis.git`
+
 Links
 - Frontend plan: `kyros-praxis/frontend-current-plan.md`
 - Backend plan: `kyros-praxis/backend-current-plan.md`
@@ -13,4 +17,3 @@ Maintenance
 Getting Started
 - Backend dev: see the backend plan for the “steel thread” path to a local, testable API.
 - Frontend dev: see the frontend plan for current gaps and next steps.
-
