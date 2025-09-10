@@ -3,12 +3,12 @@ from typing import List
 
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
-from auth import get_current_user, User
+from ..auth import get_current_user, User
 
-from models import Job
+from ..models import Job
 
-from repositories.jobs import create_job, get_jobs
-from repositories.database import get_db_session
+from ..repositories.jobs import create_job, get_jobs
+from ..repositories.database import get_db_session
 
 
 router = APIRouter()

@@ -26,4 +26,6 @@ jobs:
       - name: Lint (ruff)
         run: ruff check kyros-praxis/services/orchestrator
       - name: Run tests (orchestrator)
-        run: pytest -c kyros-praxis/pytest.ini -q
+        run: |
+          cd kyros-praxis/services/orchestrator
+          pytest -q

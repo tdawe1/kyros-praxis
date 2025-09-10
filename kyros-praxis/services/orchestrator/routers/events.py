@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, Request
 from pydantic import BaseModel
-from auth import get_current_user
+from ..auth import get_current_user
 import json
 from datetime import datetime
 import os

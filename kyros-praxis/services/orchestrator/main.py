@@ -7,18 +7,19 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 from datetime import timedelta
 
-from database import engine, get_db
-from routers.jobs import router as jobs_router
-from routers.events import router as events_router
-from routers.tasks import router as tasks_router
+from .database import engine, get_db
+from .routers.jobs import router as jobs_router
+from .routers.events import router as events_router
+from .routers.tasks import router as tasks_router
 import asyncio
-from models import Base
+from .models import Base
 
-from auth import create_access_token, Token, authenticate_user, oauth2_scheme, Login
+from .auth import create_access_token, Token, authenticate_user, oauth2_scheme, Login
 
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
-from middleware import api_key_validator, rate_limiter
+from slowapi.middleware import SlowAPIMiddleware
+from .middleware import api_key_validator, limiter_key_func
 
 SECRET_KEY = getenv("SECRET_KEY")  # Remove fallback for production readiness
 ALGORITHM = "HS256"
@@ -27,9 +28,14 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 app = FastAPI(title="Orchestrator API", version="0.1.0")
 
-REDIS_URL = getenv("REDIS_URL", "redis://localhost:6379")
-app.state.limiter = Limiter(key_func=lambda request: request.headers.get("X-API-Key") or "anonymous", storage_uri=REDIS_URL)
+REDIS_URL = getenv("REDIS_URL", "memory://")
+app.state.limiter = Limiter(
+    key_func=limiter_key_func,
+    storage_uri=REDIS_URL,
+    default_limits=["60/minute"],
+)
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+app.add_middleware(SlowAPIMiddleware)
 
 
 @app.get("/")
@@ -113,9 +119,9 @@ async def http_exception_handler_422(request, exc):
 
 
 # Routers
-app.include_router(jobs_router, dependencies=[Depends(api_key_validator), Depends(rate_limiter)])
+app.include_router(jobs_router, dependencies=[Depends(api_key_validator)])
 app.include_router(events_router)
-app.include_router(tasks_router, dependencies=[Depends(api_key_validator), Depends(rate_limiter)])
+app.include_router(tasks_router)
 
 if __name__ == "__main__":
     import uvicorn
