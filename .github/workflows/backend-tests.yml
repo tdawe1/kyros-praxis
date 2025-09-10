@@ -33,7 +33,33 @@ jobs:
           pip install -r kyros-praxis/services/orchestrator/requirements.txt
           pip install ruff==0.6.9
       # Lint intentionally skipped in this focused acceptance job
-      - name: Run steel-thread acceptance tests (orchestrator)
+      - name: Run steel-thread smoke (orchestrator)
         run: |
-          cd kyros-praxis/services/orchestrator
-          pytest -q -k "test_healthz_ok or test_create_task_and_list"
+          cd kyros-praxis
+          python - << 'PY'
+          from fastapi.testclient import TestClient
+          from services.orchestrator.main import app
+          from services.orchestrator.database import SessionLocal
+          from services.orchestrator.models import User
+          from services.orchestrator.auth import pwd_context
+          
+          s = SessionLocal()
+          if not s.query(User).filter(User.email=='ci@example.com').first():
+              s.add(User(email='ci@example.com', password_hash=pwd_context.hash('password')))
+              s.commit()
+          s.close()
+          
+          c = TestClient(app)
+          r = c.get('/healthz'); assert r.status_code == 200 and r.json().get('status')=='ok'
+          login = c.post('/auth/login', json={'email':'ci@example.com','password':'password'})
+          assert login.status_code == 200, login.text
+          token = login.json()['access_token']
+          create = c.post('/collab/tasks', json={'title':'t','description':'d'}, headers={'Authorization': f'Bearer {token}'})
+          assert create.status_code == 200, create.text
+          assert 'ETag' in create.headers
+          list_resp = c.get('/collab/state/tasks')
+          assert list_resp.status_code == 200, list_resp.text
+          assert list_resp.json().get('kind')=='tasks'
+          assert 'ETag' in list_resp.headers
+          print('STEEL_THREAD_SMOKE_OK')
+          PY
