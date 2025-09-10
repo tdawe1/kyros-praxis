@@ -7,8 +7,14 @@
         "--repository",
         "/kyros-praxis"
       ],
-      "disabled": true,
-      "alwaysAllow": []
+      "disabled": false,
+      "alwaysAllow": [
+        "status",
+        "show",
+        "diff --name-only HEAD",
+        "rev-parse",
+        "ls-files"
+      ]
     }
   }
 }

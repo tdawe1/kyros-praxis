@@ -89,6 +89,19 @@ services:
     volumes:
       - ./:/workspace:ro
 
+  # Zen MCP server (official; runs via uvx inside container)
+  mcp_zen:
+    image: ${UV_IMAGE:-ghcr.io/astral-sh/uv:latest}
+    restart: unless-stopped
+    profiles: ["zen"]
+    working_dir: /app
+    # The uv image has ENTRYPOINT ["uv"], so run subcommands directly.
+    command: ["tool","run","--from","git+https://github.com/BeehiveInnovations/zen-mcp-server.git","zen-mcp-server"]
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+
   # Notion MCP server
   mcp_notion:
     image: ${NOTION_MCP_IMAGE:-node:20-alpine}
@@ -116,6 +129,55 @@ services:
       COMPOSER_API_KEY: ${COMPOSER_API_KEY:-}
       COMPOSER_SECRET_KEY: ${COMPOSER_SECRET_KEY:-}
     command: ["uvx","composer-trade-mcp==0.1.4","--hash","sha256:37d8fcfd6ddc9c8155633f755159f3fcb1a63e7acc2a32513613341a851c84e2"]
+
+
+  # ExaSearch MCP server
+  mcp_exasearch:
+    image: ${EXASEARCH_MCP_IMAGE:-node:20-alpine}
+    restart: unless-stopped
+    profiles: ["exasearch"]
+    working_dir: /app
+    environment:
+      EXA_API_KEY: ${EXA_API_KEY:-}
+      # Optional: if the server supports WS, these are common patterns
+      EXASEARCH_MCP_PORT: ${EXASEARCH_MCP_PORT:-8788}
+    # By default, try to run an npm package via npx. Override EXASEARCH_MCP_PACKAGE
+    # with the exact MCP server package name you use (e.g., "exa-mcp-server").
+    command: ["npx","-y","${EXASEARCH_MCP_PACKAGE:-exa-mcp-server}"]
+    # If your Exa MCP server exposes a WebSocket port, uncomment the line below
+    # and ensure the command starts a WS server bound to 0.0.0.0:EXASEARCH_MCP_PORT.
+    # ports:
+    #   - "${EXASEARCH_MCP_PORT:-8788}:8788"
+
+  # Railway MCP server
+  mcp_railway:
+    image: ${RAILWAY_NODE_IMAGE:-node:20-alpine}
+    restart: unless-stopped
+    profiles: ["railway"]
+    working_dir: /app
+    command: ["sh","-lc","npx -y ${RAILWAY_MCP_PACKAGE:-@railway/mcp-server}"]
+    environment:
+      RAILWAY_TOKEN: ${RAILWAY_TOKEN:-}
+
+  # Vercel MCP server
+  mcp_vercel:
+    image: ${VERCEL_NODE_IMAGE:-node:20-alpine}
+    restart: unless-stopped
+    profiles: ["vercel"]
+    working_dir: /app
+    command: ["sh","-lc","npx -y ${VERCEL_MCP_PACKAGE:-mcp-vercel}"]
+    environment:
+      VERCEL_TOKEN: ${VERCEL_TOKEN:-}
+
+  # CodeRabbit MCP server
+  mcp_coderabbit:
+    image: ${CODERABBIT_NODE_IMAGE:-node:20-alpine}
+    restart: unless-stopped
+    profiles: ["coderabbit"]
+    working_dir: /app
+    command: ["sh","-lc","npx -y ${CODERABBIT_MCP_PACKAGE:-coderabbit-mcp}"]
+    environment:
+      CODERABBIT_API_KEY: ${CODERABBIT_API_KEY:-}
 
 
   # Kyros core services (feature-complete stack)
@@ -177,6 +239,19 @@ services:
       - kyros_daemon
       - qdrant
 
+  # Kyros Collab MCP server (stdio JSON-RPC over process). Provided for reference; prefer spawning locally.
+  mcp_kyros_collab:
+    image: ${PY_IMAGE:-python:3.11-alpine}
+    restart: unless-stopped
+    profiles: ["kyros-collab"]
+    working_dir: /workspace
+    command: ["python","-u","kyros-praxis/integrations/kyros-collab-mcp/main.py"]
+    volumes:
+      - ./:/workspace
+    environment:
+      COLLAB_ROOT: /workspace/kyros-praxis/collaboration
+
 networks:
   default:
     name: kyros-integrations
+    external: true

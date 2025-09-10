@@ -70,12 +70,17 @@ PROFILES=(
   github
   puppeteer
   playwright
+  zen
   notion
   seq
   composer
   exasearch
   kyros         # Kyros app deps for kyros-mcp
   kyros-mcp
+  railway
+  vercel
+  coderabbit
+  kyros-collab
 )
 
 PROFILE_ARGS=()

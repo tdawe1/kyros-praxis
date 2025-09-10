@@ -1,32 +1,43 @@
 {
   "mcpServers": {
-    "github": {
-      "env": {
-        "GITHUB_PERSONAL_ACCESS_TOKEN": "YOUR_GITHUB_PERSONAL_ACCESS_TOKEN",
-        "GITHUB_TOOLSETS": "YOUR_GITHUB_TOOLSETS_OPTIONAL",
-        "GITHUB_READ_ONLY": "true"
-      }
+    "playwright": {
+      "command": "bash",
+      "args": ["kyros-praxis/scripts/mcp-run.sh", "mcp_playwright"]
     },
-    "composer-trade": {
-      "env": {
-        "COMPOSER_API_KEY": "YOUR_COMPOSER_API_KEY",
-        "COMPOSER_SECRET_KEY": "YOUR_COMPOSER_SECRET_KEY"
-      }
+
+    "zen": {
+      "command": "bash",
+      "args": ["kyros-praxis/scripts/mcp-run.sh", "mcp_zen"]
     },
-    "notion": {
-      "env": {
-        "OPENAPI_MCP_HEADERS": "Authorization: Bearer YOUR_NOTION_TOKEN"
-      }
+
+    "kyros_collab": {
+      "command": "bash",
+      "args": ["kyros-praxis/scripts/mcp-run.sh", "mcp_kyros_collab"]
     },
-    "exa": {
-      "env": {
-        "EXA_API_KEY": "YOUR_EXA_API_KEY"
-      }
+
+    "github_mcp": {
+      "command": "bash",
+      "args": ["kyros-praxis/scripts/mcp-run.sh", "mcp_github"]
     },
-    "context7": {
-      "env": {
-        "DEFAULT_MINIMUM_TOKENS": ""
-      }
+
+    "vercel": {
+      "command": "bash",
+      "args": ["kyros-praxis/scripts/mcp-run.sh", "mcp_vercel"]
+    },
+
+    "railway": {
+      "command": "bash",
+      "args": ["kyros-praxis/scripts/mcp-run.sh", "mcp_railway"]
+    },
+
+    "exasearch": {
+      "command": "bash",
+      "args": ["kyros-praxis/scripts/mcp-run.sh", "mcp_exasearch"]
+    },
+
+    "coderabbit": {
+      "command": "bash",
+      "args": ["kyros-praxis/scripts/mcp-run.sh", "mcp_coderabbit"]
     }
   }
 }

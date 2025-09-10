@@ -1,62 +1,33 @@
 from fastapi import APIRouter, Depends
-from fastapi.responses import JSONResponse
 from pydantic import BaseModel
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
-import hashlib
-import json
+from sqlalchemy.orm import Session
+from typing import List
 
-from database import get_db_session
+from database import get_db
 from models import Task
-
 
 router = APIRouter()
 
-
 class TaskCreate(BaseModel):
     title: str
-    description: str | None = None
+    description: str
 
+class Task(BaseModel):
+    id: str
+    title: str
+    description: str
+    version: int
+    created_at: str
 
 @router.post("/collab/tasks")
-async def create_task_endpoint(
-    task: TaskCreate,
-    session: AsyncSession = Depends(get_db_session),
-):
-    obj = Task(title=task.title, description=task.description or "")
-    session.add(obj)
-    await session.commit()
-    await session.refresh(obj)
-
-    task_dict = {
-        "id": obj.id,
-        "title": obj.title,
-        "description": obj.description,
-        "version": obj.version,
-        "created_at": obj.created_at.isoformat() if obj.created_at else None,
-    }
-    etag = hashlib.sha256(json.dumps(task_dict, sort_keys=True).encode()).hexdigest()
-    return JSONResponse(content=task_dict, headers={"ETag": etag})
-
+def create_task(task: TaskCreate, db: Session = Depends(get_db)):
+    db_task = Task(**task.dict())
+    db.add(db_task)
+    db.commit()
+    db.refresh(db_task)
+    return db_task
 
 @router.get("/collab/state/tasks")
-async def list_tasks_endpoint(
-    session: AsyncSession = Depends(get_db_session),
-):
-    result = await session.execute(select(Task))
-    items = []
-    for t in result.scalars().all():
-        items.append(
-            {
-                "id": t.id,
-                "title": t.title,
-                "description": t.description,
-                "version": t.version,
-                "created_at": t.created_at.isoformat() if t.created_at else None,
-            }
-        )
-
-    payload = {"kind": "tasks", "items": items}
-    etag = hashlib.sha256(json.dumps(payload, sort_keys=True).encode()).hexdigest()
-    return JSONResponse(content=payload, headers={"ETag": etag})
-
+def list_tasks(db: Session = Depends(get_db)):
+    tasks = db.query(Task).all()
+    return tasks
