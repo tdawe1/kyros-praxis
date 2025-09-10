@@ -46,8 +46,8 @@ async def delete_job(
     session: AsyncSession = Depends(get_db_session_wrapper),
     current_user: User = Depends(get_current_user),
 ):
-    # Day-1: not implemented; return 404 to avoid silent no-op
-    raise HTTPException(status_code=404, detail="Not implemented")
+    # Day-1: not implemented; return 501 to clearly indicate not implemented
+    raise HTTPException(status_code=501, detail="Not implemented")
 
 
 @router.get("/jobs")
