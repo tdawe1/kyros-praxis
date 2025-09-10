@@ -1,6 +1,12 @@
 from fastapi import Depends, Request, HTTPException
-from slowapi import Limiter
-from slowapi.errors import RateLimitExceeded
+try:
+    from slowapi import Limiter
+    from slowapi.errors import RateLimitExceeded
+    HAVE_SLOWAPI = True
+except Exception:  # optional dep for local runs
+    Limiter = None  # type: ignore
+    RateLimitExceeded = Exception  # type: ignore
+    HAVE_SLOWAPI = False
 import os
 
 
@@ -27,7 +33,7 @@ def limiter_key_func(request: Request) -> str:
 
 
 # Local Limiter (may be overridden by app.state.limiter in main.py)
-limiter = Limiter(key_func=limiter_key_func)
+limiter = Limiter(key_func=limiter_key_func) if HAVE_SLOWAPI else None
 
 
 async def rate_limiter(request: Request, api_key: str = Depends(api_key_validator)) -> None:
@@ -35,11 +41,11 @@ async def rate_limiter(request: Request, api_key: str = Depends(api_key_validato
     Rate limit dependency. Uses app.state.limiter if set (e.g., Redis backend),
     else falls back to module-level limiter. Keys on API key.
     """
-    active_limiter: Limiter = getattr(request.app.state, "limiter", limiter)
+    active_limiter = getattr(request.app.state, "limiter", limiter)
     # Prefer middleware/decorators; this dependency is a simple guardrail.
     try:
         # Fallback to internal check; allow if not available
-        if active_limiter.hit("global", request):
+        if active_limiter and active_limiter.hit("global", request):
             raise RateLimitExceeded
     except Exception:
         pass

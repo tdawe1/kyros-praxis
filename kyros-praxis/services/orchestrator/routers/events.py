@@ -4,6 +4,7 @@ from ..auth import get_current_user
 import json
 from datetime import datetime
 import os
+import asyncio
 import hashlib
 from pathlib import Path
 from sse_starlette.sse import EventSourceResponse
@@ -39,7 +40,7 @@ def append_event(event: EventCreate, current_user = Depends(get_current_user)):
     return {"ok": True}, {"ETag": etag}
 
 @router.get("/events/tail")
-async def events_tail(current_user = Depends(get_current_user), request: Request):
+async def events_tail(request: Request, current_user = Depends(get_current_user)):
     events_file = Path(__file__).parent.parent.parent.parent / 'collaboration/events/events.jsonl'
     events = []
     if events_file.exists():
