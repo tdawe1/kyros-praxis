@@ -3,6 +3,25 @@
 - v1.2 (2024-09-11): Address review feedback for Jobs API and tests.
 - v1.1 (2024-09-10): Merged baks, aligned stacks, fixed dates.
 
+## Phase Gates
+
+- Phase 1 → 2: Lead agent confirms alignment via `attempt_completion`.
+- Phase 2 → 3: All subtasks have owners in `collaboration/state/tasks.json`.
+- Phase 3 → 4: Local tests pass (automated check).
+- Phase 4 → 5: Self-score ≥0.8 in rubric.
+- Phase 5 → 6: At least one approval comment.
+- Phase 6 → 7: CI green + no unresolved comments.
+
+## Quick Start Commands (TL;DR)
+
+```bash
+git checkout -b feat/TDS-XXX-description
+python scripts/pr_gate.py --base main    # Run before each commit
+git commit -m "feat(TDS-XXX): description"
+python scripts/pr_gate.py --run-tests    # Final check before PR
+gh pr create --fill
+```
+
 ## 0) Goals & Non‑Negotiables
 
 **What “v1” must ship:**
@@ -12,6 +31,14 @@
 - **Console UI**: pages for **Agents**, **Tasks (Kanban)**, **Leases**, **Events (live tail)**, plus **Jobs / Studio / Scheduler / Settings** wired to APIs.
 - **Worker**: Celery+Redis with at least one safe executor (e.g., lint/format) that **acquires leases**, **emits events**, handles **retry/backoff**.
 - **Quality gates**: pre‑commit, unit tests (FE/BE), Playwright E2E, secret scan, `.env.example`, basic rate limits and JWT, `/readyz` deep checks.&#x20;
+
+Event Logging Examples
+
+```bash
+# Append a structured event (local dev example)
+echo '{"ts":"2024-01-15T10:00:00Z","event":"task_claimed","actor":"impl-1","target":"TDS-101"}' \
+  >> collaboration/events/events.jsonl
+```
 
 **Stretch (nice‑to‑have):**
 
@@ -82,13 +109,26 @@ See [ADR 0005](adr/0005-frontend-stack.md) for details on the frontend stack dec
 
 ### Phase 3 — Jobs Vertical Slice
 
-**API:**
+## 3) Implement (Iterative)
 
-- Day‑1 scope (implemented): `POST /jobs` (payload `{title, description?}`), `GET /jobs`, `GET /jobs/{id}`. All routes require JWT and API key; responses include `ETag` (job id for Day‑1).
-- Day‑2 scope: `GET/PUT /variants/{id}`, `POST /export/{variant_id}`, `POST/GET /schedule`.
-  **Models & Alembic:** User, Preset, Job, Variant, Schedule, Tool, AuditEvent.
-  **Auth:** JWT (access/refresh), rate limits, input validation.
-  **FE:** Jobs list → Job detail → Variant accept → Export flow.&#x20;
+- Objective: Ship minimal changes with tests and docs.
+- Pre-flight:
+  □ Branch created: `git checkout -b feat/TDS-XXX-description`
+  □ Lease acquired: Update `collaboration/state/locks.json` with your agent ID
+  □ Task status → "in_progress" in `collaboration/state/tasks.json`
+  
+- Actions:
+  □ Write failing test first (TDD)
+  □ Implement minimal code to pass test
+  □ Run `python scripts/pr_gate.py` after each file save
+  □ Update relevant docs IN SAME COMMIT
+  □ Keep diff <200 LOC (check: `git diff --stat`)
+  
+- Exit Checklist:
+  □ `pytest services/orchestrator/tests` passes
+  □ `python scripts/pr_gate.py --run-tests` passes  
+  □ No uncommitted changes: `git status`
+  □ Event logged: task progress
 
 ### Phase 4 — Runner & Safe Executor (+ Optional LangGraph)
 
