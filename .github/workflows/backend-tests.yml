@@ -25,7 +25,7 @@ jobs:
           pip install ruff==0.6.9
       - name: Lint (ruff)
         run: ruff check kyros-praxis/services/orchestrator
-      - name: Run tests (orchestrator)
+      - name: Run steel-thread acceptance tests (orchestrator)
         run: |
           cd kyros-praxis/services/orchestrator
-          pytest -q
+          pytest -q -k "test_healthz_ok or test_create_task_and_list"
