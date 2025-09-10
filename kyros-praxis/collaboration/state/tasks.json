@@ -1,0 +1,148 @@
+{
+  "meta": {
+    "source": "agents/PLAN.md",
+    "synced_at": "2025-09-09T21:47:11.100Z"
+  },
+  "tasks": [
+    {
+      "id": "T-100",
+      "title": "Collab API with ETag + SSE (backend)",
+      "description": "Synced from PLAN.md",
+      "dod": [
+        "Endpoints return expected shapes; SSE tail works in dev"
+      ],
+      "owned_paths": [],
+      "commands": [
+        "pytest --collect-only",
+        "pytest services/orchestrator/tests/unit -v"
+      ],
+      "status": "todo",
+      "github_issue_number": null
+    },
+    {
+      "id": "T-101",
+      "title": "Console pages (Agents/Tasks/Leases/Events)",
+      "description": "Synced from PLAN.md",
+      "dod": [
+        "All pages render with basic data and a11y checks pass"
+      ],
+      "owned_paths": [],
+      "commands": [
+        "npm --prefix services/console run build",
+        "npm --prefix services/console test -w"
+      ],
+      "status": "todo",
+      "github_issue_number": null
+    },
+    {
+      "id": "T-102",
+      "title": "Celery runner + safe executor (backend)",
+      "description": "Synced from PLAN.md",
+      "dod": [
+        "Worker starts, executes a stub task, emits events"
+      ],
+      "owned_paths": [],
+      "commands": [
+        "alembic upgrade head",
+        "pytest services/orchestrator/tests/unit -v -k worker"
+      ],
+      "status": "todo",
+      "github_issue_number": null
+    },
+    {
+      "id": "T-103",
+      "title": "Jobs vertical slice (auth→job→variant→accept→export)",
+      "description": "Synced from PLAN.md",
+      "dod": [
+        "Create/list/detail flows work end‑to‑end"
+      ],
+      "owned_paths": [],
+      "commands": [
+        "pytest services/orchestrator/tests/unit -v -k jobs",
+        "npm --prefix services/console test -w -k jobs"
+      ],
+      "status": "todo",
+      "github_issue_number": null
+    },
+    {
+      "id": "T-104",
+      "title": "Playwright flows (Collab + Jobs) + data-testid",
+      "description": "Synced from PLAN.md",
+      "dod": [
+        "Happy paths pass with trace/video artifacts"
+      ],
+      "owned_paths": [],
+      "commands": [
+        "npx playwright test"
+      ],
+      "status": "todo",
+      "github_issue_number": null
+    },
+    {
+      "id": "T-105",
+      "title": "Docs & Runbooks + ADR template",
+      "description": "Synced from PLAN.md",
+      "dod": [
+        "Docs updated and lint passes"
+      ],
+      "owned_paths": [],
+      "commands": [
+        "markdownlint . || true"
+      ],
+      "status": "todo",
+      "github_issue_number": null
+    },
+    {
+      "id": "T-200",
+      "title": "Omnichannel hub (WS/Email/API/Slack/Webhook) + audit log",
+      "description": "Synced from PLAN.md",
+      "dod": [
+        "Minimal hub routes + audit appended"
+      ],
+      "owned_paths": [],
+      "commands": [],
+      "status": "todo",
+      "github_issue_number": null
+    },
+    {
+      "id": "T-201",
+      "title": "Remote Control UI tabs + activity feed",
+      "description": "Synced from PLAN.md",
+      "dod": [],
+      "owned_paths": [],
+      "commands": [],
+      "status": "todo",
+      "github_issue_number": null
+    },
+    {
+      "id": "T-202",
+      "title": "Email Commander + parsing + response loop",
+      "description": "Synced from PLAN.md",
+      "dod": [],
+      "owned_paths": [],
+      "commands": [],
+      "status": "todo",
+      "github_issue_number": null
+    },
+    {
+      "id": "T-203",
+      "title": "Slack slash commands + deep link",
+      "description": "Synced from PLAN.md",
+      "dod": [],
+      "owned_paths": [],
+      "commands": [],
+      "status": "todo",
+      "github_issue_number": null
+    },
+    {
+      "id": "T-204",
+      "title": "Channel rate limiting + API‑key validation middleware",
+      "description": "Synced from PLAN.md",
+      "dod": [],
+      "owned_paths": [],
+      "commands": [],
+      "status": "todo",
+      "github_issue_number": null
+    }
+  ]
+}

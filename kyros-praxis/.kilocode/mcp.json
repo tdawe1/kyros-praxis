@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "git": {
+      "command": "uvx",
+      "args": [
+        "mcp-server-git",
+        "--repository",
+        "/kyros-praxis"
+      ],
+      "disabled": true,
+      "alwaysAllow": []
+    }
+  }
+}

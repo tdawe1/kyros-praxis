@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")"/.. && pwd)"
+CSV1="$ROOT_DIR/kyros-praxis/docs/Tasks 2682b55f8d8581329b89d0635643317c_all.csv"
+CSV2="$ROOT_DIR/kyros-praxis/docs/Untitled 2682b55f8d8580bcaccaf5b744a95465.csv"
+OUT_CSV="$ROOT_DIR/kyros-praxis/docs/tasks_deduped.csv"
+OUT_MD="$ROOT_DIR/kyros-praxis/docs/tasks_deduped.md"
+PLAN_PATH_DEFAULT="${PLAN_PATH:-$HOME/.kilocode/rules/PLAN.md}"
+python3 "$ROOT_DIR/kyros-praxis/scripts/sync_plan.py" \
+  --src "$CSV1" --src "$CSV2" \
+  --out-csv "$OUT_CSV" --out-md "$OUT_MD" \
+  --plan "$PLAN_PATH_DEFAULT"
+echo "Synced: $OUT_MD -> $PLAN_PATH_DEFAULT"
+

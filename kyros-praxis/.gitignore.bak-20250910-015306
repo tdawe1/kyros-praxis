@@ -1,0 +1,50 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Builds
+dist/
+build/
+
+# Tests
+coverage/
+.pytest_cache/
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+
+# Docker
+.dockerignore
+
+# Home dir exclusions (to ignore irrelevant parent files)
+../.android/
+../.cache/
+../.config/
+../.local/
+../Desktop/
+../Documents/
+../Downloads/
+../.bash_history
+../.zsh_history
+../.gitconfig
+../.ssh/

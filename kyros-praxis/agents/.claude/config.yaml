@@ -1,0 +1,19 @@
+# .claude/config.yaml
+# Local configuration for Claude Code sessions.
+# Fill in ANTHROPIC_API_KEY via environment (.env) instead of this file.
+session_defaults:
+  model: "claude-3-opus-2024-xx"  # or current Opus 4.1 code model ID
+  max_depth: 4
+  style: "patches"        # prefer patch-style diffs
+  notes_file: "docs/BUILD_NOTES.md"
+  kickoff_template: ".claude/session_templates/kickoff.md"
+  wrapup_template: ".claude/session_templates/wrapup.md"
+  repo_context_paths:
+    - "collaboration/"
+    - "backend/"
+    - "frontend/"
+  guardrails:
+    - "no_secrets_in_code"
+    - "small_reviewable_diffs"
+env:
+  key_env: "ANTHROPIC_API_KEY"

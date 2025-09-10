@@ -1,0 +1,18 @@
+# Node
+node_modules/
+dist/
+.next/
+
+# Python
+**/__pycache__/
+**/.pytest_cache/
+**/venv/
+
+# Env & secrets
+.env
+*.env
+
+# Build artifacts
+*.log
+coverage/
+

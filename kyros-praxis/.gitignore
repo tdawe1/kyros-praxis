@@ -1,50 +1,32 @@
-# Dependencies
-node_modules/
+# Python
 __pycache__/
-*.pyc
-.env
-.env.local
-.env.*.local
+*.py[cod]
+*.pyo
+*.pyd
+.python-version
+.venv/
+venv/
+.eggs/
+*.egg-info/
+.mypy_cache/
+.pytest_cache/
 
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Logs
-logs/
-*.log
-
-# Builds
+# Node
+node_modules/
+.npm/
+.pnpm-store/
+.next/
 dist/
 build/
 
-# Tests
+# OS/editor
+.DS_Store
+.idea/
+.vscode/
+
+# Env
+.env
+.env.*
+
+# Misc
 coverage/
-.pytest_cache/
-
-# Terraform
-.terraform/
-*.tfstate
-*.tfstate.*
-
-# Docker
-.dockerignore
-
-# Home dir exclusions (to ignore irrelevant parent files)
-../.android/
-../.cache/
-../.config/
-../.local/
-../Desktop/
-../Documents/
-../Downloads/
-../.bash_history
-../.zsh_history
-../.gitconfig
-../.ssh/

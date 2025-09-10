@@ -1,0 +1,72 @@
+openapi: 3.0.0
+info:
+  title: API Client
+  version: 1.0.0
+  description: API for Orchestrator and Service Registry
+servers:
+  - url: http://localhost:8000
+    description: Orchestrator server
+paths:
+  /jobs:
+    get:
+      summary: List jobs
+      responses:
+        '200':
+          description: List of jobs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    status:
+                      type: string
+                    created_at:
+                      type: string
+    post:
+      summary: Create job
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                source_type:
+                  type: string
+                source_payload:
+                  type: object
+      responses:
+        '201':
+          description: Created job
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  status:
+                    type: string
+  /services:
+    get:
+      summary: List services
+      responses:
+        '200':
+          description: List of services
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      type: string
+                    status:
+                      type: string

@@ -1,0 +1,11 @@
+# DOC_INDEX.txt
+# Map stable DocIDs to file paths (optionally with anchors)
+# Format: <DocID>=<relative-path[#anchor]>
+collab-api-v1=docs/ARCHITECTURE.md#collab-api
+leases-spec-v1=docs/ARCHITECTURE.md#leases
+events-protocol-v1=docs/ARCHITECTURE.md#events
+jobs-slice-v1=docs/ARCHITECTURE.md#jobs
+mcp-collab-v1=docs/mcp/collab.md
+mcp-tests-v1=docs/mcp/tests.md
+ci-pipeline-v1=docs/TESTING.md#ci
+session-playbook-v1=docs/PLAYBOOK.md#claude-max

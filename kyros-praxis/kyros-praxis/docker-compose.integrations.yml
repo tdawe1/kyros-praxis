@@ -1,0 +1,182 @@
+services:
+  qdrant:
+    image: qdrant/qdrant:latest
+    restart: unless-stopped
+    ports:
+      - "6333:6333"   # REST
+      - "6334:6334"   # gRPC
+    environment:
+      QDRANT__SERVICE__API_KEY: ${QDRANT_API_KEY:-}
+      QDRANT__SERVICE__ENABLE_CORS: "true"
+      QDRANT__SERVICE__HTTP_PORT: 6333
+      QDRANT__SERVICE__GRPC_PORT: 6334
+      QDRANT__STORAGE__STORAGE_PATH: /qdrant/storage
+      QDRANT__TELEMETRY_DISABLED: "true"
+      QDRANT__LOG__LEVEL: INFO
+    volumes:
+      - ./qdrant/storage:/qdrant/storage
+      - ./qdrant/config/production.yaml:/qdrant/config/production.yaml:ro
+
+  # Filesystem MCP server (scoped to a specific host path)
+  mcp_filesystem:
+    image: ${FS_NODE_IMAGE:-node:20-alpine}
+    restart: unless-stopped
+    profiles: ["fs"]
+    working_dir: /workspace
+    command: ["npx","-y","@modelcontextprotocol/server-filesystem","/workspace"]
+    volumes:
+      - ${FS_PATH:-.}:/workspace:${FS_MODE:-ro}
+    environment:
+      FS_ALLOW_GLOBS: ${FS_ALLOW_GLOBS:-**/*}
+
+  # Memory MCP server (vector memory; defaults to Qdrant backend)
+  mcp_memory:
+    image: ${MEMORY_NODE_IMAGE:-node:20-alpine}
+    restart: unless-stopped
+    profiles: ["memory"]
+    environment:
+      QDRANT_URL: ${QDRANT_URL:-http://qdrant:6333}
+      QDRANT_API_KEY: ${QDRANT_API_KEY:-}
+      COLLECTION: ${MEMORY_COLLECTION:-kyros_agents}
+    working_dir: /app
+    command: ["npx","-y","@modelcontextprotocol/server-memory"]
+    depends_on:
+      - qdrant
+
+  # Context7 MCP server
+  context7:
+    image: ${CONTEXT7_NODE_IMAGE:-node:20-alpine}
+    restart: unless-stopped
+    profiles: ["context7"]
+    working_dir: /app
+    command: ["npx","-y","@upstash/context7-mcp"]
+    environment:
+      DEFAULT_MINIMUM_TOKENS: ${CONTEXT7_DEFAULT_MINIMUM_TOKENS:-256}
+      CONTEXT7_API_TOKEN: ${CONTEXT7_API_TOKEN:-}
+
+  # GitHub issue/PR MCP bridge (headless). Provide an image that exposes MCP tools
+  # over WS or stdio. If stdio-only, you may not need to expose a port.
+  mcp_github:
+    image: ${GITHUB_MCP_IMAGE:-ghcr.io/github/github-mcp-server}
+    restart: unless-stopped
+    profiles: ["github"]
+    environment:
+      GITHUB_PERSONAL_ACCESS_TOKEN: ${GITHUB_PERSONAL_ACCESS_TOKEN:?set a token with repo scope}
+      GITHUB_TOOLSETS: ${GITHUB_TOOLSETS:-repos,issues,pull_requests,code_security}
+      GITHUB_READ_ONLY: ${GITHUB_READ_ONLY:-}
+    # Example WS port (if your bridge exposes a socket)
+    # ports:
+    #   - "8787:8787"
+
+  # Headless browser (Puppeteer via CDP). Also works with Playwright over CDP.
+  mcp_puppeteer:
+    image: ${PUPPETEER_MCP_IMAGE:-node:20-alpine}
+    restart: unless-stopped
+    profiles: ["puppeteer"]
+    working_dir: /app
+    command: ["npx","-y","@modelcontextprotocol/server-puppeteer"]
+    environment:
+      BROWSERLESS_TOKEN: ${BROWSERLESS_TOKEN:-}
+
+  # Playwright runner (for CI/E2E). Not a service API by default; used to exec tests.
+  # You can `docker compose run --rm playwright npx playwright test`.
+  mcp_playwright:
+    image: ${PLAYWRIGHT_IMAGE:-mcr.microsoft.com/playwright:v1.45.0-jammy}
+    profiles: ["playwright"]
+    shm_size: "1gb"
+    working_dir: /workspace
+    command: ["bash","-lc","npx -y @playwright/mcp@latest --browser=chromium --headless=true --viewport-size=1280x800"]
+    volumes:
+      - ./:/workspace:ro
+
+  # Notion MCP server
+  mcp_notion:
+    image: ${NOTION_MCP_IMAGE:-node:20-alpine}
+    restart: unless-stopped
+    profiles: ["notion"]
+    working_dir: /app
+    command: ["npx","-y","@notionhq/notion-mcp-server"]
+    environment:
+      OPENAPI_MCP_HEADERS: ${OPENAPI_MCP_HEADERS:-}
+
+  # Sequential Thinking MCP server
+  mcp_sequentialthinking:
+    image: ${SEQ_MCP_IMAGE:-node:20-alpine}
+    restart: unless-stopped
+    profiles: ["seq"]
+    working_dir: /app
+    command: ["npx","-y","@modelcontextprotocol/server-sequential-thinking"]
+
+  # Composer Trade MCP server (Python uvx)
+  mcp_composer_trade:
+    image: ${UV_IMAGE:-ghcr.io/astral-sh/uv:latest}
+    restart: unless-stopped
+    profiles: ["composer"]
+    environment:
+      COMPOSER_API_KEY: ${COMPOSER_API_KEY:-}
+      COMPOSER_SECRET_KEY: ${COMPOSER_SECRET_KEY:-}
+    command: ["uvx","composer-trade-mcp==0.1.4","--hash","sha256:37d8fcfd6ddc9c8155633f755159f3fcb1a63e7acc2a32513613341a851c84e2"]
+
+
+  # Kyros core services (feature-complete stack)
+  kyros_orchestrator:
+    build:
+      context: ./services/orchestrator
+      dockerfile: Dockerfile
+    env_file:
+      - ./services/orchestrator/.env.example
+    environment:
+      QDRANT_URL: ${QDRANT_URL:-http://qdrant:6333}
+      QDRANT_API_KEY: ${QDRANT_API_KEY:-}
+    depends_on:
+      - qdrant
+    ports:
+      - "8000:8000"
+    profiles: ["kyros"]
+
+  kyros_registry:
+    build:
+      context: ./packages/service-registry
+      dockerfile: Dockerfile
+    env_file:
+      - ./packages/service-registry/.env.example
+    ports:
+      - "9000:9000"
+    profiles: ["kyros"]
+
+
+  kyros_daemon:
+    build:
+      context: .
+      dockerfile: services/terminal-daemon/Dockerfile
+    env_file:
+      - ./services/terminal-daemon/.env.example
+    ports:
+      - "8080:8080"
+    profiles: ["kyros"]
+
+  # Kyros MCP server (bridges Kyros APIs/Registry/Daemon/Memory to MCP tools)
+  mcp_kyros:
+    build:
+      context: ./integrations/kyros-mcp
+      dockerfile: Dockerfile
+    image: ${KYROS_MCP_IMAGE:-local/kyros-mcp:latest}
+    restart: unless-stopped
+    profiles: ["kyros-mcp"]
+    environment:
+      KYROS_API_BASE: ${KYROS_API_BASE:-http://kyros_orchestrator:8000}
+      KYROS_REGISTRY_URL: ${KYROS_REGISTRY_URL:-http://kyros_registry:9000}
+      KYROS_DAEMON_URL: ${KYROS_DAEMON_URL:-ws://kyros_daemon:8080/ws}
+      QDRANT_URL: ${QDRANT_URL:-http://qdrant:6333}
+      QDRANT_API_KEY: ${QDRANT_API_KEY:-}
+      KYROS_MCP_API_KEY: ${KYROS_MCP_API_KEY:-}
+      KYROS_MCP_TOOLS: ${KYROS_MCP_TOOLS:-runs,registry,memory,terminal}
+    depends_on:
+      - kyros_orchestrator
+      - kyros_registry
+      - kyros_daemon
+      - qdrant
+
+networks:
+  default:
+    name: kyros-integrations

@@ -1,0 +1,55 @@
+project: kyros-praxis/services/orchestrator
+current_state: Partial progress includes UUID primary keys and async Base in models.py, proper async engine/session setup in database.py, relative imports/auth/ETags/If-Match handling in routers/jobs.py and events.py, and basic async model tests in test_models.py; gaps remain in missing dependencies (e.g., sqlalchemy not installed causing import errors), no explicit indexes on Job.id and Event.type (field mismatch from 'name' to 'type'), hardcoded "Test Job" in create_job endpoint, incomplete CRUD tests in test_repo.py (only error cases with partial mocks, no success paths for commit/refresh), and unverified integration due to pytest failures during collection (exit code 2, 0 items collected).
+
+plan:
+  - step: 1
+    description: Install dependencies and fix import structure to unblock test collection and execution.
+    tools/commands:
+      - "cd kyros-praxis/services/orchestrator && python -m venv .venv && source .venv/bin/activate (if venv not present)"
+      - "echo \"sqlalchemy>=2.0\nfastapi\npydantic\npytest-asyncio\nuvicorn[standard]\nalembic\" > requirements.txt"
+      - "pip install -r requirements.txt"
+      - "touch kyros-praxis/services/orchestrator/repositories/__init__.py && touch kyros-praxis/services/orchestrator/tests/unit/__init__.py"
+      - "Update pytest.ini (if exists) with addopts = -v --asyncio-mode=auto and pythonpath = src (or adjust relative imports in tests to from ..repositories.jobs import ...)"
+    dependencies: Access to terminal in orchestrator dir; no conflicting global Python packages.
+    expected_outcome: Dependencies installed; __init__.py enables package resolution; pytest collects all test files without ImportError for sqlalchemy or repositories.
+    dod: Pytest --collect-only shows 2+ items collected with no errors; pre-commit run passes lint/format; small diff only to requirements.txt and __init__.py files.
+  - step: 2
+    description: Add explicit indexes to models.py and generate/apply Alembic migration for schema update.
+    tools/commands:
+      - "Edit kyros-praxis/services/orchestrator/models.py: Add from sqlalchemy import Index; then for Job: __table_args__ = (Index('ix_jobs_id', id), {}); for Event: __table_args__ = (Index('ix_events_type', type), {})."
+      - "cd kyros-praxis/services/orchestrator && alembic revision --autogenerate -m \"Add indexes on jobs.id and events.type for ETag performance\""
+      - "Edit new migration file (alembic/versions/xxxx_add_indexes.py) to ensure op.create_index('ix_jobs_id', 'jobs', ['id'], postgresql_concurrently=False) and op.create_index('ix_events_type', 'events', ['type'], postgresql_concurrently=False) in upgrade(); reverse in downgrade()."
+      - "alembic upgrade head"
+    dependencies: Step 1 completed (deps including alembic installed); existing 0001_initial migration applied.
+    expected_outcome: Models define explicit indexes; migration applied without errors; DB schema updated (verify with alembic current showing head).
+    dod: Alembic history shows new migration; no data loss on upgrade/downgrade test; ADR note in docs/ADRs if indexing decision warrants (e.g., adr-0002-indexing-for-etags.md); small diff to models.py and new migration file.
+  - step: 3
+    description: Parameterize hardcoded name in routers/jobs.py using Pydantic model for request body.
+    tools/commands:
+      - "Create kyros-praxis/services/orchestrator/schemas.py if missing: from pydantic import BaseModel, Field; class JobCreate(BaseModel): name: str = Field(..., min_length=1, max_length=255)"
+      - "Edit kyros-praxis/services/orchestrator/routers/jobs.py: Import JobCreate from ..schemas; update @router.post(\"/jobs\") to async def create_job_endpoint(job_create: JobCreate, ...); then job = await create_job(session, job_create.name)"
+      - "Add validation: If name invalid, Pydantic auto-raises 422; ensure response includes ETag as str(job.id)."
+    dependencies: Step 1 (deps for pydantic); routers/jobs.py exists with current structure.
+    expected_outcome: Endpoint accepts JSON {\"name\": \"Dynamic Job\"} and uses it; no hardcodes; validation enforced.
+    dod: Code inspection confirms parameterization; test via curl -X POST http://localhost:8000/jobs -H "Content-Type: application/json" -d '{\"name\": \"Test\"}' returns 200 with dynamic name in response; small diff to schemas.py (if new) and jobs.py.
+  - step: 4
+    description: Expand test_repo.py for full CRUD coverage with async mocks for success/error paths.
+    tools/commands:
+      - "Edit kyros-praxis/services/orchestrator/tests/unit/test_repo.py: Add @pytest.mark.asyncio async def test_create_job_success(): mock_session = AsyncMock(); mock_job = Job(name=\"Test\", id=uuid4()); mock_session.add.return_value = None; mock_session.commit.return_value = None; mock_session.refresh.side_effect = lambda obj: setattr(obj, 'id', mock_job.id); job = await create_job(mock_session, \"Test\"); assert job.name == \"Test\"; assert job.id is not None"
+      - "Similarly add test_add_event_success and test_get_jobs_nonempty (mock scalars().all() returning [Job instances])."
+      - "Fix imports to relative: from ..repositories.jobs import ...; from ..models import Job, Event"
+      - "Add edge cases: test_create_job_rollback on exception (patch commit to raise, assert rollback called)."
+    dependencies: Step 1 (pytest-asyncio installed); models.py and repositories/jobs.py stable.
+    expected_outcome: Tests cover success (commit/refresh mocked, assertions on returns) and errors for all functions; full CRUD logic verified.
+    dod: At least 6 tests total (3 success + 3 error); all pass with pytest; coverage >80% for repositories/jobs.py (use pytest-cov if installed); small diff to test_repo.py only.
+  - step: 5
+    description: Verify all fixes with pytest run, manual inspections, and integration checks.
+    tools/commands:
+      - "cd kyros-praxis/services/orchestrator && pytest tests/unit -v (expect all pass, no collection errors)"
+      - "Manual: Inspect models.py for indexes, jobs.py for JobCreate, test_repo.py for mocks/assertions; alembic current for head."
+      - "Integration: source .venv/bin/activate && uvicorn main:app --reload; curl test /jobs POST with body; check logs for no errors."
+      - "pre-commit run --all-files to verify format/lint."
+      - "If schema changes, update docs/API.md or create ADR in docs/ADRs/adr-indexing.md."
+    dependencies: All prior steps completed; server starts without import errors.
+    expected_outcome: Pytest passes 100%; integration confirms dynamic endpoint works; no regressions.
+    dod: Pytest output shows all green; curl returns expected response with ETag; docs updated if needed (e.g., schema note); overall DoD met (tests pass, pre-commit clean, small diffs, no events needed here); re-run code review if applicable.
