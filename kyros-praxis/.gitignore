@@ -40,3 +40,6 @@ packages/_deprecated/
 .kilocodemodes
 collaboration/state/
 archive/
+
+# Ignore large migration patch artifacts
+tools/migration/patches/*.patch
