@@ -1,20 +1,33 @@
-from fastapi import FastAPI, WebSocket, Depends, HTTPException, status, Body
+from fastapi import FastAPI, WebSocket, Depends, HTTPException, status
+from fastapi.responses import JSONResponse
 from fastapi.websockets import WebSocketDisconnect
-from jose import JWTError, jwt
+from jose import jwt  # used for token encoding in auth module
 from os import getenv
 from typing import Any
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.ext.asyncio import AsyncSession  # noqa: F401 (placeholder for future async endpoints)
 from sqlalchemy.orm import Session
 from datetime import timedelta
 
-from database import engine, get_db
-from routers.jobs import router as jobs_router
-from routers.events import router as events_router
-from routers.tasks import router as tasks_router
-import asyncio
-from models import Base
+from .database import engine, get_db
+from sqlalchemy import text
+from .routers.jobs import router as jobs_router
+from .routers.tasks import router as tasks_router
+# asyncio only needed for websocket echo; keep optional
+from .models import Base
 
-from auth import create_access_token, Token, authenticate_user, oauth2_scheme, Login
+from .auth import create_access_token, Token, authenticate_user, Login
+
+try:
+    from slowapi import Limiter, _rate_limit_exceeded_handler
+    from slowapi.errors import RateLimitExceeded
+    from slowapi.middleware import SlowAPIMiddleware
+    HAVE_SLOWAPI = True
+except Exception:  # pragma: no cover - optional dependency in local runs
+    Limiter = None  # type: ignore
+    SlowAPIMiddleware = None  # type: ignore
+    RateLimitExceeded = Exception  # type: ignore
+    HAVE_SLOWAPI = False
+from .middleware import api_key_validator, limiter_key_func
 
 SECRET_KEY = getenv("SECRET_KEY")  # Remove fallback for production readiness
 ALGORITHM = "HS256"
@@ -22,6 +35,16 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 
 app = FastAPI(title="Orchestrator API", version="0.1.0")
+
+REDIS_URL = getenv("REDIS_URL", "memory://")
+if HAVE_SLOWAPI:
+    app.state.limiter = Limiter(
+        key_func=limiter_key_func,
+        storage_uri=REDIS_URL,
+        default_limits=["60/minute"],
+    )
+    app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+    app.add_middleware(SlowAPIMiddleware)  
 
 
 @app.get("/")
@@ -37,7 +60,7 @@ async def health():
 @app.get("/healthz")
 def healthz(db = Depends(get_db)):
     try:
-        db.execute("SELECT 1")
+        db.execute(text("SELECT 1"))
         return {"status": "ok"}
     except Exception:
         raise HTTPException(status_code=500, detail="Database unavailable")
@@ -45,7 +68,7 @@ def healthz(db = Depends(get_db)):
 
 @app.post("/auth/login", response_model=Token)
 def login_for_access_token(
-    login: Login = Body(...),
+    login: Login,
     db: Session = Depends(get_db)
 ):
     user = authenticate_user(db, login.email, login.password)
@@ -86,27 +109,26 @@ app.websocket_endpoint = websocket_endpoint
 # Exception handlers
 @app.exception_handler(status.HTTP_401_UNAUTHORIZED)
 async def http_exception_handler_401(request, exc):
-    return {"type": "unauthorized", "message": "Could not validate credentials"}
+    return JSONResponse({"type": "unauthorized", "message": "Could not validate credentials"}, status_code=401)
 
 
 @app.exception_handler(status.HTTP_403_FORBIDDEN)
 async def http_exception_handler_403(request, exc):
-    return {"type": "forbidden", "message": "Not enough permissions to access resource"}
+    return JSONResponse({"type": "forbidden", "message": "Not enough permissions to access resource"}, status_code=403)
 
 
 @app.exception_handler(status.HTTP_404_NOT_FOUND)
 async def http_exception_handler_404(request, exc):
-    return {"type": "not_found", "message": "Resource not found"}
+    return JSONResponse({"type": "not_found", "message": "Resource not found"}, status_code=404)
 
 
 @app.exception_handler(status.HTTP_422_UNPROCESSABLE_ENTITY)
 async def http_exception_handler_422(request, exc):
-    return {"type": "unprocessable_entity", "message": "Validation error", "details": exc.detail}
+    return JSONResponse({"type": "unprocessable_entity", "message": "Validation error", "details": exc.detail}, status_code=422)
 
 
 # Routers
-app.include_router(jobs_router)
-app.include_router(events_router)
+app.include_router(jobs_router, dependencies=[Depends(api_key_validator)])
 app.include_router(tasks_router)
 
 if __name__ == "__main__":

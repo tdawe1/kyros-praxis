@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import AsyncMock, patch
-from repositories.jobs import get_jobs, create_job, add_event
-from models import Job, Event
+from services.orchestrator.repositories.jobs import get_jobs, create_job, add_event
+from services.orchestrator.models import Job, Event
 
 
 @pytest.mark.asyncio

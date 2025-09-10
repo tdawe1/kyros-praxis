@@ -1,14 +1,16 @@
 from fastapi import APIRouter, HTTPException, Depends
-from typing import List
 
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
-from auth import get_current_user, User
+from ..auth import get_current_user, User
 
-from models import Job
+# (No direct Job import needed at import-time)
 
-from repositories.jobs import create_job, get_jobs
-from repositories.database import get_db_session
+async def get_db_session():
+    # Lazy import to avoid loading async drivers during unrelated tests
+    from ..repositories.database import get_db_session as _inner
+    async for s in _inner():
+        yield s
 
 
 router = APIRouter()
@@ -19,7 +21,8 @@ async def create_job_endpoint(
     current_user: User = Depends(get_current_user),
 ):
     try:
-        job = await create_job(session, "Test Job")
+        from ..repositories.jobs import create_job as _create_job
+        job = await _create_job(session, "Test Job")
         response = JSONResponse(
             content={
                 "job_id": str(job.id),
@@ -38,7 +41,8 @@ async def get_jobs_endpoint(
     session: AsyncSession = Depends(get_db_session),
     current_user: User = Depends(get_current_user),
 ):
-    jobs = await get_jobs(session)
+    from ..repositories.jobs import get_jobs as _get_jobs
+    jobs = await _get_jobs(session)
     response = JSONResponse(
         content={
             "jobs": [

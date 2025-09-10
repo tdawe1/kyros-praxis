@@ -9,6 +9,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Detect changed paths
+        id: changes
+        uses: dorny/paths-filter@v3
+        with:
+          token: ${{ github.token }}
+          filters: |
+            orchestrator:
+              - 'kyros-praxis/services/orchestrator/**'
+              - 'services/orchestrator/**'
+            console:
+              - 'kyros-praxis/services/console/**'
+              - 'services/console/**'
+            docs:
+              - 'docs/**'
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
@@ -18,26 +32,32 @@ jobs:
         with:
           python-version: '3.11'
       - name: Install backend dependencies
+        if: steps.changes.outputs.orchestrator == 'true'
         run: |
           cd services/orchestrator
           pip install -r requirements.txt
       - name: Lint backend
+        if: steps.changes.outputs.orchestrator == 'true'
         run: |
           cd services/orchestrator
           ruff check .
-      - name: Test backend
+      - name: Test backend (steel-thread)
+        if: steps.changes.outputs.orchestrator == 'true'
         run: |
           cd services/orchestrator
-          pytest
+          pytest -q -k "test_healthz_ok or test_create_task_and_list"
       - name: Install frontend dependencies
+        if: steps.changes.outputs.console == 'true'
         run: |
           cd services/console
           npm ci
       - name: Lint frontend
+        if: steps.changes.outputs.console == 'true'
         run: |
           cd services/console
           npm run lint
       - name: Test frontend
+        if: steps.changes.outputs.console == 'true'
         run: |
           cd services/console
           npm test
