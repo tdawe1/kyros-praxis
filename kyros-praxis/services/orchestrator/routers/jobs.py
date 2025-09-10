@@ -36,7 +36,7 @@ def create_job(
     db.add(job)
     db.commit()
     db.refresh(job)
-    job_dict = {"job_id": str(job.id), "status": job.status}
+    job_dict = {"id": str(job.id), "name": job.name, "status": job.status}
     canonical = json.dumps(job_dict, sort_keys=True)
     etag = hashlib.sha256(canonical.encode()).hexdigest()
     response = JSONResponse(content=job_dict)
