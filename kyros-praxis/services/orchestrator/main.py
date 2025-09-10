@@ -1,4 +1,5 @@
 from fastapi import FastAPI, WebSocket, Depends, HTTPException, status
+from fastapi.responses import JSONResponse
 from fastapi.websockets import WebSocketDisconnect
 from jose import jwt  # used for token encoding in auth module
 from os import getenv
@@ -108,22 +109,22 @@ app.websocket_endpoint = websocket_endpoint
 # Exception handlers
 @app.exception_handler(status.HTTP_401_UNAUTHORIZED)
 async def http_exception_handler_401(request, exc):
-    return {"type": "unauthorized", "message": "Could not validate credentials"}
+    return JSONResponse({"type": "unauthorized", "message": "Could not validate credentials"}, status_code=401)
 
 
 @app.exception_handler(status.HTTP_403_FORBIDDEN)
 async def http_exception_handler_403(request, exc):
-    return {"type": "forbidden", "message": "Not enough permissions to access resource"}
+    return JSONResponse({"type": "forbidden", "message": "Not enough permissions to access resource"}, status_code=403)
 
 
 @app.exception_handler(status.HTTP_404_NOT_FOUND)
 async def http_exception_handler_404(request, exc):
-    return {"type": "not_found", "message": "Resource not found"}
+    return JSONResponse({"type": "not_found", "message": "Resource not found"}, status_code=404)
 
 
 @app.exception_handler(status.HTTP_422_UNPROCESSABLE_ENTITY)
 async def http_exception_handler_422(request, exc):
-    return {"type": "unprocessable_entity", "message": "Validation error", "details": exc.detail}
+    return JSONResponse({"type": "unprocessable_entity", "message": "Validation error", "details": exc.detail}, status_code=422)
 
 
 # Routers
