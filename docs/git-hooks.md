@@ -94,7 +94,8 @@ Example `.eslintrc.json`:
 
 The sample script (`scripts/pre-push.sh`) is a Bash script that:
 
-- Identifies staged files using `git diff --cached --name-only --diff-filter=ACMRTUXB`.
+- Identifies files in the push range by reading ref updates from STDIN and
+  running `git diff --name-only --diff-filter=ACMRTUXB "$remote_sha..$local_sha"`.
 - Separates Python (`.py`) and JS/TS files.
 - Runs `pylint` on Python files (using `pyproject.toml` config).
 - Runs `npx eslint` on JS/TS files (using `.eslintrc.json` config).
