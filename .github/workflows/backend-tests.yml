@@ -2,7 +2,16 @@ name: backend-tests
 
 on:
   push:
+    branches: [ main ]
+    paths:
+      - 'kyros-praxis/services/orchestrator/**'
+      - '.github/workflows/backend-tests.yml'
+      - 'kyros-praxis/pytest.ini'
   pull_request:
+    paths:
+      - 'kyros-praxis/services/orchestrator/**'
+      - '.github/workflows/backend-tests.yml'
+      - 'kyros-praxis/pytest.ini'
 
 jobs:
   test:
