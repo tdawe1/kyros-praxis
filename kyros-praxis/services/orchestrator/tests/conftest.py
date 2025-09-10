@@ -35,14 +35,21 @@ def sync_override_get_db():
 
 @pytest.fixture(scope="function")
 def async_override_get_db_session():
-    engine = create_async_engine("sqlite+aiosqlite:///:memory:", echo=False)
+    from sqlalchemy.pool import StaticPool
+    engine = create_async_engine(
+        "sqlite+aiosqlite://",
+        echo=False,
+        poolclass=StaticPool,
+    )
 
     async def test_get_db_session():
         async with engine.begin() as conn:
             await conn.run_sync(Base.metadata.create_all)
 
-        async with AsyncSession(engine) as session:
+        async with AsyncSession(engine, expire_on_commit=False) as session:
             user = User(
+                # …
+            )
                 email="jobs@example.com", 
                 password_hash=pwd_context.hash("password")
             )
