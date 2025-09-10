@@ -43,3 +43,6 @@ archive/
 
 # Ignore large migration patch artifacts
 tools/migration/patches/*.patch
+
+# Ignore large migration patch artifacts
+tools/migration/patches/*.patch
