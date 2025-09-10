@@ -44,10 +44,7 @@ jobs:
           from services.orchestrator.models import User
           from services.orchestrator.auth import pwd_context
           
-          # Configure env for jobs (API key + async DB)
-          os.environ.setdefault('API_KEYS', 'ci-key')
-          os.environ.setdefault('DATABASE_URL', 'sqlite+aiosqlite:///./orchestrator_async.db')
-
+          # (env provided by workflow)
           s = SessionLocal()
           if not s.query(User).filter(User.email=='ci@example.com').first():
               s.add(User(email='ci@example.com', password_hash=pwd_context.hash('password')))
