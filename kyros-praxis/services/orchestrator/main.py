@@ -34,6 +34,12 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 @app.get("/")
 async def root():
+    """
+    Return a simple JSON-ready heartbeat indicating the API is running.
+    
+    Returns:
+        dict: A payload with a "message" key, e.g. {"message": "Orchestrator API is running"}.
+    """
     return {"message": "Orchestrator API is running"}
 
 

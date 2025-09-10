@@ -6,6 +6,11 @@ from typing import Optional
 
 
 def _allowed_api_keys() -> set[str]:
+    """
+    Return the set of allowed API keys parsed from the API_KEYS environment variable.
+    
+    Reads the environment variable "API_KEYS", splits its value on commas, trims whitespace from each entry, and returns a set of non-empty keys. If API_KEYS is unset or contains only empty/whitespace entries, an empty set is returned.
+    """
     raw = os.getenv("API_KEYS", "")
     return {k.strip() for k in raw.split(",") if k.strip()}
 
@@ -34,8 +39,12 @@ limiter = Limiter(key_func=limiter_key_func)
 
 async def rate_limiter(request: Request, api_key: str = Depends(api_key_validator)) -> None:
     """
-    Rate limit dependency. Uses app.state.limiter if set (e.g., Redis backend),
-    else falls back to module-level limiter. Keys on API key.
+    Enforce per-key rate limiting for incoming requests.
+    
+    This async dependency validates rate limits using the application's active limiter (request.app.state.limiter) or the module-level fallback. It is intended to run after api_key_validator (via the dependency injection) so limits are applied per API key; when no API key is present the limiter's key function may treat the request as "anonymous". Uses the generic "global" bucket for checks.
+    
+    Raises:
+    	RateLimitExceeded: if the limiter reports the "global" bucket is over the allowed limit.
     """
     active_limiter: Limiter = getattr(request.app.state, "limiter", limiter)
     # Use a generic limit bucket name; policies can be refined per-route later.
