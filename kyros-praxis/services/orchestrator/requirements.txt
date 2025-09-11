@@ -1,9 +1,9 @@
 fastapi==0.115.0
 uvicorn[standard]==0.32.0
-sqlalchemy[asyncio]>=2.0.0
+sqlalchemy[asyncio]==2.0.35
 alembic==1.16.5
 pydantic==2.11.7
-python-jose[cryptography]==3.5.0
+python-jose==3.3.0
 passlib[bcrypt]==1.7.4
 python-dotenv==1.1.1
 

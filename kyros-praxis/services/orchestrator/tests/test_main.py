@@ -1,8 +1,7 @@
-import os
 import importlib
+
 import pytest
 from fastapi.testclient import TestClient
-
 from services.orchestrator.main import app
 
 
@@ -19,11 +18,13 @@ def test_healthz(client):
 
 def test_websocket_endpoint():
     from services.orchestrator.main import app as the_app
+
     assert hasattr(the_app, "websocket_endpoint")
 
 
 def test_secret_key_env(monkeypatch):
     monkeypatch.setenv("SECRET_KEY", "test-secret")
     import services.orchestrator.main as main_mod
+
     importlib.reload(main_mod)
     assert main_mod.SECRET_KEY == "test-secret"
