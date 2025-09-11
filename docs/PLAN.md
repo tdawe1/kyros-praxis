@@ -1,5 +1,6 @@
 # Changelog
 
+- v1.2 (2024-09-11): Address review feedback for Jobs API and tests.
 - v1.1 (2024-09-10): Merged baks, aligned stacks, fixed dates.
 
 ## 0) Goals & Non‑Negotiables
