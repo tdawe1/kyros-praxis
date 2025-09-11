@@ -166,8 +166,6 @@ def main():
         with open(plan_path, "a", encoding="utf-8") as f:
             f.write(f"\n<!-- Updated: {datetime.now().isoformat()} -->\n")
         print("  Auto-fix: Added timestamp to docs/PLAN.md")
-        ok = True  # Re-evaluate after fix; caller may re-run script
-
     if args.fix and not dod_ok:
         test_path = REPO_ROOT / "services" / "orchestrator" / "tests" / "unit" / "test_generated.py"
         test_path.parent.mkdir(parents=True, exist_ok=True)
@@ -182,6 +180,11 @@ def main():
         else:
             print("  Auto-fix skipped: placeholder test already exists")
 
+    # Re-evaluate status post auto-fix without clobbering failure states
+    ok = plan_sync_ok and dod_ok and (tests_ok if args.run_tests else True)
+
+    # Positive feedback
+    if ok:
     # Positive feedback
     if ok:
         print("✅ All checks passed! Ready for PR.")
