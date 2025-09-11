@@ -40,7 +40,7 @@ cd ..
 
 # Frontend setup
 echo "Setting up frontend in services/console..."
-cd services/console
+cd console
 
 if [ ! -d node_modules ]; then
     echo "Installing frontend dependencies..."
@@ -52,13 +52,13 @@ fi
 cd ..
 
 # Database migrations (assume DB is set up if alembic.ini exists)
-if [ -f services/orchestrator/alembic.ini ]; then
+if [ -f orchestrator/alembic.ini ]; then
     echo "Running database migrations..."
     cd services/orchestrator
     alembic upgrade head
     cd ..
 else
-    echo "Skipping DB migrations: alembic.ini not found in services/orchestrator"
+    echo "Skipping DB migrations: alembic.ini not found in orchestrator"
 fi
 
 # Instructions for starting services

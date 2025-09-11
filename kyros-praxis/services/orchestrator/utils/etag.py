@@ -1,7 +1,7 @@
 import hashlib
 import json
 
-def generate_etag(data):
+def generate_etag(data: dict) -> str:
     """
     Generate an ETag from the data by sorting keys and using SHA256.
     """
