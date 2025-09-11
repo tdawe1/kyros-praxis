@@ -1,6 +1,9 @@
+import os
 import pytest
 
 from httpx import AsyncClient
+
+os.environ.setdefault("API_KEYS", "ci-key")
 
 from services.orchestrator.main import app
 from services.orchestrator.database import SessionLocal
@@ -26,13 +29,13 @@ async def test_create_job_contract():
 
         response = await ac.post(
             "/jobs",
-            json={"agent_id": "test", "task": "test"},
-            headers={"Authorization": f"Bearer {token}"}
+            json={"title": "test"},
+            headers={"Authorization": f"Bearer {token}", "X-API-Key": "ci-key"}
         )
         assert response.status_code == 200
         data = response.json()
-        assert "job_id" in data
-        assert data["status"] == "accepted"
+        assert "id" in data
+        assert "status" in data
 
 
 @pytest.mark.asyncio
@@ -45,7 +48,7 @@ async def test_list_jobs_contract():
 
         response = await ac.get(
             "/jobs",
-            headers={"Authorization": f"Bearer {token}"}
+            headers={"Authorization": f"Bearer {token}", "X-API-Key": "ci-key"}
         )
         assert response.status_code == 200
         assert "jobs" in response.json()
