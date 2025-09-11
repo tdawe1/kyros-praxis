@@ -13,7 +13,7 @@
 - Omnichannel hub (WS/Email/API/Slack/Webhook) + audit log (TDS-6) — Backlog, P1, Due: 26 September 2025
 - Docs & Runbooks + ADR template (TDS-5) — Backlog, P0, Due: 26 September 2025
 - Playwright flows (Collab + Jobs) + data-testid (TDS-4) — Backlog, P0, Due: 24 September 2025
-- Jobs vertical slice (auth→job→variant→accept→export) (TDS-3) — In Progress, P0, Due: 23 September 2025
+- Jobs vertical slice (auth→job→variant→accept→export) (TDS-3) — In Progress, P0, Due: 23 September 2025 (imports refactored; task endpoints synced)
 - Console pages: Agents/Tasks/Leases/Events (TDS-12) — Backlog, P0, Due: 19 September 2025
 - Celery runner + safe executor (TDS-13) — Backlog, P0, Due: 12 September 2025
 - Email Commander + parsing + response loop (TDS-19) — Backlog, P1, Due: 26 September 2025

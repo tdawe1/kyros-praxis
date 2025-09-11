@@ -13,7 +13,7 @@ router = APIRouter()
 
 
 @router.post("/collab/tasks")
-async def create_task(
+def create_task(
     task: TaskCreate,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
@@ -41,7 +41,7 @@ async def create_task(
 
 
 @router.get("/collab/state/tasks")
-async def list_tasks(db: Session = Depends(get_db), response: Response = None):
+def list_tasks(db: Session = Depends(get_db), response: Response = None):
     tasks = db.query(Task).all()
     items = []
     for t in tasks:

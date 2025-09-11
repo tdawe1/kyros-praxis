@@ -28,6 +28,25 @@ Integrate handoff cards matching docs/schemas/handoff-card.yaml, generated using
 - Invariants: Enforce ETags on updates for optimistic concurrency; use atomic writes for state changes; emit append-only events for transitions to maintain observability.
 - Plan-Sync: Reject changes if matching plan file (e.g., backend-current-plan.md or frontend-current-plan.md) is not updated in the same PR.
 
+## Integrator Merge Step (Proposed)
+
+- Acquire lease: mark an `integrate` lease in `collaboration/state/locks.json` to avoid parallel merges.
+- Prep workspace: `git fetch --all --prune && git checkout main && git pull`.
+- Validate PR branch locally:
+  - `gh pr checkout <PR#>` or `git checkout <branch>`
+  - Run: `scripts/check.sh --base main --run-tests` (must pass)
+- Merge protocol:
+  - Enable rerere (optional): `git config rerere.enabled true`
+  - Rebase onto `main` (preferred) or merge; resolve conflicts
+  - Conflict resolution checklist: preserve schema changes, re-run `scripts/check.sh`, emit events (see below)
+- Events during merge:
+  - Append to `collaboration/events/events.jsonl`:
+    - `merge_started`, `merge_conflict` (per file, include resolver + strategy), `merge_resolved`, `merge_pushed`
+- Finalize:
+  - Push: `git push` (for rebase, with `--force-with-lease` when necessary)
+  - Confirm CI green; update task status to `merging` → `done` in `collaboration/state/tasks.json`
+  - Comment on PR summarizing resolution and follow-ups
+
 Goals
 - Backend: Wire endpoints/models with ETag and pass PR1 tests. Paths touched: services/orchestrator/main.py (app, routes, session wiring), services/orchestrator/models.py (SQLAlchemy Base + models), services/orchestrator/auth.py (login route, JWT helpers, dependencies), services/orchestrator/errors.py (exception handlers), services/orchestrator/tests/ (unit/contract tests), alembic/ (env + versions after PR3).
 - Frontend: Wire pages with TanStack Query and WS integration. Paths touched: services/console/app/page.tsx (dashboard), services/console/src/lib/auth.ts (Next-Auth OIDC), services/console/src/lib/ws.ts (WebSocket hook).
@@ -55,4 +74,3 @@ Steel Thread Smoke Tests
 Guardrails (enforce)
 - Reject if matching plan file not updated in same PR.
 - Prefer ≤200 LOC diffs unless migrations.
-
