@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from ..models import Job, Event
 
 async def get_jobs(session: AsyncSession) -> List[Job]:
-    result = await session.execute(select(Job))
+    result = await session.execute(select(Job).order_by(Job.id))
     return result.scalars().all()
 
 async def create_job(session: AsyncSession, name: str) -> Job:
