@@ -68,13 +68,6 @@ async def get_jobs_endpoint(
     current_user: User = Depends(get_current_user),
     response: Response = None,
 ):
-    jobs = await get_jobs(session)
-    payload = {
-        "jobs": [
-            {"id": str(j.id), "name": j.name, "status": j.status}
-            for j in jobs
-        ]
-    }
     from ..repositories.jobs import get_jobs as _get_jobs
     jobs = await _get_jobs(session)
     items = [
