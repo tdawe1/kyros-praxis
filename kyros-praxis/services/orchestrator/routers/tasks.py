@@ -1,5 +1,4 @@
-from fastapi import APIRouter, Depends
-from fastapi.responses import JSONResponse
+from fastapi import APIRouter, Depends, Response
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
@@ -14,9 +13,14 @@ router = APIRouter()
 
 
 @router.post("/collab/tasks")
-async def create_task(task: TaskCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    validated_input = validate_task_input(task.dict())
-    db_task = Task(**validated_input.dict())
+async def create_task(
+    task: TaskCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+    response: Response = None,
+):
+    validated_input = validate_task_input(task.model_dump())
+    db_task = Task(**validated_input.model_dump())
     db.add(db_task)
     db.commit()
     db.refresh(db_task)
@@ -25,17 +29,19 @@ async def create_task(task: TaskCreate, db: Session = Depends(get_db), current_u
         "title": db_task.title,
         "description": db_task.description,
         "version": db_task.version,
-        "created_at": db_task.created_at.isoformat()
+        "created_at": db_task.created_at.isoformat(),
     }
     canonical = json.dumps(task_dict, sort_keys=True)
     etag = hashlib.sha256(canonical.encode()).hexdigest()
-    response = JSONResponse(content=task_dict)
-    response.headers["ETag"] = etag
-    return response
+    if response is not None:
+        response.status_code = 201
+        response.headers["ETag"] = f"\"{etag}\""
+        response.headers["Location"] = f"/collab/tasks/{task_dict['id']}"
+    return task_dict
 
 
 @router.get("/collab/state/tasks")
-async def list_tasks(db: Session = Depends(get_db)):
+async def list_tasks(db: Session = Depends(get_db), response: Response = None):
     tasks = db.query(Task).all()
     items = []
     for t in tasks:
@@ -48,6 +54,6 @@ async def list_tasks(db: Session = Depends(get_db)):
         })
     canonical = json.dumps(items, sort_keys=True)
     etag = hashlib.sha256(canonical.encode()).hexdigest()
-    response = JSONResponse(content={"kind": "tasks", "items": items})
-    response.headers["ETag"] = etag
-    return response
+    if response is not None:
+        response.headers["ETag"] = etag
+    return {"kind": "tasks", "items": items}

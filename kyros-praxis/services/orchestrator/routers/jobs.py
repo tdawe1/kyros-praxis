@@ -1,6 +1,6 @@
-from fastapi import APIRouter, HTTPException, Depends, Body
-from fastapi.responses import JSONResponse
+from fastapi import APIRouter, HTTPException, Depends, Body, Response
 from sqlalchemy.ext.asyncio import AsyncSession
+from pydantic import BaseModel
 from ..utils.validation import validate_job_input, JobCreate
 # Lazy wrapper to avoid importing asyncpg unless these endpoints are invoked
 async def get_db_session_wrapper():
@@ -19,22 +19,29 @@ async def _create_job(session: AsyncSession, title: str):
     await session.refresh(job)
     return job
 
+class JobResponse(BaseModel):
+    id: str
+    name: str
+    status: str
+
+
 router = APIRouter()
 
-@router.post("/jobs")
+
+@router.post("/jobs", response_model=JobResponse)
 async def create_job(
     job_input: JobCreate = Body(...),
     session: AsyncSession = Depends(get_db_session_wrapper),
     current_user: User = Depends(get_current_user),
+    response: Response = None,
 ):
-    validated_input = validate_job_input(job_input.dict())
+    validated_input = validate_job_input(job_input.model_dump())
     try:
         job = await _create_job(session, validated_input.title)
-        response = JSONResponse(
-            content={"job_id": str(job.id), "status": "accepted"}
-        )
-        response.headers["ETag"] = str(job.id)
-        return response
+        resp_model = JobResponse(id=str(job.id), name=job.name, status=job.status)
+        if response is not None:
+            response.headers["ETag"] = str(job.id)
+        return resp_model
     except Exception:
         await session.rollback()
         raise HTTPException(status_code=500, detail="Job creation failed")
@@ -54,19 +61,19 @@ async def delete_job(
 async def get_jobs_endpoint(
     session: AsyncSession = Depends(get_db_session_wrapper),
     current_user: User = Depends(get_current_user),
+    response: Response = None,
 ):
     from ..repositories.jobs import get_jobs as _get_jobs
     jobs = await _get_jobs(session)
-    response = JSONResponse(
-        content={
-            "jobs": [
-                {"id": str(j.id), "name": j.name, "status": j.status}
-                for j in jobs
-            ]
-        }
-    )
-    response.headers["ETag"] = "list-version-1"
-    return response
+    payload = {
+        "jobs": [
+            {"id": str(j.id), "name": j.name, "status": j.status}
+            for j in jobs
+        ]
+    }
+    if response is not None:
+        response.headers["ETag"] = "list-version-1"
+    return payload
 
 
 @router.get("/jobs/{job_id}")
@@ -74,12 +81,13 @@ async def get_job_by_id(
     job_id: str,
     session: AsyncSession = Depends(get_db_session_wrapper),
     current_user: User = Depends(get_current_user),
+    response: Response = None,
 ):
     from ..models import Job
     obj = await session.get(Job, job_id)
     if not obj:
         raise HTTPException(status_code=404, detail="Job not found")
     content = {"id": str(obj.id), "name": obj.name, "status": obj.status}
-    response = JSONResponse(content=content)
-    response.headers["ETag"] = str(obj.id)
-    return response
+    if response is not None:
+        response.headers["ETag"] = str(obj.id)
+    return content
