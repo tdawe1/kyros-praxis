@@ -8,6 +8,7 @@ async def get_db_session_wrapper():
     async for s in _inner():
         yield s
 from ..auth import get_current_user, User
+from ..utils import generate_etag
 
 
 async def _create_job(session: AsyncSession, title: str):
@@ -38,10 +39,10 @@ async def create_job(
     validated_input = validate_job_input(job_input.model_dump())
     try:
         job = await _create_job(session, validated_input.title)
-        resp_model = JobResponse(id=str(job.id), name=job.name, status=job.status)
+        content = {"id": str(job.id), "name": job.name, "status": job.status}
         if response is not None:
-            response.headers["ETag"] = str(job.id)
-        return resp_model
+            response.headers["ETag"] = generate_etag(content)
+        return content
     except Exception:
         await session.rollback()
         raise HTTPException(status_code=500, detail="Job creation failed")
@@ -65,14 +66,13 @@ async def get_jobs_endpoint(
 ):
     from ..repositories.jobs import get_jobs as _get_jobs
     jobs = await _get_jobs(session)
-    payload = {
-        "jobs": [
-            {"id": str(j.id), "name": j.name, "status": j.status}
-            for j in jobs
-        ]
-    }
+    items = [
+        {"id": str(j.id), "name": j.name, "status": j.status}
+        for j in jobs
+    ]
+    payload = {"jobs": items}
     if response is not None:
-        response.headers["ETag"] = "list-version-1"
+        response.headers["ETag"] = generate_etag(items)
     return payload
 
 
@@ -89,5 +89,5 @@ async def get_job_by_id(
         raise HTTPException(status_code=404, detail="Job not found")
     content = {"id": str(obj.id), "name": obj.name, "status": obj.status}
     if response is not None:
-        response.headers["ETag"] = str(obj.id)
+        response.headers["ETag"] = generate_etag(content)
     return content
