@@ -1,13 +1,11 @@
 from fastapi.testclient import TestClient
+from services.orchestrator.auth import pwd_context
+from services.orchestrator.database import get_db
+from services.orchestrator.main import app
+from services.orchestrator.models import Base, User
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
-
-from services.orchestrator.main import app
-from services.orchestrator.database import get_db
-from services.orchestrator.models import Base, User
-from services.orchestrator.auth import pwd_context
-from services.orchestrator.auth import authenticate_user
 
 engine = create_engine(
     "sqlite:///./test.db",
@@ -35,19 +33,24 @@ client = TestClient(app)
 def test_unauth_create():
     response = client.post(
         "/collab/tasks",
-        json={"title": "Test Task", "description": "Test Description", "version": 1}
+        json={"title": "Test Task", "description": "Test Description", "version": 1},
     )
     assert response.status_code == 401
-    assert response.json() == {"type": "unauthorized", "message": "Could not validate credentials"}
+    assert response.json() == {
+        "type": "unauthorized",
+        "message": "Could not validate credentials",
+    }
 
 
 def test_login_invalid():
     response = client.post(
-        "/auth/login",
-        json={"email": "test@example.com", "password": "wrong"}
+        "/auth/login", json={"email": "test@example.com", "password": "wrong"}
     )
     assert response.status_code == 401
-    assert response.json() == {"type": "unauthorized", "message": "Incorrect email or password"}
+    assert response.json() == {
+        "type": "unauthorized",
+        "message": "Incorrect email or password",
+    }
 
 
 def test_login_and_create():
@@ -60,8 +63,7 @@ def test_login_and_create():
 
     # Login
     response = client.post(
-        "/auth/login",
-        json={"email": "test@example.com", "password": "password"}
+        "/auth/login", json={"email": "test@example.com", "password": "password"}
     )
     assert response.status_code == 200
     tokens = response.json()
@@ -71,7 +73,7 @@ def test_login_and_create():
     response = client.post(
         "/collab/tasks",
         json={"title": "Test Task", "description": "Test Description", "version": 1},
-        headers={"Authorization": f"Bearer {access_token}"}
+        headers={"Authorization": f"Bearer {access_token}"},
     )
     assert response.status_code == 200
     assert "id" in response.json()
@@ -80,7 +82,7 @@ def test_login_and_create():
     response = client.post(
         "/collab/tasks",
         json={"title": "", "description": "Test Description", "version": 1},
-        headers={"Authorization": f"Bearer {access_token}"}
+        headers={"Authorization": f"Bearer {access_token}"},
     )
     assert response.status_code == 422
     assert "type" in response.json()

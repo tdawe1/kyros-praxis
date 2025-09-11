@@ -1,8 +1,8 @@
-from sqlalchemy import Index
+from uuid import uuid4
+
+from sqlalchemy import JSON, Column, DateTime, Index, Integer, String, func
 from sqlalchemy.ext.asyncio import AsyncAttrs
 from sqlalchemy.orm import DeclarativeBase
-from sqlalchemy import Column, String, JSON, DateTime, Integer, func
-from uuid import uuid4
 
 
 class Base(AsyncAttrs, DeclarativeBase):
@@ -16,7 +16,7 @@ class Job(Base):
     name = Column(String(255), nullable=False)
     status = Column(String(50), server_default="pending")
     created_at = Column(DateTime, server_default=func.now())
-    __table_args__ = (Index('ix_jobs_created_at', 'created_at'), )
+    __table_args__ = (Index("ix_jobs_created_at", "created_at"),)
 
 
 class Event(Base):
@@ -26,7 +26,7 @@ class Event(Base):
     type = Column(String(50), nullable=False)
     payload = Column(JSON, nullable=False)
     created_at = Column(DateTime, server_default=func.now())
-    __table_args__ = (Index('ix_events_created_at', 'created_at'), )
+    __table_args__ = (Index("ix_events_created_at", "created_at"),)
 
 
 class Task(Base):
@@ -37,7 +37,7 @@ class Task(Base):
     description = Column(String(1024))
     version = Column(Integer, server_default="1")
     created_at = Column(DateTime, server_default=func.now())
-    __table_args__ = (Index('ix_tasks_created_at', 'created_at'), )
+    __table_args__ = (Index("ix_tasks_created_at", "created_at"),)
 
 
 class User(Base):

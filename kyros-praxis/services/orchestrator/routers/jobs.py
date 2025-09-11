@@ -1,18 +1,21 @@
-from fastapi import APIRouter, HTTPException, Depends, Body, Response
-from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import APIRouter, Body, Depends, HTTPException, Response
 from pydantic import BaseModel
-from ..auth import get_current_user, User
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from ..database import get_db_session
 from ..models import Job
-from ..repositories.jobs import get_jobs
 from ..utils.validation import JobCreate, validate_job_input
-from ..utils.validation import validate_job_input, JobCreate
+
+
 # Lazy wrapper to avoid importing database/session machinery unless endpoints are invoked
 async def get_db_session_wrapper():
     from ..database import get_db_session as _inner
+
     async for s in _inner():
         yield s
-from ..auth import get_current_user, User
+
+
+from ..auth import User, get_current_user
 from ..utils import generate_etag
 
 
@@ -23,6 +26,7 @@ async def _create_job(session: AsyncSession, title: str):
     await session.commit()
     await session.refresh(job)
     return job
+
 
 class JobResponse(BaseModel):
     id: str
@@ -69,11 +73,9 @@ async def get_jobs_endpoint(
     response: Response = None,
 ):
     from ..repositories.jobs import get_jobs as _get_jobs
+
     jobs = await _get_jobs(session)
-    items = [
-        {"id": str(j.id), "name": j.name, "status": j.status}
-        for j in jobs
-    ]
+    items = [{"id": str(j.id), "name": j.name, "status": j.status} for j in jobs]
     payload = {"jobs": items}
     if response is not None:
         response.headers["ETag"] = generate_etag(items)
