@@ -1,15 +1,14 @@
 import os
-import pytest
 
+import pytest
 from httpx import AsyncClient
 
 os.environ.setdefault("API_KEYS", "ci-key")
 
-from services.orchestrator.main import app
-from services.orchestrator.database import SessionLocal
-from services.orchestrator.models import User
 from services.orchestrator.auth import pwd_context
-
+from services.orchestrator.database import SessionLocal
+from services.orchestrator.main import app
+from services.orchestrator.models import User
 from services.orchestrator.utils.etag import generate_etag
 
 
@@ -20,19 +19,23 @@ async def test_create_job_contract():
         db = SessionLocal()
         try:
             if not db.query(User).filter(User.email == "jobs@example.com").first():
-                user = User(email="jobs@example.com", password_hash=pwd_context.hash("password"))
+                user = User(
+                    email="jobs@example.com", password_hash=pwd_context.hash("password")
+                )
                 db.add(user)
                 db.commit()
         finally:
             db.close()
-        login = await ac.post("/auth/login", json={"email": "jobs@example.com", "password": "password"})
+        login = await ac.post(
+            "/auth/login", json={"email": "jobs@example.com", "password": "password"}
+        )
         assert login.status_code == 200
         token = login.json()["access_token"]
 
         response = await ac.post(
             "/jobs",
             json={"title": "test"},
-            headers={"Authorization": f"Bearer {token}", "X-API-Key": "ci-key"}
+            headers={"Authorization": f"Bearer {token}", "X-API-Key": "ci-key"},
         )
         assert response.status_code == 200
         data = response.json()
@@ -47,13 +50,14 @@ async def test_create_job_contract():
 async def test_list_jobs_contract():
     async with AsyncClient(app=app, base_url="http://test") as ac:
         # login with same seeded user
-        login = await ac.post("/auth/login", json={"email": "jobs@example.com", "password": "password"})
+        login = await ac.post(
+            "/auth/login", json={"email": "jobs@example.com", "password": "password"}
+        )
         assert login.status_code == 200
         token = login.json()["access_token"]
 
         response = await ac.get(
-            "/jobs",
-            headers={"Authorization": f"Bearer {token}", "X-API-Key": "ci-key"}
+            "/jobs", headers={"Authorization": f"Bearer {token}", "X-API-Key": "ci-key"}
         )
         assert response.status_code == 200
         data = response.json()

@@ -1,20 +1,22 @@
-import os
 import logging
+import os
 import subprocess
-from fastapi import FastAPI, Depends, HTTPException, status, Request, WebSocket
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from typing import Dict
 from datetime import datetime
+from typing import Dict
+
+import redis
+from fastapi import Depends, FastAPI, HTTPException, Request, WebSocket, status
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
-from sqlalchemy import create_engine, Column, String, DateTime, JSON, text
+from pydantic import BaseModel
+from sqlalchemy import JSON, Column, DateTime, String, create_engine, text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-import redis
 
 Base = declarative_base()
+
 
 class Service(Base):
     __tablename__ = "registered_services"
@@ -24,9 +26,11 @@ class Service(Base):
     capabilities = Column(JSON)
     last_heartbeat = Column(DateTime)
 
+
 engine = create_engine(os.getenv("DATABASE_URL", "sqlite:///services.db"))
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
 
 def get_db():
     db = SessionLocal()
@@ -35,12 +39,11 @@ def get_db():
     finally:
         db.close()
 
+
 app = FastAPI(title="Kyros Service Registry", version="1.0.0")
 
 # CORS
-ALLOWED_ORIGINS = [
-    o.strip() for o in os.getenv("ALLOWED_ORIGINS", "*").split(",")
-]
+ALLOWED_ORIGINS = [o.strip() for o in os.getenv("ALLOWED_ORIGINS", "*").split(",")]
 
 app.add_middleware(
     CORSMiddleware,
@@ -53,6 +56,7 @@ app.add_middleware(
 # Basic request id logging
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger("service-registry")
+
 
 @app.middleware("http")
 async def add_request_id(request: Request, call_next):
@@ -68,16 +72,19 @@ async def add_request_id(request: Request, call_next):
     )
     return response
 
+
 class ServiceRegistration(BaseModel):
     name: str
     host: str
     port: str
     capabilities: Dict[str, str]
 
+
 class ServiceHealthCheck(BaseModel):
     name: str
     status: str
     timestamp: datetime
+
 
 # Dependency Injection example (FastAPI Depends)
 
@@ -88,8 +95,9 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 security = HTTPBearer()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+
 async def get_current_user(
-    credentials: HTTPAuthorizationCredentials = Depends(security)
+    credentials: HTTPAuthorizationCredentials = Depends(security),
 ):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -106,6 +114,7 @@ async def get_current_user(
     except JWTError:
         raise credentials_exception
     return {"user_id": user_id}
+
 
 @app.post("/register")
 async def register_service(
@@ -126,6 +135,7 @@ async def register_service(
 
     return {"status": "registered", "service": service.name}
 
+
 @app.get("/services")
 async def list_services(
     db=Depends(get_db), current_user: dict = Depends(get_current_user)
@@ -144,6 +154,7 @@ async def list_services(
         ]
     }
 
+
 @app.delete("/unregister/{service_name}")
 async def unregister_service(
     service_name: str,
@@ -157,18 +168,16 @@ async def unregister_service(
         return {"status": "unregistered", "service": service_name}
     raise HTTPException(status_code=404, detail="Service not found")
 
+
 @app.get("/health/{service_name}")
-async def health_check(
-    service_name: str, db=Depends(get_db)
-):
+async def health_check(service_name: str, db=Depends(get_db)):
     service = db.query(Service).filter(Service.name == service_name).first()
     if not service:
         raise HTTPException(status_code=404, detail="Service not found")
-    
+
     # Check if service is healthy (mock - ping in production)
-    is_healthy = (
-        service.last_heartbeat.timestamp()
-        > (datetime.utcnow().timestamp() - 60)
+    is_healthy = service.last_heartbeat.timestamp() > (
+        datetime.utcnow().timestamp() - 60
     )  # 60s heartbeat timeout
     health = ServiceHealthCheck(
         name=service_name,
@@ -176,6 +185,7 @@ async def health_check(
         timestamp=datetime.utcnow(),
     )
     return health
+
 
 @app.get("/readyz")
 async def readyz(db=Depends(get_db)):
@@ -189,6 +199,7 @@ async def readyz(db=Depends(get_db)):
         return {"status": "ready"}
     except Exception:
         raise HTTPException(status_code=503, detail="Not ready")
+
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
@@ -221,10 +232,12 @@ async def websocket_endpoint(websocket: WebSocket):
     except Exception:
         pass
 
+
 if __name__ == "__main__":
     import uvicorn
 
     uvicorn.run(app, host="0.0.0.0", port=9000)
+
 
 @app.on_event("startup")
 def startup():

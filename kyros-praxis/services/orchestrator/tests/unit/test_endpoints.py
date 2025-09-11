@@ -1,10 +1,9 @@
 import pytest
 from httpx import AsyncClient
-
-from services.orchestrator.main import app
-from services.orchestrator.database import SessionLocal
-from services.orchestrator.models import User
 from services.orchestrator.auth import pwd_context
+from services.orchestrator.database import SessionLocal
+from services.orchestrator.main import app
+from services.orchestrator.models import User
 
 
 @pytest.mark.asyncio
@@ -22,19 +21,25 @@ async def test_create_task_and_list():
         db = SessionLocal()
         try:
             if not db.query(User).filter(User.email == "test@example.com").first():
-                user = User(email="test@example.com", password_hash=pwd_context.hash("password"))
+                user = User(
+                    email="test@example.com", password_hash=pwd_context.hash("password")
+                )
                 db.add(user)
                 db.commit()
         finally:
             db.close()
 
-        login = await ac.post("/auth/login", json={"email": "test@example.com", "password": "password"})
+        login = await ac.post(
+            "/auth/login", json={"email": "test@example.com", "password": "password"}
+        )
         assert login.status_code == 200
         token = login.json()["access_token"]
 
         # create (auth required)
         payload = {"title": "Test Task", "description": "Test Description"}
-        resp = await ac.post("/collab/tasks", json=payload, headers={"Authorization": f"Bearer {token}"})
+        resp = await ac.post(
+            "/collab/tasks", json=payload, headers={"Authorization": f"Bearer {token}"}
+        )
         assert resp.status_code == 200
         body = resp.json()
         assert body["title"] == "Test Task"

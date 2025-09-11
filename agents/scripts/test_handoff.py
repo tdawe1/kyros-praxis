@@ -1,5 +1,4 @@
-import pytest
-from handoff import generate_handoff, format_for_new_task, emit_delegation_event
+from handoff import emit_delegation_event, format_for_new_task, generate_handoff
 
 
 def test_generate_handoff_validates_against_schema():
@@ -11,7 +10,7 @@ def test_generate_handoff_validates_against_schema():
         completion_signal="Test signal",
         parent_context="Test parent",
         dependencies=["test dep"],
-        superseding_statement="Test superseding"
+        superseding_statement="Test superseding",
     )
     assert handoff["mode"] == "test"
     assert "superseding_statement" in handoff
@@ -19,10 +18,7 @@ def test_generate_handoff_validates_against_schema():
 
 
 def test_format_for_new_task_produces_valid_xml():
-    handoff = {
-        "mode": "test",
-        "message": "Test message"
-    }
+    handoff = {"mode": "test", "message": "Test message"}
     formatted = format_for_new_task(handoff)
     assert "<new_task>" in formatted
     assert "<mode>test</mode>" in formatted

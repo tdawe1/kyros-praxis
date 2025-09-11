@@ -1,6 +1,7 @@
-import yaml
 import json
 from typing import Dict, List
+
+import yaml
 from jsonschema import validate
 
 
@@ -69,7 +70,7 @@ if __name__ == "__main__":
     snippet = (
         "Models: `Task {{id, title, description, version, created_at}}` "
         "(SQLAlchemy sync, SQLite default). Endpoints: `GET /healthz`: DB ping "
-        "returns `{{status:\"ok\"}}`. `POST /collab/tasks`: create; returns "
+        'returns `{{status:"ok"}}`. `POST /collab/tasks`: create; returns '
         "body `{{id,title,description,version}}` and header `ETag` (SHA‑256 "
         "of canonical JSON). `GET /collab/state/tasks`: list items; returns "
         "header `ETag` for the full payload."

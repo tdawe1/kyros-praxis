@@ -1,9 +1,9 @@
-from datetime import datetime, timedelta
 import os
+from datetime import datetime, timedelta
 from typing import Optional
 
 from fastapi import Depends, HTTPException, status
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from pydantic import BaseModel
@@ -12,15 +12,15 @@ from sqlalchemy.orm import Session
 from .database import get_db
 from .models import User
 
-SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key")  # Use env in production
+SECRET_KEY = os.getenv("SECRET_KEY")
+if SECRET_KEY is None:
+    raise ValueError("SECRET_KEY environment variable not set")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-oauth2_scheme = HTTPBearer(
-    auto_error=False
-)
+oauth2_scheme = HTTPBearer(auto_error=False)
 
 
 class Token(BaseModel):
@@ -37,15 +37,18 @@ class TokenData(BaseModel):
     email: Optional[str] = None
 
 
-def verify_password(plain_password, hashed_password):
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    """Verify plain password against hashed."""
     return pwd_context.verify(plain_password, hashed_password)
 
 
-def get_user(db, email: str):
+def get_user(db: Session, email: str) -> Optional[User]:
+    """Get user by email from DB."""
     return db.query(User).filter(User.email == email).first()
 
 
 def authenticate_user(db: Session, email: str, password: str):
+    """Authenticate user by email and password."""
     user = get_user(db, email)
     if not user:
         return False
@@ -55,6 +58,7 @@ def authenticate_user(db: Session, email: str, password: str):
 
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
+    """Create JWT access token."""
     to_encode = data.copy()
     if expires_delta:
         expire = datetime.utcnow() + expires_delta
@@ -67,8 +71,9 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
 
 async def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(oauth2_scheme),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
+    """Get current user from token."""
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -76,7 +81,11 @@ async def get_current_user(
     )
     try:
         payload = jwt.decode(
-            credentials.credentials, SECRET_KEY, algorithms=[ALGORITHM]
+            credentials.credentials,
+            SECRET_KEY,
+            algorithms=[ALGORITHM],
+            audience="api",
+            issuer="https://orchestrator.local",
         )
         email: str = payload.get("sub")
         if email is None:
