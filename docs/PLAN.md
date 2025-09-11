@@ -1,5 +1,6 @@
 # Changelog
 
+- v1.3 (2025-09-11): Refactored jobs imports and synced task endpoints to avoid event loop blocking.
 - v1.2 (2024-09-11): Address review feedback for Jobs API and tests.
 - v1.1 (2024-09-10): Merged baks, aligned stacks, fixed dates.
 
