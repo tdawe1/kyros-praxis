@@ -10,6 +10,8 @@ from services.orchestrator.database import SessionLocal
 from services.orchestrator.models import User
 from services.orchestrator.auth import pwd_context
 
+from services.orchestrator.utils.etag import generate_etag
+
 
 @pytest.mark.asyncio
 async def test_create_job_contract():
@@ -37,6 +39,9 @@ async def test_create_job_contract():
         assert "id" in data
         assert "status" in data
 
+        expected_etag = generate_etag(data)
+        assert response.headers["ETag"] == expected_etag
+
 
 @pytest.mark.asyncio
 async def test_list_jobs_contract():
@@ -51,4 +56,8 @@ async def test_list_jobs_contract():
             headers={"Authorization": f"Bearer {token}", "X-API-Key": "ci-key"}
         )
         assert response.status_code == 200
-        assert "jobs" in response.json()
+        data = response.json()
+        assert "jobs" in data
+
+        expected_etag = generate_etag(data["jobs"])
+        assert response.headers["ETag"] == expected_etag

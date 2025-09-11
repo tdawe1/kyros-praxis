@@ -2,9 +2,9 @@ from fastapi import APIRouter, HTTPException, Depends, Body, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 from pydantic import BaseModel
 from ..utils.validation import validate_job_input, JobCreate
-# Lazy wrapper to avoid importing asyncpg unless these endpoints are invoked
+# Lazy wrapper to avoid importing database/session machinery unless endpoints are invoked
 async def get_db_session_wrapper():
-    from ..repositories.database import get_db_session as _inner
+    from ..database import get_db_session as _inner
     async for s in _inner():
         yield s
 from ..auth import get_current_user, User

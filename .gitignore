@@ -10,6 +10,7 @@ venv/
 *.egg-info/
 .mypy_cache/
 .pytest_cache/
+*.db
 
 # Node
 node_modules/
