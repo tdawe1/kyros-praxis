@@ -308,9 +308,11 @@ def main():
             respond(req_id, result)
             continue
 
-        respond(
-            req_id, error={"code": -32601, "message": f"Method not found: {method}"}
-        )
+        if req_id is not None:
+            respond(
+                req_id,
+                error={"code": -32601, "message": f"Method not found: {method}"},
+            )
 
 
 if __name__ == "__main__":
