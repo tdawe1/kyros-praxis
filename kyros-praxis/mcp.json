@@ -86,14 +86,14 @@
     "fireproof": {
       "command": "node",
       "args": [
-        "/build/index.js"
+        "build/index.js"
       ]
     },
     "exa": {
-      "command": "npx",
+      "command": "sh",
       "args": [
-        "-y",
-        "exa-mcp-server"
+        "-lc",
+        "exec npx -y mcp-remote 'https://mcp.exa.ai/mcp?exaApiKey=${EXA_API_KEY}'"
       ],
       "env": {
         "EXA_API_KEY": ""
@@ -120,7 +120,7 @@
         "OPENAI_API_KEY": "",
         "ANTHROPIC_API_KEY": "",
         "OPENROUTER_API_KEY": "",
-        "DISABLED_TOOLS": "analyze,refactor,testgen,secaudit,docgen,tracer",
+        "DISABLED_TOOLS": "",
         "DEFAULT_MODEL": "auto"
       }
     },

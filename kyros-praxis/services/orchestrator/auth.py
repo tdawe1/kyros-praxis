@@ -9,8 +9,12 @@ from passlib.context import CryptContext
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
-from .database import get_db
-from .models import User
+try:
+    from .database import get_db
+    from .models import User
+except Exception:  # Fallback when running module directly in container
+    from database import get_db  # type: ignore
+    from models import User  # type: ignore
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 if SECRET_KEY is None:

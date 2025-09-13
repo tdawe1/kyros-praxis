@@ -4,28 +4,51 @@ from fastapi import (
     Depends,
     FastAPI,
     HTTPException,
-    OAuth2PasswordRequestForm,
     WebSocket,
     status,
 )
+from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import (
     AsyncSession,  # noqa: F401 (placeholder for future async endpoints)
 )
 
-from .auth import (
-    User,
-    authenticate_user,
-    create_access_token,
-    ACCESS_TOKEN_EXPIRE_MINUTES,
-    get_current_user,
+try:
+    # When running as a package (e.g., tests in monorepo)
+    from .auth import (
+        User,
+        authenticate_user,
+        create_access_token,
+        ACCESS_TOKEN_EXPIRE_MINUTES,
+        get_current_user,
+    )
+    from .database import get_db, text
+    from .routers import jobs, tasks, utils
+    from .app.core.config import settings
+except Exception:  # Fallback when running module directly in container (/app)
+    from auth import (  # type: ignore
+        User,
+        authenticate_user,
+        create_access_token,
+        ACCESS_TOKEN_EXPIRE_MINUTES,
+        get_current_user,
+    )
+    from database import get_db, text  # type: ignore
+    import routers.jobs as jobs  # type: ignore
+    import routers.tasks as tasks  # type: ignore
+    import routers.utils as utils  # type: ignore
+    from app.core.config import settings  # type: ignore
+
+app = FastAPI(
+    title=settings.PROJECT_NAME + " - Orchestrator API",
+    version=settings.VERSION,
+    openapi_url=f"{settings.API_V1_STR}/openapi.json",
 )
-from .database import get_db, text
-from .routers import jobs, tasks
 
-app = FastAPI(title="Orchestrator API", version="0.1.0")
-
-app.include_router(jobs.router, prefix="/jobs", tags=["jobs"])
-app.include_router(tasks.router, prefix="/collab", tags=["collab"])
+# API v1 routers
+API_V1_STR = settings.API_V1_STR
+app.include_router(jobs.router, prefix=f"{API_V1_STR}/jobs", tags=["jobs"])
+app.include_router(tasks.router, prefix=f"{API_V1_STR}/collab", tags=["collab"])
+app.include_router(utils.router, prefix=f"{API_V1_STR}/utils", tags=["utils"])
 
 
 @app.get("/")

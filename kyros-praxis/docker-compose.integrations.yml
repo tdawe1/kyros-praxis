@@ -1,7 +1,7 @@
 services:
   qdrant:
     image: qdrant/qdrant:latest
-    restart: unless-stopped
+    restart: "no"
     ports:
       - "6333:6333" # REST
       - "6334:6334" # gRPC
@@ -22,7 +22,7 @@ services:
     stdin_open: true
     tty: true
     image: ${FS_NODE_IMAGE:-node:20-alpine}
-    restart: unless-stopped
+    restart: "no"
     profiles: ["fs"]
     working_dir: /workspace
     command:
@@ -34,8 +34,10 @@ services:
 
   # Memory MCP server (vector memory; defaults to Qdrant backend)
   mcp_memory:
+    stdin_open: true
+    tty: true
     image: ${MEMORY_NODE_IMAGE:-node:20-alpine}
-    restart: unless-stopped
+    restart: "no"
     profiles: ["memory"]
     environment:
       QDRANT_URL: ${QDRANT_URL:-http://qdrant:6333}
@@ -49,7 +51,7 @@ services:
   # Context7 MCP server
   context7:
     image: ${CONTEXT7_NODE_IMAGE:-node:20-alpine}
-    restart: unless-stopped
+    restart: "no"
     profiles: ["context7"]
     working_dir: /app
     command: ["npx", "-y", "@upstash/context7-mcp"]
@@ -63,7 +65,7 @@ services:
     stdin_open: true
     tty: true
     image: ${GITHUB_MCP_IMAGE:-ghcr.io/github/github-mcp-server}
-    restart: unless-stopped
+    restart: "no"
     profiles: ["github"]
     environment:
       GITHUB_PERSONAL_ACCESS_TOKEN: ${GITHUB_PERSONAL_ACCESS_TOKEN:?set a token with repo scope}
@@ -78,7 +80,7 @@ services:
     stdin_open: true
     tty: true
     image: ${PUPPETEER_MCP_IMAGE:-node:20-alpine}
-    restart: unless-stopped
+    restart: "no"
     profiles: ["puppeteer"]
     working_dir: /app
     command: ["npx", "-y", "@modelcontextprotocol/server-puppeteer"]
@@ -92,25 +94,29 @@ services:
     profiles: ["playwright"]
     shm_size: "1gb"
     working_dir: /workspace
-    command: ["bash", "-lc", "npx -y @playwright/mcp@latest"]
+    command: ["bash", "-lc", "npx -y @playwright/mcp@latest --browser=chromium --headless --viewport-size=1280,800 --no-sandbox"]
     volumes:
       - ./:/workspace:ro
 
   # Redis MCP server (+ optional local Redis instance)
   mcp_redis:
     image: ${REDIS_MCP_NODE_IMAGE:-node:20-alpine}
-    restart: unless-stopped
+    restart: "no"
     profiles: ["redis"]
     working_dir: /app
-    command: ["sh", "-lc", "npx -y @modelcontextprotocol/server-redis"]
+    command: ["sh", "-lc", "npx -y @modelcontextprotocol/server-redis ${REDIS_URL:-redis://redis:6379}"]
     environment:
-      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
+      # @modelcontextprotocol/server-redis expects discrete settings; REDIS_URL is ignored
+      REDIS_HOST: ${REDIS_HOST:-redis}
+      REDIS_PORT: ${REDIS_PORT:-6379}
+      REDIS_DB: ${REDIS_DB:-0}
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
     depends_on:
       - redis
 
   redis:
     image: ${REDIS_IMAGE:-redis:7-alpine}
-    restart: unless-stopped
+    restart: "no"
     profiles: ["redis"]
     ports:
       - "6379:6379"
@@ -124,9 +130,13 @@ services:
       context: ./integrations/zen-mcp
       dockerfile: Dockerfile
     image: ${ZEN_MCP_IMAGE:-local/zen-mcp:latest}
-    restart: unless-stopped
+    restart: "no"
     profiles: ["zen"]
     environment:
+      OPENAI_BASE_URL: ${OPENAI_BASE_URL:-https://api.z.ai/api/coding/paas/v4}
+      OPENAI_API_BASE: ${OPENAI_API_BASE:-${OPENAI_BASE_URL:-https://api.z.ai/api/coding/paas/v4}}
+      CUSTOM_API_URL: ${CUSTOM_API_URL:-${OPENAI_BASE_URL:-https://api.z.ai/api/coding/paas/v4}}
+      CUSTOM_API_KEY: ${CUSTOM_API_KEY:-${OPENAI_API_KEY:-}}
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}
       OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
@@ -136,7 +146,7 @@ services:
     stdin_open: true
     tty: true
     image: ${NOTION_MCP_IMAGE:-node:20-alpine}
-    restart: unless-stopped
+    restart: "no"
     profiles: ["notion"]
     working_dir: /app
     command: ["npx", "-y", "@notionhq/notion-mcp-server"]
@@ -145,8 +155,10 @@ services:
 
   # Sequential Thinking MCP server
   mcp_sequentialthinking:
+    stdin_open: true
+    tty: true
     image: ${SEQ_MCP_IMAGE:-node:20-alpine}
-    restart: unless-stopped
+    restart: "no"
     profiles: ["seq"]
     working_dir: /app
     command: ["npx", "-y", "@modelcontextprotocol/server-sequential-thinking"]
@@ -156,7 +168,7 @@ services:
     stdin_open: true
     tty: true
     image: ${UV_IMAGE:-ghcr.io/astral-sh/uv:latest}
-    restart: unless-stopped
+    restart: "no"
     profiles: ["composer"]
     environment:
       COMPOSER_API_KEY: ${COMPOSER_API_KEY:-}
@@ -174,16 +186,17 @@ services:
     stdin_open: true
     tty: true
     image: ${EXASEARCH_MCP_IMAGE:-node:20-alpine}
-    restart: unless-stopped
+    restart: "no"
     profiles: ["exasearch"]
     working_dir: /app
     environment:
       EXA_API_KEY: ${EXA_API_KEY:-}
       # Optional: if the server supports WS, these are common patterns
       EXASEARCH_MCP_PORT: ${EXASEARCH_MCP_PORT:-8788}
-    # By default, try to run an npm package via npx. Override EXASEARCH_MCP_PACKAGE
-    # with the exact MCP server package name you use (e.g., "exa-mcp-server").
-    command: ["npx", "-y", "${EXASEARCH_MCP_PACKAGE:-exa-mcp-server}"]
+    # Use the official remote Exa MCP via mcp-remote and your EXA_API_KEY.
+    # Run this service interactively via scripts/mcp-run.sh to attach stdio.
+    # Avoid single quotes so ${EXA_API_KEY} is expanded by the shell
+    command: ["sh", "-lc", "npx -y mcp-remote \"https://mcp.exa.ai/mcp?exaApiKey=${EXA_API_KEY}\""]
     # If your Exa MCP server exposes a WebSocket port, uncomment the line below
     # and ensure the command starts a WS server bound to 0.0.0.0:EXASEARCH_MCP_PORT.
     # ports:
@@ -194,7 +207,7 @@ services:
     stdin_open: true
     tty: true
     image: ${RAILWAY_NODE_IMAGE:-node:20-alpine}
-    restart: unless-stopped
+    restart: "no"
     profiles: ["railway"]
     working_dir: /app
     command: ["sh", "-lc", "npx -y ${RAILWAY_MCP_PACKAGE:-@railway/mcp-server}"]
@@ -206,7 +219,7 @@ services:
     stdin_open: true
     tty: true
     image: ${VERCEL_NODE_IMAGE:-node:20-alpine}
-    restart: unless-stopped
+    restart: "no"
     profiles: ["vercel"]
     working_dir: /app
     command: ["sh", "-lc", "npx -y ${VERCEL_MCP_PACKAGE:-mcp-vercel}"]
@@ -218,7 +231,7 @@ services:
     stdin_open: true
     tty: true
     image: ${CODERABBIT_NODE_IMAGE:-node:20-alpine}
-    restart: unless-stopped
+    restart: "no"
     profiles: ["coderabbit"]
     working_dir: /app
     command: ["sh", "-lc", "npx -y ${CODERABBIT_MCP_PACKAGE:-coderabbit-mcp}"]
@@ -233,6 +246,9 @@ services:
     env_file:
       - ./services/orchestrator/.env.example
     environment:
+      DATABASE_URL: ${ORCH_DATABASE_URL:-sqlite:///orchestrator.db}
+      REDIS_URL: ${ORCH_REDIS_URL:-redis://redis:6379}
+      SECRET_KEY: ${ORCH_SECRET_KEY:-dev-secret}
       QDRANT_URL: ${QDRANT_URL:-http://qdrant:6333}
       QDRANT_API_KEY: ${QDRANT_API_KEY:-}
     depends_on:
@@ -247,6 +263,10 @@ services:
       dockerfile: Dockerfile
     env_file:
       - ./packages/service-registry/.env.example
+    environment:
+      # Override to local sqlite and internal redis for a self-contained dev run
+      DATABASE_URL: ${REGISTRY_DATABASE_URL:-sqlite:///services.db}
+      REDIS_URL: ${REGISTRY_REDIS_URL:-redis://redis:6379}
     ports:
       - "9000:9000"
     profiles: ["kyros"]
@@ -263,11 +283,13 @@ services:
 
   # Kyros MCP server (bridges Kyros APIs/Registry/Daemon/Memory to MCP tools)
   mcp_kyros:
+    stdin_open: true
+    tty: true
     build:
       context: ./integrations/kyros-mcp
       dockerfile: Dockerfile
     image: ${KYROS_MCP_IMAGE:-local/kyros-mcp:latest}
-    restart: unless-stopped
+    restart: "no"
     profiles: ["kyros-mcp"]
     environment:
       KYROS_API_BASE: ${KYROS_API_BASE:-http://kyros_orchestrator:8000}
@@ -291,7 +313,7 @@ services:
       context: ./integrations/fireproof-mcp
       dockerfile: Dockerfile
     image: ${FIREPROOF_MCP_IMAGE:-local/fireproof-mcp:latest}
-    restart: unless-stopped
+    restart: "no"
     profiles: ["fireproof"]
 
   # Zen Tools MCP (our local tools wrapper around sessions/agents)
@@ -299,28 +321,28 @@ services:
     stdin_open: true
     tty: true
     image: ${ZEN_TOOLS_PY_IMAGE:-python:3.11-slim}
-    restart: unless-stopped
+    restart: "no"
     profiles: ["zen-tools"]
     working_dir: /workspace
-    command: ["python", "-u", "kyros-praxis/integrations/zen-mcp/main.py"]
+    command: ["python", "-u", "integrations/zen-mcp/main.py"]
     volumes:
       - ./:/workspace
     environment:
-      ZEN_ROOT: /workspace/kyros-praxis/zen
+      ZEN_ROOT: /workspace/zen
   # Kyros Collab MCP server (stdio JSON-RPC over process). Provided for reference; prefer spawning locally.
   mcp_kyros_collab:
     stdin_open: true
     tty: true
     image: ${PY_IMAGE:-python:3.11-alpine}
-    restart: unless-stopped
+    restart: "no"
     profiles: ["kyros-collab"]
     working_dir: /workspace
     command:
-      ["python", "-u", "kyros-praxis/integrations/kyros-collab-mcp/main.py"]
+      ["python", "-u", "integrations/kyros-collab-mcp/main.py"]
     volumes:
       - ./:/workspace
     environment:
-      COLLAB_ROOT: /workspace/kyros-praxis/collaboration
+      COLLAB_ROOT: /workspace/collaboration
 
 networks:
   default:
