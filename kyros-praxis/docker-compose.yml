@@ -1,64 +1,151 @@
-version: "3.0"
+version: '3.8'
 
 services:
   kyros-praxis-postgres:
     image: postgres:15
     container_name: kyros-praxis-postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-kyros}"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-kyros}
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    env_file:
-      - .env
 
   kyros-praxis-redis:
     image: redis:7-alpine
     container_name: kyros-praxis-redis
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
     ports:
-      - "6379:6379"
-    env_file:
-      - .env
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
 
-  console:
-    build:
-      context: ./services/console
-      dockerfile: Dockerfile
+  kyros-praxis-console:
+    build: ./kyros-praxis/services/console
     container_name: kyros-praxis-console
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
     ports:
-      - "3000:3000"
+      - "3001:3000"
+    volumes:
+      - ./kyros-praxis/services/console/.env:/app/.env:ro
+    environment:
+      - DATABASE_URL=postgresql://postgres:password@kyros-praxis-postgres:5432/kyros
+      - REDIS_URL=redis://kyros-praxis-redis:6379
+      - NEXTAUTH_URL=http://localhost:3001
+      - NEXTAUTH_SECRET=your-nextauth-secret
+      - API_URL=http://kyros-praxis-orchestrator:8000
     depends_on:
       - kyros-praxis-postgres
       - kyros-praxis-redis
-    env_file:
-      - .env
+      - kyros-praxis-orchestrator
 
-  orchestrator:
-    build:
-      context: ./services/orchestrator
-      dockerfile: Dockerfile
+  # Prestart service to run migrations
+  kyros-praxis-prestart:
+    build: ./services/orchestrator
+    container_name: kyros-praxis-prestart
+    restart: "no"
+    environment:
+      - POSTGRES_SERVER=kyros-praxis-postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=${POSTGRES_DB:-kyros}
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-password}
+      - FIRST_SUPERUSER=${FIRST_SUPERUSER:-}
+      - FIRST_SUPERUSER_PASSWORD=${FIRST_SUPERUSER_PASSWORD:-}
+      - ENABLE_SEED=${ENABLE_SEED:-false}
+    depends_on:
+      kyros-praxis-postgres:
+        condition: service_healthy
+    command: bash /app/scripts/prestart.sh
+    profiles: ["migrate"]  # Only runs when explicitly requested
+
+  kyros-praxis-orchestrator:
+    build: ./services/orchestrator
     container_name: kyros-praxis-orchestrator
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/utils/health-check"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
     ports:
       - "8000:8000"
+    volumes:
+      - ./services/orchestrator/.env:/app/.env:ro
+    environment:
+      - POSTGRES_SERVER=kyros-praxis-postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=${POSTGRES_DB:-kyros}
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-password}
+      - DB_HOST=kyros-praxis-postgres
+      - DB_PORT=5432
+      - DB_NAME=${POSTGRES_DB:-kyros}
+      - DB_USER=${POSTGRES_USER:-postgres}
+      - DB_PASSWORD=${POSTGRES_PASSWORD:-password}
+      - REDIS_HOST=kyros-praxis-redis
+      - REDIS_PORT=6379
+      - SECRET_KEY=${SECRET_KEY:-your-secret-key-change-in-prod}
+      - BACKEND_CORS_ORIGINS=${BACKEND_CORS_ORIGINS:-}
+      - FRONTEND_HOST=${FRONTEND_HOST:-http://localhost:3001}
     depends_on:
-      - kyros-praxis-postgres
-      - kyros-praxis-redis
-    env_file:
-      - .env
+      kyros-praxis-postgres:
+        condition: service_healthy
+      kyros-praxis-redis:
+        condition: service_healthy
+    command: uvicorn main:app --host 0.0.0.0 --port 8000
 
-  service-registry:
-    build:
-      context: ./packages/service-registry
+  kyros-praxis-service-registry:
+    build: ./kyros-praxis/packages/service-registry
     container_name: kyros-praxis-service-registry
     ports:
       - "9000:9000"
+    volumes:
+      - ./kyros-praxis/packages/service-registry/.env:/app/.env:ro
+    environment:
+      - DB_HOST=kyros-praxis-postgres
+      - DB_PORT=5432
+      - DB_NAME=kyros
+      - DB_USER=postgres
+      - DB_PASSWORD=password
+      - SECRET_KEY=your-secret-key-change-in-prod
     depends_on:
       - kyros-praxis-postgres
-    env_file:
-      - .env
+    command: uvicorn main:app --host 0.0.0.0 --port 9000
+
+  # Optional Adminer for database management (dev only)
+  adminer:
+    image: adminer
+    container_name: kyros-praxis-adminer
+    restart: unless-stopped
+    profiles: ["tools"]  # Only starts when explicitly requested
+    depends_on:
+      - kyros-praxis-postgres
+    environment:
+      - ADMINER_DESIGN=pepa-linha-dark
+      - ADMINER_DEFAULT_SERVER=kyros-praxis-postgres
+    ports:
+      - "8080:8080"
+    networks:
+      - default
 
 volumes:
   postgres_data:
