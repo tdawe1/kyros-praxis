@@ -13,6 +13,7 @@ from fastapi import (
     status,
 )
 from fastapi.security import OAuth2PasswordRequestForm
+from sqlalchemy import text
 from sqlalchemy.ext.asyncio import (
     AsyncSession,  # noqa: F401 (placeholder for future async endpoints)
 )
@@ -27,7 +28,6 @@ try:
         get_current_user,
     )
     from .database import get_db
-    from sqlalchemy import text
     from .routers import jobs, tasks, utils
     from .app.core.config import settings
 except Exception:  # Fallback when running module directly in container (/app)
@@ -39,7 +39,6 @@ except Exception:  # Fallback when running module directly in container (/app)
         get_current_user,
     )
     from database import get_db  # type: ignore
-    from sqlalchemy import text  # type: ignore
     import routers.jobs as jobs  # type: ignore
     import routers.tasks as tasks  # type: ignore
     import routers.utils as utils  # type: ignore
