@@ -26,6 +26,7 @@ export QDRANT_API_KEY=""              # vector MCP (optional)
 # (Use your codex-CLI invocation and pass MCP config/path if required by your setup.)
 codex --mcp-config ./mcp.json
 ```
+MCP servers may already be running. Check first
 
 > MCP servers and commands are declared in `mcp.json`. Don’t enable `kyros-collab` until `COLLAB_CONFIG` is set.&#x20;
 
@@ -252,9 +253,10 @@ python scripts/state_update.py TDS-1 in_progress --if-match "$ETAG"
 
 ## Step 4 — Model usage (for Codex team)
 
-- Primary implementation model: **OpenAI (business) via codex-CLI**.
-- Medium complexity: **GLM** (if routed through Kilo/Zen).
+- Primary implementation model: **OpenAI (business) via codex-CLI, via OAuth not API**.
 - Tiny patch fan-out (≤50 LOC): **zen MCP**. Do **not** use Zen for multi-file refactors.&#x20;
+
+
 
 Kilo’s free models (e.g., Sonoma) are used by the other group for planning/orchestration/review; Codex focuses on **coding** and communicates via the **requests folder** and **state_update**.
 
@@ -279,7 +281,6 @@ Use the Kanban, ETag writes, and PR rules above; this prevents the prior “work
 - Version control & PR rules: `docs/version-control.md`.&#x20;
 - Last sync status: `docs/agent-sync.md` (“no completed tasks” finding).&#x20;
 
-Great question — those defaults are a bit “open-floodgate.” They’ll inflate tokens and slow the agents, especially when GLM is the paid workhorse. Here’s a crisp set of **global defaults** and **mode-specific overrides** that match our plan (Sonoma for planning/orchestration/review; GLM for precise code), plus a **.kilocodeignore** you should add.
 
 ---
 
@@ -336,7 +337,7 @@ Use these as the **Global Default (all profiles)** in Kilo.
 - Condense threshold: **80 %** (keeps more spec context)
 - Diagnostics in context: **Off** (architect doesn’t need lint spam)
 
-### Orchestrator (Sonoma, routing/state)
+### Orchestrator (GLM, routing/state)
 
 - Open tabs: **8**
 - Workspace files: **40**
@@ -351,7 +352,7 @@ Use these as the **Global Default (all profiles)** in Kilo.
 - Condense threshold: **60 %** (condense earlier to save GLM tokens)
 - Diagnostics: **On**, max **20**
 
-### Critic (Sonoma, low-temp)
+### Critic (GLM, low-temp)
 
 - Open tabs: **8**
 - Workspace files: **40**

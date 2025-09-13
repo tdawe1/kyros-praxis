@@ -1,0 +1,35 @@
+# build artifacts & caches
+**/node_modules/
+**/.next/
+**/dist/
+**/build/
+**/.turbo/
+**/.vite/
+**/.pytest_cache/
+**/__pycache__/
+**/.ruff_cache/
+**/.mypy_cache/
+
+# env & vcs
+.env*
+.git/
+**/*.lock
+**/package-lock.json
+**/pnpm-lock.yaml
+**/yarn.lock
+
+# data & snapshots
+**/coverage/
+**/playwright-report/
+**/*.snap
+**/*.min.*
+**/*.map
+**/*.generated.*
+
+# images & binaries
+**/*.png
+**/*.jpg
+**/*.jpeg
+**/*.gif
+**/*.pdf
+**/*.mp4
