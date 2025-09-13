@@ -22,7 +22,7 @@
     "xterm": "5.3.0",
     "zod": "3.23.8",
     "zustand": "4.5.2",
-    "@kyros-praxis/api-client": "^0.1.0"
+    "date-fns": "^3.3.1"
   },
   "keywords": [],
   "devDependencies": {
