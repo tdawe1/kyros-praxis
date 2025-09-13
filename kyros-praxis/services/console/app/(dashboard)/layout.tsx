@@ -29,7 +29,6 @@ import {
   ShoppingCart,
   ChartLine,
   Terminal,
-  Assistant,
   Settings,
   Dashboard,
 } from '@carbon/icons-react';
@@ -83,7 +82,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     {
       title: 'Assistant',
       href: '/assistant',
-      icon: Assistant,
+      icon: Bot,
     },
     {
       title: 'Settings',
@@ -113,7 +112,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   return (
     <>
       <HeaderContainer
-        render={({ isSideNavExpanded, onClickSideNavExpand }) => (
+        render={({ isSideNavExpanded, onClickSideNavExpand }: any) => (
           <Header aria-label="Kyros Praxis">
             <SkipToContent />
             <HeaderName 

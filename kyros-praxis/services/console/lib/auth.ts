@@ -1,5 +1,5 @@
 import { jwtDecode } from "jwt-decode";
-import * as React from "react";
+import React, { useState, useEffect, createContext, createElement } from "react";
 
 // Define the user type
 interface User {
@@ -17,14 +17,14 @@ interface AuthContextType {
   logout: () => void;
 }
 
-const AuthContext = React.createContext<AuthContextType | null>(null);
+const AuthContext = createContext<AuthContextType | null>(null);
 
 // Custom hook for JWT auth
 export const useAuth = () => {
-  const [user, setUser] = React.useState<User | null>(null);
-  const [token, setToken] = React.useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
       try {
@@ -79,7 +79,7 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const auth = useAuth();
 
-  return React.createElement(
+  return createElement(
     AuthContext.Provider,
     {
       value: auth,

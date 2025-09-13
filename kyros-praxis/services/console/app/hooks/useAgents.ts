@@ -182,9 +182,9 @@ export function useAgentRun(agentId: string, runId: string) {
     queryKey: agentKeys.run(agentId, runId),
     queryFn: () => agentApi.getRun(agentId, runId),
     enabled: !!agentId && !!runId,
-    refetchInterval: (data) => {
+    refetchInterval: (query) => {
       // Poll while running
-      if (data?.status === 'running') {
+      if ((query.state.data as any)?.status === 'running') {
         return 2000; // Poll every 2 seconds
       }
       return false;

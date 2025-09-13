@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
   DataTable,
@@ -59,7 +59,7 @@ const statusConfig = {
   pending: { type: 'blue', label: 'Pending' },
 } as const;
 
-export default function AgentsPage() {
+function AgentsPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   
@@ -259,7 +259,6 @@ export default function AgentsPage() {
                   <TableBatchAction
                     renderIcon={Delete}
                     onClick={() => setDeleteModalOpen(true)}
-                    hasDivider
                   >
                     Delete
                   </TableBatchAction>
@@ -300,9 +299,8 @@ export default function AgentsPage() {
                 <TableHead>
                   <TableRow>
                     <TableSelectAll {...getSelectionProps()} />
-                    {headers.map((header, i) => (
+                    {headers.map((header) => (
                       <TableHeader
-                        key={header.key}
                         {...getHeaderProps({ header })}
                       >
                         {header.header}
@@ -311,8 +309,8 @@ export default function AgentsPage() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {rows.map((row, i) => (
-                    <TableRow key={row.id} {...getRowProps({ row })}>
+                  {rows.map((row) => (
+                    <TableRow {...getRowProps({ row })}>
                       <TableSelectRow {...getSelectionProps({ row })} />
                       <TableCell>
                         <Link
@@ -400,5 +398,22 @@ export default function AgentsPage() {
         </p>
       </Modal>
     </div>
+  );
+}
+
+export default function AgentsPage() {
+  return (
+    <Suspense fallback={
+      <div className="cds--content">
+        <DataTableSkeleton
+          columnCount={8}
+          rowCount={10}
+          showHeader
+          showToolbar
+        />
+      </div>
+    }>
+      <AgentsPageContent />
+    </Suspense>
   );
 }

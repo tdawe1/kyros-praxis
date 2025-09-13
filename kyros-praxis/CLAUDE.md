@@ -4,13 +4,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Architecture Overview
 
-Kyros is a manifest-driven monorepo with declarative architecture featuring:
+Kyros Praxis is an AI orchestration platform with a multi-service architecture featuring:
 
-- **Manifest-driven scaffolding**: `manifest.yaml` defines services, contracts, and dependencies
 - **Multi-service architecture**: Console (Next.js), Orchestrator (FastAPI), Terminal-daemon (Node.js + node-pty)
 - **Shared packages**: Core libraries in `packages/` for cross-service functionality
-- **Contract-first development**: OpenAPI specs and Protocol Buffers for service communication
-- **Docker containerization**: Services deployable via Docker Compose
+- **Service discovery**: Centralized service registry with health monitoring
+- **AI coordination**: Zen MCP Server for multi-model AI orchestration
+- **Docker containerization**: Services deployable via Docker Compose with health checks
 
 ### Directory Structure
 ```
@@ -86,18 +86,34 @@ docs/                    # Architecture documentation and ADRs
 
 ### Required Environment Variables
 ```bash
-# Database
-DATABASE_URL=postgresql://postgres:password@localhost:5432/kyros
+# Database (NO DEFAULT VALUES - must be set)
+DATABASE_URL=postgresql://user:secure_password@localhost:5432/kyros
 POSTGRES_DB=kyros
 POSTGRES_USER=postgres
-POSTGRES_PASSWORD=your_password
+POSTGRES_PASSWORD=your_secure_password
 
 # Redis
 REDIS_URL=redis://localhost:6379
 
-# Authentication
-JWT_SECRET=your_jwt_secret
-NEXTAUTH_SECRET=your_nextauth_secret
+# Authentication (NO DEFAULT VALUES - must be set)
+JWT_SECRET=your_very_secure_jwt_secret_minimum_32_chars
+NEXTAUTH_SECRET=your_very_secure_nextauth_secret_minimum_32_chars
+SECRET_KEY=your_very_secure_app_secret_minimum_32_chars
+CSRF_SECRET=your_very_secure_csrf_secret_minimum_32_chars
+
+# AI Services (provide at least one)
+OPENAI_API_KEY=your_openai_api_key
+GEMINI_API_KEY=your_gemini_api_key
+XAI_API_KEY=your_xai_api_key
+OPENROUTER_API_KEY=your_openrouter_api_key
+```
+
+### Security Configuration Rules
+1. **Never use default secrets** - All environment variables must be explicitly set
+2. **Minimum secret length** - 32 characters for all cryptographic secrets
+3. **Rotate secrets regularly** - Implement secret rotation in production
+4. **Use secure random generation** - Generate secrets with `openssl rand -hex 32`
+
 NEXTAUTH_URL=http://localhost:3000
 ```
 

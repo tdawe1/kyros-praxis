@@ -45,9 +45,12 @@ class Settings(BaseSettings):
     
     # Security
     SECRET_KEY: str = secrets.token_urlsafe(32)
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8  # 8 days
-    JWT_ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 120  # 2 hours (reduced from 8 days)
+    REFRESH_TOKEN_EXPIRE_MINUTES: int = 10080  # 7 days
+    JWT_ALGORITHM: str = "HS512"  # Changed from HS256 to HS512 for stronger security
     JWKS_URL: Optional[str] = None
+    JWT_ISSUER: str = "kyros-praxis"
+    JWT_AUDIENCE: str = "kyros-app"
     
     # Environment
     ENVIRONMENT: Literal["local", "staging", "production"] = "local"

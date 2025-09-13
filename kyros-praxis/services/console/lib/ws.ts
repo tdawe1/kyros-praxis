@@ -46,9 +46,9 @@ export const useWebSocket = (url: string = "ws://localhost:8000/ws") => {
       setStatus({ connected: false, connecting: false, error: null });
     };
 
-    socket.onerror = (error) => {
-      console.error("WebSocket error:", error);
-      setStatus({ connected: false, connecting: false, error: error.message });
+    socket.onerror = (event) => {
+      console.error("WebSocket error:", event);
+      setStatus({ connected: false, connecting: false, error: "WebSocket connection failed" });
     };
 
     return () => {

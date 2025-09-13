@@ -65,7 +65,7 @@ export default function InventoryPage() {
 
   const statusConfig = {
     in_stock: { type: 'green', label: 'In Stock' },
-    low_stock: { type: 'yellow', label: 'Low Stock' },
+    low_stock: { type: 'magenta', label: 'Low Stock' },
     out_of_stock: { type: 'red', label: 'Out of Stock' },
   } as const;
 
@@ -117,7 +117,7 @@ export default function InventoryPage() {
               <span style={{ color: 'var(--cds-text-secondary)' }}>Low Stock Items</span>
             </div>
             <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>8</div>
-            <Tag type="yellow" size="sm">Needs attention</Tag>
+            <Tag type="magenta" size="sm">Needs attention</Tag>
           </Tile>
         </Layer>
 
@@ -164,7 +164,7 @@ export default function InventoryPage() {
               <TableHead>
                 <TableRow>
                   {headers.map((header) => (
-                    <TableHeader key={header.key} {...getHeaderProps({ header })}>
+                    <TableHeader {...getHeaderProps({ header })}>
                       {header.header}
                     </TableHeader>
                   ))}
@@ -172,7 +172,7 @@ export default function InventoryPage() {
               </TableHead>
               <TableBody>
                 {rows.map((row) => (
-                  <TableRow key={row.id} {...getRowProps({ row })}>
+                  <TableRow {...getRowProps({ row })}>
                     {row.cells.map((cell) => {
                       if (cell.info.header === 'status') {
                         const status = cell.value as keyof typeof statusConfig;

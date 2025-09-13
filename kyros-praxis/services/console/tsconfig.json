@@ -23,13 +23,15 @@
     "baseUrl": ".",
     "paths": {
       "@/*": [
-        "./app/*"
+        "./app/*",
+        "./src/*"
       ],
       "@/components/*": [
         "./components/*"
       ],
       "@/lib/*": [
-        "./lib/*"
+        "./lib/*",
+        "./src/lib/*"
       ],
       "@kyros/core/*": [
         "../../packages/core/src/*"

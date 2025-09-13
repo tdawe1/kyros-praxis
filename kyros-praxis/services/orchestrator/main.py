@@ -1,4 +1,9 @@
 from datetime import timedelta
+from dotenv import load_dotenv
+import os
+
+# Load environment variables from .env file
+load_dotenv()
 
 from fastapi import (
     Depends,
@@ -21,7 +26,8 @@ try:
         ACCESS_TOKEN_EXPIRE_MINUTES,
         get_current_user,
     )
-    from .database import get_db, text
+    from .database import get_db
+    from sqlalchemy import text
     from .routers import jobs, tasks, utils
     from .app.core.config import settings
 except Exception:  # Fallback when running module directly in container (/app)
@@ -32,7 +38,8 @@ except Exception:  # Fallback when running module directly in container (/app)
         ACCESS_TOKEN_EXPIRE_MINUTES,
         get_current_user,
     )
-    from database import get_db, text  # type: ignore
+    from database import get_db  # type: ignore
+    from sqlalchemy import text  # type: ignore
     import routers.jobs as jobs  # type: ignore
     import routers.tasks as tasks  # type: ignore
     import routers.utils as utils  # type: ignore
