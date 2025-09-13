@@ -301,6 +301,7 @@ function AgentsPageContent() {
                     <TableSelectAll {...getSelectionProps()} />
                     {headers.map((header) => (
                       <TableHeader
+                        key={header.key}
                         {...getHeaderProps({ header })}
                       >
                         {header.header}
@@ -310,7 +311,7 @@ function AgentsPageContent() {
                 </TableHead>
                 <TableBody>
                   {rows.map((row) => (
-                    <TableRow {...getRowProps({ row })}>
+                    <TableRow key={row.id} {...getRowProps({ row })}>
                       <TableSelectRow {...getSelectionProps({ row })} />
                       <TableCell>
                         <Link
