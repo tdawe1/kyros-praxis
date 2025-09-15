@@ -223,6 +223,9 @@ Create a new task.
 #### GET `/api/v1/collab/state/tasks`
 List all tasks.
 
+**Request Headers:**
+- `Authorization: Bearer <token>` (required)
+
 **Response:**
 ```json
 {
@@ -241,6 +244,195 @@ List all tasks.
 
 **Response Headers:**
 - `ETag` - Entity tag for caching
+
+**Status Codes:**
+- `200` - Tasks retrieved successfully
+- `401` - Unauthorized
+
+### Security API (`/api/v1/security`)
+
+#### GET `/api/v1/security/health`
+Security-focused health check endpoint.
+
+**Response:**
+```json
+{
+  "status": "healthy",
+  "security": {
+    "csp_enabled": true,
+    "csrf_enabled": true,
+    "rate_limiting": true,
+    "jwt_enabled": true
+  }
+}
+```
+
+#### POST `/api/v1/security/csp-report`
+Receive and log Content Security Policy violation reports.
+
+**Request Body:**
+```json
+{
+  "csp_report": {
+    "document_uri": "https://example.com/page",
+    "violated_directive": "script-src",
+    "effective_directive": "script-src",
+    "original_policy": "script-src 'self'",
+    "blocked_uri": "https://evil.com/malicious.js",
+    "status_code": 200
+  }
+}
+```
+
+**Response:**
+```json
+{
+  "status": "reported"
+}
+```
+
+#### GET `/api/v1/security/config`
+Get current security configuration (redacted for security).
+
+**Response:**
+```json
+{
+  "environment": "production",
+  "features": {
+    "jwt_authentication": true,
+    "csrf_protection": true,
+    "rate_limiting": true,
+    "csp_headers": true,
+    "security_headers": true,
+    "cors_policy": true
+  },
+  "jwt": {
+    "algorithm": "HS512",
+    "expiration_hours": 2
+  }
+}
+```
+
+### Monitoring API (`/api/v1/monitoring`)
+
+#### GET `/api/v1/monitoring/health`
+Comprehensive health check endpoint.
+
+**Response:**
+```json
+{
+  "status": "healthy",
+  "timestamp": "2024-01-01T00:00:00Z",
+  "service": "kyros-praxis",
+  "version": "0.1.0",
+  "environment": "production",
+  "database": "healthy",
+  "memory": "healthy"
+}
+```
+
+#### GET `/api/v1/monitoring/metrics`
+System metrics endpoint.
+
+**Response:**
+```json
+{
+  "timestamp": "2024-01-01T00:00:00Z",
+  "system": {
+    "cpu_usage": 45.2,
+    "memory": {
+      "total": 8589934592,
+      "available": 4294967296,
+      "used": 4294967296,
+      "percentage": 50.0
+    },
+    "disk": {
+      "total": 100000000000,
+      "used": 50000000000,
+      "free": 50000000000,
+      "percentage": 50.0
+    },
+    "process": {
+      "pid": 1234,
+      "cpu_percent": 5.2,
+      "memory_info": {...},
+      "num_threads": 8,
+      "create_time": "2024-01-01T00:00:00Z"
+    }
+  },
+  "application": {
+    "service": "kyros-praxis",
+    "version": "0.1.0",
+    "environment": "production",
+    "python_version": "3.11.0"
+  }
+}
+```
+
+#### GET `/api/v1/monitoring/database/health`
+Database health check endpoint.
+
+**Response:**
+```json
+{
+  "status": "healthy",
+  "latency_ms": 5.2,
+  "database_info": {
+    "version": "PostgreSQL 15.0"
+  },
+  "timestamp": "2024-01-01T00:00:00Z"
+}
+```
+
+#### GET `/api/v1/monitoring/logs/recent`
+Get recent application logs (placeholder implementation).
+
+**Response:**
+```json
+{
+  "message": "Log retrieval not implemented",
+  "note": "Use proper log aggregation system (ELK, Loki, etc.) for production",
+  "timestamp": "2024-01-01T00:00:00Z"
+}
+```
+
+#### GET `/api/v1/monitoring/performance`
+Application performance metrics (placeholder implementation).
+
+**Response:**
+```json
+{
+  "response_times": {
+    "average_ms": 0,
+    "95th_percentile_ms": 0,
+    "99th_percentile_ms": 0
+  },
+  "throughput": {
+    "requests_per_second": 0,
+    "total_requests": 0
+  },
+  "error_rate": {
+    "percentage": 0,
+    "total_errors": 0
+  },
+  "timestamp": "2024-01-01T00:00:00Z",
+  "note": "Implement proper APM/metrics collection for production use"
+}
+```
+
+#### GET `/api/v1/monitoring/dependencies`
+Check external dependencies health.
+
+**Response:**
+```json
+{
+  "dependencies": {
+    "redis": {"status": "not_configured"},
+    "qdrant": {"status": "not_configured"}
+  },
+  "timestamp": "2024-01-01T00:00:00Z"
+}
+```
 
 ### Utilities API (`/api/v1/utils`)
 
@@ -394,7 +586,24 @@ interface Event {
 
 ## 🚨 Error Handling
 
-### Standard Error Response Format
+### Structured Error Response Format
+All API errors now return structured responses for better error handling:
+
+```json
+{
+  "error": {
+    "type": "http_exception",
+    "code": 401,
+    "message": "Could not validate credentials",
+    "path": "/api/v1/collab/tasks",
+    "method": "POST"
+  }
+}
+```
+
+### Legacy Error Response Format (Deprecated)
+Some endpoints may still return the legacy format:
+
 ```json
 {
   "detail": "Error message describing the issue"
@@ -422,10 +631,17 @@ interface Event {
 
 ## 🔄 Rate Limiting
 
+### JWT-Aware Rate Limiting
+Rate limiting is now JWT-aware, using authenticated user IDs for fair usage:
+
+- **Authenticated users**: Limited by user ID (prevents abuse per user)
+- **Anonymous requests**: Limited by IP address
+- **Login endpoint**: Stricter 5 requests/minute limit (prevents brute force)
+
 ### Default Limits
-- **Requests per minute**: 100
-- **Burst capacity**: 10 requests
-- **Window size**: 15 minutes
+- **General API endpoints**: 100 requests per 15 minutes per user/IP
+- **Login endpoint**: 5 requests per minute per IP
+- **Rate limiting backend**: Redis (with in-memory fallback)
 
 ### Rate Limit Headers
 When rate limits are enforced, the following headers are included:
