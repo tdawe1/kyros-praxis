@@ -16,16 +16,41 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
 
         try {
-          // Dev bypass: allow local login without backend when enabled
+          // Dev bypass: authenticate with orchestrator in dev mode
           if (
             process.env.NEXT_PUBLIC_ALLOW_DEV_LOGIN === 'true' ||
             process.env.ALLOW_DEV_LOGIN === '1'
           ) {
+            // For dev mode, use a test user account
+            const devCredentials = {
+              username: 'user@example.com',
+              password: 'password'
+            };
+
+            const res = await fetch(`${authBase}/auth/login`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(devCredentials),
+            });
+
+            if (!res.ok) {
+              console.error('Dev login failed:', await res.text());
+              return null;
+            }
+
+            const data = await res.json();
+            if (!data.access_token) {
+              console.error('No access token in dev login response');
+              return null;
+            }
+
             return {
-              id: credentials.email,
-              name: credentials.email,
-              email: credentials.email,
-              accessToken: 'dev-token-' + Math.random().toString(36).slice(2),
+              id: devCredentials.username,
+              name: devCredentials.username,
+              email: devCredentials.username,
+              accessToken: data.access_token
             } as any;
           }
 

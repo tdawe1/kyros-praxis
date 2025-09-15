@@ -30,6 +30,8 @@ type Job = {
   status: "pending" | "running" | "completed" | "failed" | "cancelled";
   created_at: string;
   updated_at?: string;
+  priority?: number;
+  description?: string;
 };
 
 export default function JobsPage() {
@@ -39,6 +41,9 @@ export default function JobsPage() {
   const [filter, setFilter] = useState("");
   const [creating, setCreating] = useState(false);
   const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [priority, setPriority] = useState("0");
+  const [metadata, setMetadata] = useState("");
 
   useEffect(() => {
     if (authStatus === "unauthenticated") router.push("/auth");
@@ -58,16 +63,26 @@ export default function JobsPage() {
   });
 
   const createJob = useMutation({
-    mutationFn: async (t: string) => api.jobs.create({ title: t }),
+    mutationFn: async (data: { title: string; description?: string; priority?: number; metadata?: Record<string, any> }) => {
+      const payload: any = { title: data.title };
+      if (data.description) payload.description = data.description;
+      if (data.priority) payload.priority = data.priority;
+      if (data.metadata) payload.metadata = data.metadata;
+      return api.jobs.create(payload);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["jobs"] });
       setTitle("");
+      setDescription("");
+      setPriority("0");
+      setMetadata("");
       setCreating(false);
     },
   });
 
   const headers = [
     { key: "name", header: "Name" },
+    { key: "priority", header: "Priority" },
     { key: "status", header: "Status" },
     { key: "created", header: "Created" },
     { key: "actions", header: "" },
@@ -77,6 +92,7 @@ export default function JobsPage() {
     return (jobsQuery.data || []).map((j) => ({
       id: j.id,
       name: j.name,
+      priority: j.priority || 0,
       status: j.status,
       created: new Date(j.created_at).toLocaleString(),
     }));
@@ -118,28 +134,79 @@ export default function JobsPage() {
                       New Job
                     </Button>
                   ) : (
-                    <form
-                      onSubmit={(e) => {
-                        e.preventDefault();
-                        if (title.trim()) createJob.mutate(title.trim());
+                    <div
+                      style={{
+                        position: "absolute",
+                        top: "3rem",
+                        right: "1rem",
+                        zIndex: 1000,
+                        background: "white",
+                        border: "1px solid var(--cds-border-strong)",
+                        borderRadius: "0.25rem",
+                        padding: "1rem",
+                        minWidth: "300px",
+                        boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
                       }}
-                      style={{ display: "flex", gap: 8 }}
                     >
-                      <input
-                        aria-label="Job title"
-                        placeholder="Job title"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        className="border rounded px-3 py-2"
-                        style={{ width: 260 }}
-                      />
-                      <Button type="submit" disabled={createJob.isPending}>
-                        {createJob.isPending ? "Creating..." : "Create"}
-                      </Button>
-                      <Button kind="secondary" onClick={() => setCreating(false)}>
-                        Cancel
-                      </Button>
-                    </form>
+                      <form
+                        onSubmit={(e) => {
+                          e.preventDefault();
+                          if (title.trim()) {
+                            const parsedMetadata = metadata ? JSON.parse(metadata) : undefined;
+                            createJob.mutate({
+                              title: title.trim(),
+                              description: description.trim() || undefined,
+                              priority: parseInt(priority) || 0,
+                              metadata: parsedMetadata,
+                            });
+                          }
+                        }}
+                        style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}
+                      >
+                        <input
+                          aria-label="Job title"
+                          placeholder="Job title *"
+                          value={title}
+                          onChange={(e) => setTitle(e.target.value)}
+                          className="border rounded px-3 py-2"
+                          required
+                        />
+                        <textarea
+                          aria-label="Job description"
+                          placeholder="Job description (optional)"
+                          value={description}
+                          onChange={(e) => setDescription(e.target.value)}
+                          className="border rounded px-3 py-2"
+                          rows={2}
+                        />
+                        <input
+                          type="number"
+                          aria-label="Priority"
+                          placeholder="Priority (0-100)"
+                          value={priority}
+                          onChange={(e) => setPriority(e.target.value)}
+                          className="border rounded px-3 py-2"
+                          min="0"
+                          max="100"
+                        />
+                        <textarea
+                          aria-label="Metadata (JSON)"
+                          placeholder='Metadata (JSON, optional)'
+                          value={metadata}
+                          onChange={(e) => setMetadata(e.target.value)}
+                          className="border rounded px-3 py-2 font-mono text-sm"
+                          rows={3}
+                        />
+                        <div style={{ display: "flex", gap: "0.5rem", justifyContent: "flex-end" }}>
+                          <Button type="submit" disabled={createJob.isPending || !title.trim()}>
+                            {createJob.isPending ? "Creating..." : "Create"}
+                          </Button>
+                          <Button kind="secondary" onClick={() => setCreating(false)}>
+                            Cancel
+                          </Button>
+                        </div>
+                      </form>
+                    </div>
                   )}
                 </div>
               </TableToolbarContent>
@@ -161,11 +228,16 @@ export default function JobsPage() {
                     <TableRow key={row.id} {...rowProps}>
                       <TableCell>{row.cells[0].value}</TableCell>
                       <TableCell>
-                        <Tag type={{ pending: "blue", running: "teal", completed: "green", failed: "red", cancelled: "gray" }[row.cells[1].value as string] as any}>
+                        <Tag type={row.cells[1].value > 50 ? "red" : row.cells[1].value > 20 ? "yellow" : "green"}>
                           {row.cells[1].value}
                         </Tag>
                       </TableCell>
-                      <TableCell>{row.cells[2].value}</TableCell>
+                      <TableCell>
+                        <Tag type={{ pending: "blue", running: "teal", completed: "green", failed: "red", cancelled: "gray" }[row.cells[2].value as string] as any}>
+                          {row.cells[2].value}
+                        </Tag>
+                      </TableCell>
+                      <TableCell>{row.cells[3].value}</TableCell>
                       <TableCell>
                         <Button size="sm" kind="tertiary" onClick={() => router.push(`/jobs/${row.id}`)}>
                           View
