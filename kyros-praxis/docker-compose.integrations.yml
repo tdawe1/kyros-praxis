@@ -3,8 +3,8 @@ services:
     image: qdrant/qdrant:latest
     restart: unless-stopped
     ports:
-      - "6333:6333"   # REST
-      - "6334:6334"   # gRPC
+      - "6333:6333" # REST
+      - "6334:6334" # gRPC
     environment:
       QDRANT__SERVICE__API_KEY: ${QDRANT_API_KEY:-}
       QDRANT__SERVICE__ENABLE_CORS: "true"
@@ -19,11 +19,14 @@ services:
 
   # Filesystem MCP server (scoped to a specific host path)
   mcp_filesystem:
+    stdin_open: true
+    tty: true
     image: ${FS_NODE_IMAGE:-node:20-alpine}
     restart: unless-stopped
     profiles: ["fs"]
     working_dir: /workspace
-    command: ["npx","-y","@modelcontextprotocol/server-filesystem","/workspace"]
+    command:
+      ["npx", "-y", "@modelcontextprotocol/server-filesystem", "/workspace"]
     volumes:
       - ${FS_PATH:-.}:/workspace:${FS_MODE:-ro}
     environment:
@@ -39,7 +42,7 @@ services:
       QDRANT_API_KEY: ${QDRANT_API_KEY:-}
       COLLECTION: ${MEMORY_COLLECTION:-kyros_agents}
     working_dir: /app
-    command: ["npx","-y","@modelcontextprotocol/server-memory"]
+    command: ["npx", "-y", "@modelcontextprotocol/server-memory"]
     depends_on:
       - qdrant
 
@@ -49,7 +52,7 @@ services:
     restart: unless-stopped
     profiles: ["context7"]
     working_dir: /app
-    command: ["npx","-y","@upstash/context7-mcp"]
+    command: ["npx", "-y", "@upstash/context7-mcp"]
     environment:
       DEFAULT_MINIMUM_TOKENS: ${CONTEXT7_DEFAULT_MINIMUM_TOKENS:-256}
       CONTEXT7_API_TOKEN: ${CONTEXT7_API_TOKEN:-}
@@ -57,6 +60,8 @@ services:
   # GitHub issue/PR MCP bridge (headless). Provide an image that exposes MCP tools
   # over WS or stdio. If stdio-only, you may not need to expose a port.
   mcp_github:
+    stdin_open: true
+    tty: true
     image: ${GITHUB_MCP_IMAGE:-ghcr.io/github/github-mcp-server}
     restart: unless-stopped
     profiles: ["github"]
@@ -70,11 +75,13 @@ services:
 
   # Headless browser (Puppeteer via CDP). Also works with Playwright over CDP.
   mcp_puppeteer:
+    stdin_open: true
+    tty: true
     image: ${PUPPETEER_MCP_IMAGE:-node:20-alpine}
     restart: unless-stopped
     profiles: ["puppeteer"]
     working_dir: /app
-    command: ["npx","-y","@modelcontextprotocol/server-puppeteer"]
+    command: ["npx", "-y", "@modelcontextprotocol/server-puppeteer"]
     environment:
       BROWSERLESS_TOKEN: ${BROWSERLESS_TOKEN:-}
 
@@ -85,7 +92,7 @@ services:
     profiles: ["playwright"]
     shm_size: "1gb"
     working_dir: /workspace
-    command: ["bash","-lc","npx -y @playwright/mcp@latest"]
+    command: ["bash", "-lc", "npx -y @playwright/mcp@latest"]
     volumes:
       - ./:/workspace:ro
 
@@ -95,7 +102,7 @@ services:
     restart: unless-stopped
     profiles: ["redis"]
     working_dir: /app
-    command: ["sh","-lc","npx -y @modelcontextprotocol/server-redis"]
+    command: ["sh", "-lc", "npx -y @modelcontextprotocol/server-redis"]
     environment:
       REDIS_URL: ${REDIS_URL:-redis://redis:6379}
     depends_on:
@@ -107,10 +114,12 @@ services:
     profiles: ["redis"]
     ports:
       - "6379:6379"
-    command: ["redis-server","--appendonly","yes"]
+    command: ["redis-server", "--appendonly", "yes"]
 
   # Zen MCP server (official; runs via uvx inside container)
   mcp_zen:
+    stdin_open: true
+    tty: true
     build:
       context: ./integrations/zen-mcp
       dockerfile: Dockerfile
@@ -124,11 +133,13 @@ services:
 
   # Notion MCP server
   mcp_notion:
+    stdin_open: true
+    tty: true
     image: ${NOTION_MCP_IMAGE:-node:20-alpine}
     restart: unless-stopped
     profiles: ["notion"]
     working_dir: /app
-    command: ["npx","-y","@notionhq/notion-mcp-server"]
+    command: ["npx", "-y", "@notionhq/notion-mcp-server"]
     environment:
       OPENAPI_MCP_HEADERS: ${OPENAPI_MCP_HEADERS:-}
 
@@ -138,21 +149,30 @@ services:
     restart: unless-stopped
     profiles: ["seq"]
     working_dir: /app
-    command: ["npx","-y","@modelcontextprotocol/server-sequential-thinking"]
+    command: ["npx", "-y", "@modelcontextprotocol/server-sequential-thinking"]
 
   # Composer Trade MCP server (Python uvx)
   mcp_composer_trade:
+    stdin_open: true
+    tty: true
     image: ${UV_IMAGE:-ghcr.io/astral-sh/uv:latest}
     restart: unless-stopped
     profiles: ["composer"]
     environment:
       COMPOSER_API_KEY: ${COMPOSER_API_KEY:-}
       COMPOSER_SECRET_KEY: ${COMPOSER_SECRET_KEY:-}
-    command: ["uvx","composer-trade-mcp==0.1.4","--hash","sha256:37d8fcfd6ddc9c8155633f755159f3fcb1a63e7acc2a32513613341a851c84e2"]
-
+    command:
+      [
+        "uvx",
+        "composer-trade-mcp==0.1.4",
+        "--hash",
+        "sha256:37d8fcfd6ddc9c8155633f755159f3fcb1a63e7acc2a32513613341a851c84e2",
+      ]
 
   # ExaSearch MCP server
   mcp_exasearch:
+    stdin_open: true
+    tty: true
     image: ${EXASEARCH_MCP_IMAGE:-node:20-alpine}
     restart: unless-stopped
     profiles: ["exasearch"]
@@ -163,7 +183,7 @@ services:
       EXASEARCH_MCP_PORT: ${EXASEARCH_MCP_PORT:-8788}
     # By default, try to run an npm package via npx. Override EXASEARCH_MCP_PACKAGE
     # with the exact MCP server package name you use (e.g., "exa-mcp-server").
-    command: ["npx","-y","${EXASEARCH_MCP_PACKAGE:-exa-mcp-server}"]
+    command: ["npx", "-y", "${EXASEARCH_MCP_PACKAGE:-exa-mcp-server}"]
     # If your Exa MCP server exposes a WebSocket port, uncomment the line below
     # and ensure the command starts a WS server bound to 0.0.0.0:EXASEARCH_MCP_PORT.
     # ports:
@@ -171,34 +191,39 @@ services:
 
   # Railway MCP server
   mcp_railway:
+    stdin_open: true
+    tty: true
     image: ${RAILWAY_NODE_IMAGE:-node:20-alpine}
     restart: unless-stopped
     profiles: ["railway"]
     working_dir: /app
-    command: ["sh","-lc","npx -y ${RAILWAY_MCP_PACKAGE:-@railway/mcp-server}"]
+    command: ["sh", "-lc", "npx -y ${RAILWAY_MCP_PACKAGE:-@railway/mcp-server}"]
     environment:
       RAILWAY_TOKEN: ${RAILWAY_TOKEN:-}
 
   # Vercel MCP server
   mcp_vercel:
+    stdin_open: true
+    tty: true
     image: ${VERCEL_NODE_IMAGE:-node:20-alpine}
     restart: unless-stopped
     profiles: ["vercel"]
     working_dir: /app
-    command: ["sh","-lc","npx -y ${VERCEL_MCP_PACKAGE:-mcp-vercel}"]
+    command: ["sh", "-lc", "npx -y ${VERCEL_MCP_PACKAGE:-mcp-vercel}"]
     environment:
       VERCEL_TOKEN: ${VERCEL_TOKEN:-}
 
   # CodeRabbit MCP server
   mcp_coderabbit:
+    stdin_open: true
+    tty: true
     image: ${CODERABBIT_NODE_IMAGE:-node:20-alpine}
     restart: unless-stopped
     profiles: ["coderabbit"]
     working_dir: /app
-    command: ["sh","-lc","npx -y ${CODERABBIT_MCP_PACKAGE:-coderabbit-mcp}"]
+    command: ["sh", "-lc", "npx -y ${CODERABBIT_MCP_PACKAGE:-coderabbit-mcp}"]
     environment:
       CODERABBIT_API_KEY: ${CODERABBIT_API_KEY:-}
-
 
   # Kyros core services (feature-complete stack)
   kyros_orchestrator:
@@ -225,7 +250,6 @@ services:
     ports:
       - "9000:9000"
     profiles: ["kyros"]
-
 
   kyros_daemon:
     build:
@@ -261,6 +285,8 @@ services:
 
   # Fireproof MCP server (build and run node project)
   mcp_fireproof:
+    stdin_open: true
+    tty: true
     build:
       context: ./integrations/fireproof-mcp
       dockerfile: Dockerfile
@@ -270,22 +296,27 @@ services:
 
   # Zen Tools MCP (our local tools wrapper around sessions/agents)
   mcp_zen_tools:
+    stdin_open: true
+    tty: true
     image: ${ZEN_TOOLS_PY_IMAGE:-python:3.11-slim}
     restart: unless-stopped
     profiles: ["zen-tools"]
     working_dir: /workspace
-    command: ["python","-u","kyros-praxis/integrations/zen-mcp/main.py"]
+    command: ["python", "-u", "kyros-praxis/integrations/zen-mcp/main.py"]
     volumes:
       - ./:/workspace
     environment:
       ZEN_ROOT: /workspace/kyros-praxis/zen
   # Kyros Collab MCP server (stdio JSON-RPC over process). Provided for reference; prefer spawning locally.
   mcp_kyros_collab:
+    stdin_open: true
+    tty: true
     image: ${PY_IMAGE:-python:3.11-alpine}
     restart: unless-stopped
     profiles: ["kyros-collab"]
     working_dir: /workspace
-    command: ["python","-u","kyros-praxis/integrations/kyros-collab-mcp/main.py"]
+    command:
+      ["python", "-u", "kyros-praxis/integrations/kyros-collab-mcp/main.py"]
     volumes:
       - ./:/workspace
     environment:
