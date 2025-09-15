@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Ask a question / discuss
+    url: https://github.com/tdawe1/kyros-praxis/discussions
+    about: For general questions or design discussions, use Discussions.

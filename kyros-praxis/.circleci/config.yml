@@ -1,0 +1,345 @@
+version: 2.1
+
+orbs:
+  node: circleci/node@5.1.0
+  python: circleci/python@2.1.0
+  docker: circleci/docker@2.2.0
+  browser-tools: circleci/browser-tools@1.4.0
+
+executors:
+  node-executor:
+    docker:
+      - image: cimg/node:20.11-browsers
+    resource_class: large
+    
+  python-executor:
+    docker:
+      - image: cimg/python:3.11
+    resource_class: large
+    
+  docker-executor:
+    docker:
+      - image: cimg/base:2023.09
+    resource_class: large
+
+commands:
+  install-node-deps:
+    steps:
+      - checkout
+      - node/install-packages:
+          pkg-manager: npm
+          cache-path: node_modules
+          cache-version: v1
+          include-branch-in-cache-key: true
+
+  install-python-deps:
+    steps:
+      - checkout
+      - python/install-packages:
+          pip-dependency-file: requirements.txt
+          pkg-manager: pip
+          cache-version: v1
+          include-branch-in-cache-key: true
+
+  run-eslint:
+    steps:
+      - run:
+          name: Run ESLint
+          command: |
+            cd services/console
+            npm run lint
+
+  run-tsc:
+    steps:
+      - run:
+          name: Run TypeScript check
+          command: |
+            cd services/console
+            npm run check
+
+  run-ruff:
+    steps:
+      - run:
+          name: Run Ruff linter
+          command: |
+            cd services/orchestrator
+            python -m ruff check .
+
+  run-mypy:
+    steps:
+      - run:
+          name: Run MyPy type checker
+          command: |
+            cd services/orchestrator
+            python -m mypy .
+
+  run-pytest:
+    steps:
+      - run:
+          name: Run Python tests
+          command: |
+            cd services/orchestrator
+            python -m pytest -v
+
+jobs:
+  checks-frontend:
+    executor: node-executor
+    steps:
+      - install-node-deps
+      - run-eslint
+      - run-tsc
+
+  checks-backend:
+    executor: python-executor
+    steps:
+      - install-python-deps
+      - run-ruff
+      - run-mypy
+      - run-pytest
+
+  build-frontend:
+    executor: node-executor
+    steps:
+      - install-node-deps
+      - run:
+          name: Build Next.js application
+          command: |
+            cd services/console
+            npm run build
+      - persist_to_workspace:
+          root: .
+          paths:
+            - services/console/.next
+            - services/console/build
+
+  build-backend:
+    executor: docker-executor
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 20.10.14
+          docker_layer_caching: true
+      - run:
+          name: Build FastAPI Docker image
+          command: |
+            cd services/orchestrator
+            docker build -t kyros-praxis-api:${CIRCLE_SHA1} .
+      - run:
+          name: Build terminal daemon image
+          command: |
+            cd services/terminal-daemon
+            docker build -t kyros-praxis-daemon:${CIRCLE_SHA1} .
+      - run:
+          name: Save Docker images
+          command: |
+            docker save kyros-praxis-api:${CIRCLE_SHA1} kyros-praxis-daemon:${CIRCLE_SHA1} > docker-images.tar
+      - persist_to_workspace:
+          root: .
+          paths:
+            - docker-images.tar
+
+  test-e2e:
+    executor: node-executor
+    steps:
+      - attach_workspace:
+          at: .
+      - browser-tools/install-chrome
+      - browser-tools/install-chromedriver
+      - run:
+          name: Start test stack
+          command: |
+            docker load < docker-images.tar
+            docker-compose -f docker-compose.test.yml up -d
+            sleep 30
+      - run:
+          name: Run Playwright tests
+          command: |
+            cd services/console
+            npx playwright test --reporter=list
+      - run:
+          name: Stop test stack
+          command: |
+            docker-compose -f docker-compose.test.yml down -v
+          when: always
+      - store_test_results:
+          path: services/console/test-results
+      - store_artifacts:
+          path: services/console/playwright-report
+          destination: playwright-report
+
+  security-scan:
+    executor: docker-executor
+    steps:
+      - checkout
+      - run:
+          name: Run npm audit
+          command: |
+            cd services/console
+            npm audit --audit-level=high
+      - run:
+          name: Run pip-audit
+          command: |
+            cd services/orchestrator
+            pip install pip-audit
+            pip-audit
+      - run:
+          name: Scan Docker images with Trivy
+          command: |
+            docker run -v /var/run/docker.sock:/var/run/docker.sock \
+              aquasec/trivy:latest \
+              image --exit-code 1 --severity CRITICAL,HIGH \
+              kyros-praxis-api:${CIRCLE_SHA1}
+
+  deploy-preview-vercel:
+    executor: node-executor
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Install Vercel CLI
+          command: npm install -g vercel
+      - run:
+          name: Deploy to Vercel Preview
+          command: |
+            cd services/console
+            vercel --token $VERCEL_TOKEN --scope $VERCEL_ORG_ID
+      - run:
+          name: Get Preview URL
+          command: |
+            cd services/console
+            PREVIEW_URL=$(vercel ls $VERCEL_PROJECT_NAME --token $VERCEL_TOKEN --scope $VERCEL_ORG_ID | head -n 2 | tail -n 1 | awk '{print $2}')
+            echo "export PREVIEW_URL=$PREVIEW_URL" >> $BASH_ENV
+      - run:
+          name: Comment PR with Preview URL
+          command: |
+            curl -X POST \
+              -H "Authorization: token $GITHUB_TOKEN" \
+              -H "Accept: application/vnd.github.v3+json" \
+              https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/issues/${CIRCLE_PR_NUMBER}/comments \
+              -d "{\"body\": \"🚀 Preview deployments ready!\n\n📱 Frontend: $PREVIEW_URL\n🔧 API: https://kyros-praxis-api-$CIRCLE_PR_NUMBER.railway.app\"}"
+
+  deploy-preview-railway:
+    executor: docker-executor
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 20.10.14
+          docker_layer_caching: true
+      - run:
+          name: Install Railway CLI
+          command: npm install -g @railway/cli
+      - run:
+          name: Deploy to Railway Preview
+          command: |
+            railway login --token $RAILWAY_TOKEN
+            railway up --detach --environment preview-$CIRCLE_PR_NUMBER
+      - run:
+          name: Run database migrations
+          command: |
+            railway run --environment preview-$CIRCLE_PR_NUMBER -- python -m alembic upgrade head
+
+  deploy-production-vercel:
+    executor: node-executor
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Install Vercel CLI
+          command: npm install -g vercel
+      - run:
+          name: Deploy to Vercel Production
+          command: |
+            cd services/console
+            vercel --token $VERCEL_TOKEN --scope $VERCEL_ORG_ID --prod
+
+  deploy-production-railway:
+    executor: docker-executor
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 20.10.14
+          docker_layer_caching: true
+      - run:
+          name: Install Railway CLI
+          command: npm install -g @railway/cli
+      - run:
+          name: Run pre-deploy database migrations
+          command: |
+            railway login --token $RAILWAY_TOKEN
+            railway run --environment production -- python -m alembic upgrade head
+      - run:
+          name: Deploy to Railway Production
+          command: |
+            railway up --detach --environment production
+
+  post-deploy-smoke:
+    executor: node-executor
+    steps:
+      - run:
+          name: Smoke test production deployment
+          command: |
+            curl -f https://app.kyros-praxis.com/api/v1/utils/health-check || exit 1
+            curl -f https://api.kyros-praxis.com/api/v1/utils/health-check || exit 1
+
+workflows:
+  version: 2
+  ci-cd-pipeline:
+    jobs:
+      - checks-frontend
+      - checks-backend
+      - build-frontend:
+          requires:
+            - checks-frontend
+      - build-backend:
+          requires:
+            - checks-backend
+      - test-e2e:
+          requires:
+            - build-frontend
+            - build-backend
+      - security-scan:
+          requires:
+            - build-backend
+      - deploy-preview-vercel:
+          requires:
+            - test-e2e
+            - security-scan
+          filters:
+            branches:
+              only: /^feature\//
+            ignore: /^main$/
+      - deploy-preview-railway:
+          requires:
+            - test-e2e
+            - security-scan
+          filters:
+            branches:
+              only: /^feature\//
+            ignore: /^main$/
+      - deploy-production-vercel:
+          requires:
+            - test-e2e
+            - security-scan
+          filters:
+            branches:
+              only: main
+            tags:
+              only: /^v[0-9]+\.[0-9]+\.[0-9]+/
+      - deploy-production-railway:
+          requires:
+            - test-e2e
+            - security-scan
+          filters:
+            branches:
+              only: main
+            tags:
+              only: /^v[0-9]+\.[0-9]+\.[0-9]+/
+      - post-deploy-smoke:
+          requires:
+            - deploy-production-vercel
+            - deploy-production-railway
+          filters:
+            branches:
+              only: main
+            tags:
+              only: /^v[0-9]+\.[0-9]+\.[0-9]+/

@@ -1,0 +1,32 @@
+{
+  "globalDefaults": {
+    "model": "glm-4.5",
+    "thinkingMode": "medium",
+    "temperature": 0.3
+  },
+  "hybridModelConfig": {
+    "primaryModel": "glm-4.5",
+    "premiumModel": "claude-4.1-opus",
+    "premiumUsagePercentage": 5,
+    "escalationTriggers": {
+      "architect": [
+        "decision affects 3+ services",
+        "major security implications",
+        "performance-critical infrastructure",
+        "high-risk/high-reward architectural choices",
+        "complex system boundary changes"
+      ],
+      "integrator": [
+        "complex multi-service conflict resolution",
+        "system boundary changes during merge"
+      ]
+    }
+  },
+  "monitoring": {
+    "enableModelUsageTracking": true,
+    "costOptimizationTargets": {
+      "monthlySavingsTarget": 0.35,
+      "qualityThreshold": 0.95
+    }
+  }
+}

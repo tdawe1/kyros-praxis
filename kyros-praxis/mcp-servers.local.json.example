@@ -30,9 +30,12 @@
       "args": ["kyros-praxis/scripts/mcp-run.sh", "mcp_railway"]
     },
 
-    "exasearch": {
-      "command": "bash",
-      "args": ["kyros-praxis/scripts/mcp-run.sh", "mcp_exasearch"]
+    "exa": {
+      "command": "sh",
+      "args": [
+        "-lc",
+        "npx -y mcp-remote 'https://mcp.exa.ai/mcp?exaApiKey=${EXA_API_KEY}'"
+      ]
     },
 
     "coderabbit": {

@@ -1,0 +1,28 @@
+defaults:
+  prefer_free: true
+  max_task_usd: 0.30
+  daily_cap_usd: 5
+
+modes:
+  architect:
+    primary: "openrouter/sonoma-sky-alpha"
+    fallbacks: ["glm-4.5"]
+    max_tokens: 8000
+    temperature: 0.3
+
+  orchestrator:
+    primary: "openrouter/sonoma-sky-alpha"
+    max_tokens: 4000
+    temperature: 0.2
+
+  implementer:
+    primary: "glm-4.5"
+    fallbacks: ["openrouter/sonoma-sky-alpha"]
+    max_tokens: 4000
+    temperature: 0.2
+
+  critic:
+    primary: "openrouter/sonoma-sky-alpha"
+    fallbacks: ["meta-llama/llama-3.2-3b-instruct:free"]
+    max_tokens: 2000
+    temperature: 0.1

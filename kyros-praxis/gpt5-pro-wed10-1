@@ -1,0 +1,208 @@
+Review this new plan suggestion for our next steps, and help me divide it up into tasks for our agents:
+
+Audit Summary
+Your agent mesh is capable, but the context stream they consume is uneven and hard to verify. You already maintain authoritative sources (backend steel‑thread, FE assessment, task index, AI rules/plans), yet these are not consistently packaged or routed to each agent at the right moment. Standardizing “context packs” and a lightweight handoff contract will cut redundancy, prevent drift (e.g., sync vs. async ambiguities), and align work with PR1 acceptance tests and near‑term P0 items.
+
+Code Quality Assessment (Context Inputs)
+Authoritative specs exist but aren’t bundled per role. The backend steel‑thread defines exact endpoints, ETag semantics, and test names—ideal for Implementer/Critic prompts, but they must be injected verbatim into those roles’ context.
+Frontend readiness and gaps are known. FE plan flags missing TanStack Query and low integration readiness; FE agents need a distilled “readiness delta” to avoid asking for unavailable contracts.
+Tasks are prioritized but not bound to agent prompts. The TDS list provides P0 dates for Collab API w/ ETag+SSE and Jobs slice; Orchestrator should reference TDS IDs on every handoff to keep assignments scoped and testable.
+AI rules stress minimal diffs and plan updates. These rules should be embedded as guardrails (e.g., “update matching plan file in same PR”), reducing meta‑chatter.
+Git context is not exposed to agents. The MCP Git server is configured but disabled; agents thus lack precise diff/file‑touch context that improves planning and reviews.
+Project Management Review (Flow & Governance)
+Backend PR1 acceptance is explicit (healthz; create/list with strong ETag; tests green). Architect/Implementer/Critic prompts should reference these as the only definition of done for the steel thread.
+Two living plans require synchronous updates; your rules already mandate this—codify it into Critic/Integrator exit criteria.
+Backlog routing: Orchestrator should map each card to TDS (e.g., TDS‑1, TDS‑3) and attach the exact plan fragments + file paths being modified.
+Risks & Gaps
+Context drift: Agents speculate or debate basics (sync vs. async DB; FE deps) that are settled in plans—wastes cycles.
+Missing code‑diff awareness: Without read‑only Git context, reviews and plans lack precision.
+Weak handoffs: No uniform “task card” with acceptance tests, touched files, and invariants → rework.
+Plan update debt: Agents complete work but forget to update the matching plan files in‑PR.
+Recommendations (Prioritized)
+Adopt Role‑Aligned Context Packs (P0).
+
+Architect (consulting group): Goals + risks + open decisions from AI Rules & Plans and both current plans; include “minimal diffs/DoD” guardrails.
+Orchestrator: TDS item + deadline + dependency graph + the exact plan snippets that define acceptance (e.g., PR1 tests, ETag algo).
+Implementer: Directory touchpoints, endpoint contracts, DB mode (sync Day‑1), commands, and sample curl from the backend plan; for FE, the TanStack/WS deltas.
+Critic: The acceptance tests and logging/DoD checklists; verify plans updated in‑PR.
+Integrator: Paths touched, migration impact, and the “steel thread” smoke tests to re‑run.
+Deliverable: /docs/agent-context/*.mdx with one short template per role.
+Standardize the Handoff Card schema (P0).
+Every Orchestrator→Workhorse handoff carries a single JSON block; Critic/Integrator must check it back in replies:
+
+{
+  "task_id": "TDS-1",
+  "scope": "PR1 steel thread",
+  "acceptance": ["test_healthz_ok", "test_create_task_and_list"],
+  "contracts": ["/healthz", "POST /collab/tasks", "GET /collab/state/tasks"],
+  "invariants": ["Strong ETag = sha256(canonical_json)", "Day-1 sync SQLAlchemy"],
+  "touchpoints": ["services/orchestrator/main.py", "models.py", "tests/"],
+  "commands": ["uvicorn services.orchestrator.main:app --reload --port 8000", "pytest -c services/orchestrator/pytest.ini -q"],
+  "docs_to_update": ["backend-current-plan.md"]
+}
+This anchors work to the plan and tests and prevents scope creep.
+
+Enable read‑only Git MCP for diff‑aware prompts (P0).
+Flip mcp.json to enable the Git server in read‑only mode with an allowlist (status, show, diff --name-only HEAD, rev-parse, ls-files). This lets Architect/Reviewer agents cite actual changes and file paths without mutating the repo.
+
+Embed Plan‑Update & Minimal‑Diff guardrails in system prompts (P0).
+Add to Critic/Integrator system prompts: “Reject handoff if matching plan file not updated in the same PR; prefer <200‑line diffs unless migrations.” Mirrors your rules so agents enforce them mechanically.
+
+Context Pre‑Flight for FE/BE (P1).
+
+BE: Inject steel‑thread tests, ETag algorithm, and DB mode as first 200 tokens of Implementer context.
+FE: Inject “readiness delta” (install TanStack, wire QueryProvider, WS targets) so Implementer doesn’t request missing deps.
+Next Priority
+Land a PR that adds /docs/agent-context/ (role templates + the Handoff Card), enables read‑only Git MCP, and updates Orchestrator to emit the Handoff Card for TDS‑1 and TDS‑3 immediately. This ties active P0 work directly to the steel‑thread acceptance and stops context drift on day‑to‑day tasks.
+
+
+Here’s a crisp, agent-ready breakdown that turns your plan into assignable, testable work. I kept P0 items first and tied each task to clear deliverables, acceptance, and touchpoints.
+
+Quick Take
+
+Strong plan: focuses on context quality, DoD alignment, and diff-aware reviews.
+Gaps to cover: explicit owners, concrete file paths, and checkable acceptance.
+Bias to action: ship a single PR that lands context packs + handoff schema + read-only Git MCP + Orchestrator emission for TDS-1/TDS-3.
+P0 — Role Context Packs
+
+Owner: Architect
+
+Define role templates: Author the five context templates (Architect, Orchestrator, Implementer, Critic, Integrator).
+Deliverables: docs/agent-context/architect.mdx, orchestrator.mdx, implementer.mdx, critic.mdx, integrator.mdx.
+Acceptance: Each file contains goals, risks, DoD, guardrails (“minimal diffs”, “update plan in same PR”), and required inputs.
+Touchpoints: docs/agent-context/*.
+Dependencies: None.
+Owner: Critic
+
+Harden guardrails: Add explicit “reject if matching plan file not updated” and “prefer <200-line diffs” sections to Critic/Integrator templates.
+Deliverables: Updated critic.mdx, integrator.mdx.
+Acceptance: Guardrails present as checklist items referenced in exit criteria.
+Touchpoints: docs/agent-context/*.
+Dependencies: Architect templates.
+P0 — Standard Handoff Card
+
+Owner: Architect
+
+Finalize schema: Write v1 JSON schema + doc explaining fields and examples.
+Deliverables: docs/agent-context/handoff-card.schema.json, handoff-card.mdx (usage, examples, validations).
+Acceptance: Schema validates provided examples for TDS-1 and TDS-3.
+Touchpoints: docs/agent-context/*.
+Dependencies: None.
+Owner: Orchestrator
+
+Emit card: Generate the Handoff Card in every Orchestrator→Implementer/Critic handoff.
+Deliverables: Emission code + tests; sample cards checked into repo for TDS-1, TDS-3.
+Acceptance: For TDS-1 and TDS-3, replies include a JSON block matching handoff-card.schema.json; CI lints JSON.
+Touchpoints: services/orchestrator/main.py, services/orchestrator/handshake/*.py, tests/orchestrator/test_handoff_card.py, examples/handoff/*.json.
+Dependencies: Schema.
+Owner: Critic, Integrator
+
+Enforce round-trip: Validate incoming/outgoing messages include a valid Handoff Card and echo it back.
+Deliverables: Validation hooks + failing tests when card is missing/invalid.
+Acceptance: PR checks fail if card absent or schema-invalid.
+Touchpoints: services/*/middleware/*, tests/*/test_handoff_validation.py.
+Dependencies: Schema, Orchestrator emission.
+P0 — Read‑Only Git MCP
+
+Owner: Integrator
+
+Enable Git server: Turn on MCP Git in read-only with allowlist (status, show, diff --name-only HEAD, rev-parse, ls-files).
+Deliverables: mcp.json (or equivalent) updated; doc for usage and allowed commands.
+Acceptance: Agents can request file lists and diffs; write operations blocked.
+Touchpoints: mcp.json, docs/agent-context/git-mcp.mdx.
+Dependencies: None.
+Owner: Architect
+
+Prompt wiring: Add “cite actual file paths and diff names from MCP Git” note in Architect/Critic templates.
+Deliverables: Updated templates.
+Acceptance: Templates reference MCP Git usage explicitly.
+Touchpoints: docs/agent-context/*.
+Dependencies: Git MCP enabled.
+P0 — System Guardrails (Prompts)
+
+Owner: Integrator
+System prompt updates: Inject guardrails into Critic/Integrator system prompts.
+Deliverables: Prompt files and changelog.
+Acceptance: Prompts include: plan-updates-in-PR, minimal-diff preference, Handoff Card enforcement.
+Touchpoints: services/*/prompts/*.mdx|.txt|.json.
+Dependencies: Architect templates.
+P0 — Tie to PR1 Acceptance
+
+Owner: Architect
+
+DoD pinning: Add the steel-thread acceptance tests + ETag definition into Implementer/Critic templates.
+Deliverables: Updated implementer.mdx, critic.mdx.
+Acceptance: Files include: tests list (test_healthz_ok, test_create_task_and_list) and ETag algo note.
+Touchpoints: docs/agent-context/*.
+Dependencies: None.
+Owner: Critic
+
+Gate on tests: Ensure review checklist blocks merge unless PR1 tests pass.
+Deliverables: Checklist doc + CI rule linking.
+Acceptance: CI fails if PR1 tests fail.
+Touchpoints: .github/workflows/* or CI config, docs/agent-context/review-checklist.mdx.
+Dependencies: None.
+P1 — Context Pre‑Flight Injection
+
+Owner: Architect
+
+BE preface: Compose the first-200-token preface for Implementer (PR1 tests, ETag algorithm, DB mode = sync day-1).
+Deliverables: docs/agent-context/preface-be.txt.
+Acceptance: Length ≤ 200 tokens; includes three items verbatim.
+Touchpoints: docs/agent-context/*.
+Dependencies: None.
+Owner: Architect
+
+FE readiness delta: Distill TanStack Query install, QueryProvider wiring, WS targets.
+Deliverables: docs/agent-context/preface-fe.txt.
+Acceptance: Lists deps, provider snippet path, target URLs.
+Touchpoints: docs/agent-context/*.
+Dependencies: None.
+Owner: Integrator
+
+Injector wiring: Ensure Implementer role contexts receive the preface first in the prompt assembly.
+Deliverables: Prompt assembly change + tests.
+Acceptance: Unit test verifies preface appears at the start.
+Touchpoints: services/*/prompt_assembly/*.py|.ts, tests/*/test_prompt_assembly.py.
+Dependencies: Preface docs.
+Sample Handoff Cards To Implement Now
+
+Owner: Orchestrator
+TDS-1 (PR1 steel thread)
+
+task_id: TDS-1
+scope: PR1 steel thread
+acceptance: test_healthz_ok, test_create_task_and_list
+contracts: /healthz, POST /collab/tasks, GET /collab/state/tasks
+invariants: Strong ETag = sha256(canonical_json), Day-1 sync SQLAlchemy
+touchpoints: services/orchestrator/main.py, models.py, tests/
+commands: uvicorn services.orchestrator.main:app --reload --port 8000; pytest -c services/orchestrator/pytest.ini -q
+docs_to_update: backend-current-plan.md
+TDS-3 (Jobs slice)
+
+task_id: TDS-3
+scope: Jobs slice creation + list
+acceptance: test_create_job_and_list
+contracts: POST /collab/jobs, GET /collab/state/jobs
+invariants: Strong ETag on list/get, Day-1 sync SQLAlchemy
+touchpoints: services/orchestrator/jobs.py, models.py, tests/
+commands: uvicorn ..., pytest ...
+docs_to_update: backend-current-plan.md
+CI and Checks
+
+Owner: Integrator
+JSON lint: Add CI step that validates any *.json in examples/handoff/ against handoff-card.schema.json.
+Diff size reminder: Add a non-blocking warning if PR diff > 200 LOC (excluding tests/doc).
+Plan sync: Add a blocking step that fails if touched paths don’t include at least one “plan” doc when code in services/ changes.
+Dependencies & Sequence (P0)
+
+1: Architect templates and schema.
+2: Integrator enables read-only Git MCP.
+3: Orchestrator emits Handoff Card (uses schema).
+4: Critic/Integrator enforce card and guardrails.
+5: CI checks for schema, tests, diff size, plan sync.
+What I Can Do Next
+
+Scaffold the docs and schema files under docs/agent-context/, add example Handoff Cards for TDS-1/TDS-3, and a stub mcp.json change for read-only Git MCP in a single PR.
+Optionally, add CI validation for schema and plan-sync.
+Want me to create the scaffolding PR now and wire the CI checks?

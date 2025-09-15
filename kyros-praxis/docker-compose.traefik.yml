@@ -1,0 +1,121 @@
+# Production overlay with Traefik for HTTPS and routing
+# Usage: docker compose -f docker-compose.yml -f docker-compose.traefik.yml up
+
+services:
+  traefik:
+    image: traefik:3.0
+    restart: always
+    command:
+      # Enable Docker provider
+      - --providers.docker
+      # Only use services with the label for this stack
+      - --providers.docker.constraints=Label(`traefik.constraint-label`, `${STACK_NAME:-kyros-praxis}`)
+      # Do not expose all Docker services by default
+      - --providers.docker.exposedbydefault=false
+      # Create entrypoints
+      - --entrypoints.http.address=:80
+      - --entrypoints.https.address=:443
+      # HTTPS redirect middleware
+      - --entrypoints.http.http.redirections.entrypoint.to=https
+      - --entrypoints.http.http.redirections.entrypoint.scheme=https
+      # Enable Let's Encrypt
+      - --certificatesresolvers.le.acme.email=${ACME_EMAIL:-admin@example.com}
+      - --certificatesresolvers.le.acme.storage=/certificates/acme.json
+      - --certificatesresolvers.le.acme.tlschallenge=true
+      # Enable access log
+      - --accesslog
+      # Enable Traefik log
+      - --log
+      - --log.level=${LOG_LEVEL:-INFO}
+      # Enable API and dashboard (secured)
+      - --api
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - traefik-certificates:/certificates
+    networks:
+      - traefik-public
+      - default
+    labels:
+      - traefik.enable=true
+      - traefik.constraint-label=${STACK_NAME:-kyros-praxis}
+      - traefik.docker.network=traefik-public
+      # Dashboard (secured with basic auth)
+      - traefik.http.routers.${STACK_NAME:-kyros-praxis}-traefik-https.rule=Host(`traefik.${DOMAIN:-localhost}`)
+      - traefik.http.routers.${STACK_NAME:-kyros-praxis}-traefik-https.entrypoints=https
+      - traefik.http.routers.${STACK_NAME:-kyros-praxis}-traefik-https.tls=true
+      - traefik.http.routers.${STACK_NAME:-kyros-praxis}-traefik-https.tls.certresolver=le
+      - traefik.http.routers.${STACK_NAME:-kyros-praxis}-traefik-https.service=api@internal
+      - traefik.http.routers.${STACK_NAME:-kyros-praxis}-traefik-https.middlewares=admin-auth
+      - traefik.http.middlewares.admin-auth.basicauth.users=${TRAEFIK_ADMINS:-admin:$$2y$$10$$S4m4Hq6NMS8pxQ7HGaVBCe6dLk4wR8f8pHgp8.pxNPFjbDR3KQbxu}
+      # Global HTTPS redirect middleware
+      - traefik.http.middlewares.https-redirect.redirectscheme.scheme=https
+      - traefik.http.middlewares.https-redirect.redirectscheme.permanent=true
+
+  kyros-praxis-console:
+    networks:
+      - traefik-public
+      - default
+    labels:
+      - traefik.enable=true
+      - traefik.constraint-label=${STACK_NAME:-kyros-praxis}
+      - traefik.docker.network=traefik-public
+      # HTTP
+      - traefik.http.routers.${STACK_NAME:-kyros-praxis}-console-http.rule=Host(`app.${DOMAIN:-localhost}`)
+      - traefik.http.routers.${STACK_NAME:-kyros-praxis}-console-http.entrypoints=http
+      - traefik.http.routers.${STACK_NAME:-kyros-praxis}-console-http.middlewares=https-redirect
+      # HTTPS
+      - traefik.http.routers.${STACK_NAME:-kyros-praxis}-console-https.rule=Host(`app.${DOMAIN:-localhost}`)
+      - traefik.http.routers.${STACK_NAME:-kyros-praxis}-console-https.entrypoints=https
+      - traefik.http.routers.${STACK_NAME:-kyros-praxis}-console-https.tls=true
+      - traefik.http.routers.${STACK_NAME:-kyros-praxis}-console-https.tls.certresolver=le
+      - traefik.http.services.${STACK_NAME:-kyros-praxis}-console.loadbalancer.server.port=3000
+
+  kyros-praxis-orchestrator:
+    networks:
+      - traefik-public
+      - default
+    labels:
+      - traefik.enable=true
+      - traefik.constraint-label=${STACK_NAME:-kyros-praxis}
+      - traefik.docker.network=traefik-public
+      # HTTP
+      - traefik.http.routers.${STACK_NAME:-kyros-praxis}-api-http.rule=Host(`api.${DOMAIN:-localhost}`)
+      - traefik.http.routers.${STACK_NAME:-kyros-praxis}-api-http.entrypoints=http
+      - traefik.http.routers.${STACK_NAME:-kyros-praxis}-api-http.middlewares=https-redirect
+      # HTTPS
+      - traefik.http.routers.${STACK_NAME:-kyros-praxis}-api-https.rule=Host(`api.${DOMAIN:-localhost}`)
+      - traefik.http.routers.${STACK_NAME:-kyros-praxis}-api-https.entrypoints=https
+      - traefik.http.routers.${STACK_NAME:-kyros-praxis}-api-https.tls=true
+      - traefik.http.routers.${STACK_NAME:-kyros-praxis}-api-https.tls.certresolver=le
+      - traefik.http.services.${STACK_NAME:-kyros-praxis}-api.loadbalancer.server.port=8000
+
+  adminer:
+    profiles: []  # Override to enable in production if ENABLE_ADMINER=true
+    networks:
+      - traefik-public
+      - default
+    labels:
+      - traefik.enable=${ENABLE_ADMINER:-false}
+      - traefik.constraint-label=${STACK_NAME:-kyros-praxis}
+      - traefik.docker.network=traefik-public
+      # HTTP
+      - traefik.http.routers.${STACK_NAME:-kyros-praxis}-adminer-http.rule=Host(`adminer.${DOMAIN:-localhost}`)
+      - traefik.http.routers.${STACK_NAME:-kyros-praxis}-adminer-http.entrypoints=http
+      - traefik.http.routers.${STACK_NAME:-kyros-praxis}-adminer-http.middlewares=https-redirect
+      # HTTPS (with auth)
+      - traefik.http.routers.${STACK_NAME:-kyros-praxis}-adminer-https.rule=Host(`adminer.${DOMAIN:-localhost}`)
+      - traefik.http.routers.${STACK_NAME:-kyros-praxis}-adminer-https.entrypoints=https
+      - traefik.http.routers.${STACK_NAME:-kyros-praxis}-adminer-https.tls=true
+      - traefik.http.routers.${STACK_NAME:-kyros-praxis}-adminer-https.tls.certresolver=le
+      - traefik.http.routers.${STACK_NAME:-kyros-praxis}-adminer-https.middlewares=admin-auth
+      - traefik.http.services.${STACK_NAME:-kyros-praxis}-adminer.loadbalancer.server.port=8080
+
+volumes:
+  traefik-certificates:
+
+networks:
+  traefik-public:
+    external: true

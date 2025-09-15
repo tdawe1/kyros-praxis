@@ -1,0 +1,90 @@
+name: Agent Runner
+
+on:
+  issues:
+    types: [labeled]
+  issue_comment:
+    types: [created]
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: Issue number to run
+        required: true
+      role:
+        description: Role (architect|conductor|implement|critic)
+        required: true
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  run-agent:
+    name: Run agent on issue
+    runs-on: ubuntu-latest
+    if: >-
+      ${ {
+        (github.event_name == 'issues' && contains(toJson(github.event.issue.labels), 'agent:auto-run')) ||
+        (github.event_name == 'issue_comment' && startsWith(github.event.comment.body, '/run-agent')) ||
+        (github.event_name == 'workflow_dispatch')
+      } }
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install runner deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
+      - name: Determine issue and role
+        id: meta
+        shell: bash
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "issue=${{ inputs.issue_number }}" >> $GITHUB_OUTPUT
+            echo "role=${{ inputs.role }}" >> $GITHUB_OUTPUT
+          else
+            echo "issue=${{ github.event.issue.number }}" >> $GITHUB_OUTPUT
+            role=""
+            if [[ "${{ github.event_name }}" == "issues" ]]; then
+              labels_json='${{ toJson(github.event.issue.labels) }}'
+            else
+              labels_json='${{ toJson(github.event.issue.labels) }}'
+            fi
+            if echo "$labels_json" | grep -qi 'agent:architect'; then role=architect; fi
+            if echo "$labels_json" | grep -qi 'agent:conductor'; then role=conductor; fi
+            if echo "$labels_json" | grep -qi 'agent:implement'; then role=implement; fi
+            if echo "$labels_json" | grep -qi 'agent:critic'; then role=critic; fi
+            # Allow slash command: /run-agent <role>
+            if [[ "${{ github.event_name }}" == "issue_comment" ]]; then
+              body='${{ github.event.comment.body }}'
+              if [[ "$body" =~ ^/run-agent[[:space:]]+([a-zA-Z]+) ]]; then
+                role="${BASH_REMATCH[1]}"
+              fi
+            fi
+            if [[ -z "$role" ]]; then role=implement; fi
+            echo "role=$role" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Configure git author
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Run agent issue runner
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ steps.meta.outputs.issue }}
+          ROLE: ${{ steps.meta.outputs.role }}
+        run: |
+          python scripts/agent_issue_runner.py --issue-number "$ISSUE_NUMBER" --role "$ROLE"
+

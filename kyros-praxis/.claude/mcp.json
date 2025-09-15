@@ -1,0 +1,48 @@
+{
+  "servers": [
+    {
+      "name": "filesystem",
+      "command": "bash",
+      "args": [
+        "-lc",
+        "npx -y @modelcontextprotocol/server-filesystem \"$PWD\""
+      ],
+      "alwaysAllow": [
+        "read_text_file"
+      ]
+    },
+    {
+      "name": "memory",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-memory"
+      ],
+      "alwaysAllow": [
+        "read_graph"
+      ]
+    },
+    {
+      "name": "time",
+      "command": "uvx",
+      "args": [
+        "mcp-server-time"
+      ]
+    },
+    {
+      "name": "git",
+      "command": "bash",
+      "args": [
+        "-lc",
+        "npx -y @modelcontextprotocol/server-git \"$PWD\""
+      ],
+      "alwaysAllow": [
+        "status",
+        "show",
+        "diff --name-only HEAD",
+        "rev-parse",
+        "ls-files"
+      ]
+    }
+  ]
+}

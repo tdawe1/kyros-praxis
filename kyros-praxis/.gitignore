@@ -1,20 +1,51 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.python-version
+.venv/
+venv/
+.eggs/
+*.egg-info/
+.mypy_cache/
+.pytest_cache/
+*.db
+
 # Node
 node_modules/
-dist/
+.npm/
+.pnpm-store/
 .next/
+dist/
+build/
 
-# Python
-**/__pycache__/
-**/.pytest_cache/
-**/venv/
+# OS/editor
+.DS_Store
+.idea/
+.vscode/
 
-# Env & secrets
+# Env
 .env
-*.env
+.env.*
 
-# Build artifacts
-*.log
+# Misc
 coverage/
 
-# MCP local overrides
-mcp-servers.local.json
+# Local canonicalization symlink + backups
+services/_deprecated/
+packages/_deprecated/
+
+# Tooling and local state
+.kilocode/
+.kilocodemodes
+collaboration/state/
+archive/
+
+# Ignore large migration patch artifacts
+tools/migration/patches/*.patch
+
+# Ignore large migration patch artifacts
+tools/migration/patches/*.patch
+kyros-praxis/qdrant/storage/
+tools/migration/patches_local/

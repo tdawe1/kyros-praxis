@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
+import hashlib
+import json
 import os
 import sys
-import json
 import time
 import uuid
-import hashlib
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
@@ -28,7 +28,9 @@ def ensure_dirs() -> None:
     if not AGENTS_FILE.exists():
         AGENTS_FILE.write_text(json.dumps([], indent=2) + "\n", encoding="utf-8")
     if not SESSIONS_FILE.exists():
-        SESSIONS_FILE.write_text(json.dumps({"sessions": []}, indent=2) + "\n", encoding="utf-8")
+        SESSIONS_FILE.write_text(
+            json.dumps({"sessions": []}, indent=2) + "\n", encoding="utf-8"
+        )
 
 
 def canon(obj: Any) -> str:
@@ -63,14 +65,29 @@ def respond(req_id, result=None, error=None):
     if error is not None:
         send({"jsonrpc": "2.0", "id": req_id, "error": error})
     else:
-        send({"jsonrpc": "2.0", "id": req_id, "result": result if result is not None else {}})
+        send(
+            {
+                "jsonrpc": "2.0",
+                "id": req_id,
+                "result": result if result is not None else {},
+            }
+        )
 
 
 def initialize_result():
     return {
-        "serverInfo": {"name": "zen-mcp", "version": os.getenv("ZEN_MCP_VERSION", "0.1.0")},
+        "serverInfo": {
+            "name": "zen-mcp",
+            "version": os.getenv("ZEN_MCP_VERSION", "0.1.0"),
+        },
         "protocolVersion": os.getenv("MCP_PROTOCOL_VERSION", "1.0"),
-        "capabilities": {"tools": {}, "resources": {}, "prompts": {}, "logging": {}, "sampling": {}},
+        "capabilities": {
+            "tools": {},
+            "resources": {},
+            "prompts": {},
+            "logging": {},
+            "sampling": {},
+        },
     }
 
 
@@ -86,15 +103,19 @@ def tools_list():
                         "id": {"type": "string"},
                         "name": {"type": "string"},
                         "capabilities": {"type": "array", "items": {"type": "string"}},
-                        "metadata": {"type": "object"}
+                        "metadata": {"type": "object"},
                     },
-                    "additionalProperties": False
-                }
+                    "additionalProperties": False,
+                },
             },
             {
                 "name": "zen/list_agents",
                 "description": "List registered agents",
-                "inputSchema": {"type": "object", "properties": {}, "additionalProperties": False}
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {},
+                    "additionalProperties": False,
+                },
             },
             {
                 "name": "zen/create_session",
@@ -104,10 +125,10 @@ def tools_list():
                     "properties": {
                         "agentIds": {"type": "array", "items": {"type": "string"}},
                         "tags": {"type": "array", "items": {"type": "string"}},
-                        "ttlMs": {"type": "number"}
+                        "ttlMs": {"type": "number"},
                     },
-                    "additionalProperties": False
-                }
+                    "additionalProperties": False,
+                },
             },
             {
                 "name": "zen/add_context",
@@ -120,10 +141,10 @@ def tools_list():
                         "role": {"type": "string"},
                         "provider": {"type": "string"},
                         "content": {},
-                        "metadata": {"type": "object"}
+                        "metadata": {"type": "object"},
                     },
-                    "additionalProperties": False
-                }
+                    "additionalProperties": False,
+                },
             },
             {
                 "name": "zen/get_context",
@@ -134,10 +155,10 @@ def tools_list():
                     "properties": {
                         "sessionId": {"type": "string"},
                         "limit": {"type": "number"},
-                        "sinceTs": {"type": "number"}
+                        "sinceTs": {"type": "number"},
                     },
-                    "additionalProperties": False
-                }
+                    "additionalProperties": False,
+                },
             },
             {
                 "name": "zen/set_kv",
@@ -148,10 +169,10 @@ def tools_list():
                     "properties": {
                         "sessionId": {"type": "string"},
                         "key": {"type": "string"},
-                        "value": {}
+                        "value": {},
                     },
-                    "additionalProperties": False
-                }
+                    "additionalProperties": False,
+                },
             },
             {
                 "name": "zen/get_kv",
@@ -161,10 +182,10 @@ def tools_list():
                     "required": ["sessionId", "key"],
                     "properties": {
                         "sessionId": {"type": "string"},
-                        "key": {"type": "string"}
+                        "key": {"type": "string"},
                     },
-                    "additionalProperties": False
-                }
+                    "additionalProperties": False,
+                },
             },
             {
                 "name": "zen/close_session",
@@ -173,9 +194,9 @@ def tools_list():
                     "type": "object",
                     "required": ["sessionId"],
                     "properties": {"sessionId": {"type": "string"}},
-                    "additionalProperties": False
-                }
-            }
+                    "additionalProperties": False,
+                },
+            },
         ]
     }
 
@@ -202,9 +223,13 @@ def upsert_agent(agent: Dict[str, Any]) -> Dict[str, Any]:
     return agent
 
 
-def create_session(agent_ids: List[str] | None, tags: List[str] | None, ttl_ms: int | None) -> Dict[str, Any]:
+def create_session(
+    agent_ids: List[str] | None, tags: List[str] | None, ttl_ms: int | None
+) -> Dict[str, Any]:
     sessions_doc, _ = read_json(SESSIONS_FILE)
-    if not isinstance(sessions_doc, dict) or not isinstance(sessions_doc.get("sessions"), list):
+    if not isinstance(sessions_doc, dict) or not isinstance(
+        sessions_doc.get("sessions"), list
+    ):
         sessions_doc = {"sessions": []}
     s_id = str(uuid.uuid4())
     now = now_ms()
@@ -237,7 +262,13 @@ def get_session(sid: str) -> Tuple[Dict[str, Any] | None, Dict[str, Any]]:
     return None, doc
 
 
-def append_context(sid: str, role: str, provider: str | None, content: Any, metadata: Dict[str, Any] | None) -> Dict[str, Any]:
+def append_context(
+    sid: str,
+    role: str,
+    provider: str | None,
+    content: Any,
+    metadata: Dict[str, Any] | None,
+) -> Dict[str, Any]:
     s, doc = get_session(sid)
     if not s:
         return {"ok": False, "error": "session_not_found"}
@@ -277,7 +308,7 @@ def read_context(sid: str, limit: int | None, since_ts: int | None) -> Dict[str,
                 continue
             items.append(obj)
     if limit:
-        items = items[-int(limit):]
+        items = items[-int(limit) :]
     return {"ok": True, "items": items}
 
 
@@ -373,7 +404,12 @@ def main():
         try:
             req = json.loads(line)
         except Exception as e:
-            send({"jsonrpc": "2.0", "error": {"code": -32700, "message": f"parse error: {e}"}})
+            send(
+                {
+                    "jsonrpc": "2.0",
+                    "error": {"code": -32700, "message": f"parse error: {e}"},
+                }
+            )
             continue
         method = req.get("method")
         req_id = req.get("id")
@@ -390,9 +426,10 @@ def main():
             args = params.get("arguments") or {}
             respond(req_id, call_tool(name, args))
             continue
-        respond(req_id, error={"code": -32601, "message": f"Method not found: {method}"})
+        respond(
+            req_id, error={"code": -32601, "message": f"Method not found: {method}"}
+        )
 
 
 if __name__ == "__main__":
     main()
-

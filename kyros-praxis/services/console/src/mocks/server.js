@@ -1,5 +1,9 @@
-import { setupServer } from 'msw/node';
+// Mock server for testing - simplified for Jest setup
+let handlers = [];
 
-const handlers = [];
-
-export const server = setupServer(...handlers);
+export const server = {
+  listen: () => {},
+  resetHandlers: () => { handlers = []; },
+  close: () => {},
+  use: (...newHandlers) => { handlers.push(...newHandlers); },
+};

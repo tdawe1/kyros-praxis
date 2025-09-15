@@ -1,0 +1,34 @@
+# Notification Channels Configuration
+
+channels:
+  - name: "slack_alerts"
+    type: "slack"
+    webhook_url: "https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK"
+    channel: "#quality-alerts"
+  
+  - name: "email_alerts"
+    type: "email"
+    smtp_config:
+      host: "smtp.gmail.com"
+      port: 587
+      username: "your-email@gmail.com"
+      password: "your-app-password"
+      use_tls: true
+      from_address: "quality-system@yourcompany.com"
+      to_addresses:
+        - "dev-team@yourcompany.com"
+        - "qa-team@yourcompany.com"
+        - "tech-lead@yourcompany.com"
+  
+  - name: "webhook_alerts"
+    type: "webhook"
+    webhook_url: "https://your-monitoring-system.com/api/alerts"
+    headers:
+      Authorization: "Bearer YOUR_API_TOKEN"
+      Content-Type: "application/json"
+  
+  - name: "pagerduty_alerts"
+    type: "webhook"
+    webhook_url: "https://events.pagerduty.com/v2/enqueue/YOUR_INTEGRATION_KEY"
+    headers:
+      Content-Type: "application/json"

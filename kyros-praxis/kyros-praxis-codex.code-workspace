@@ -1,0 +1,12 @@
+{
+  "folders": [
+	{
+		"name": "kyros-praxis",
+		"path": "."
+	}
+],
+  "settings": {
+    "chatgpt.openOnStartup": true,
+    "chatgpt.commentCodeLensEnabled": true
+  }
+}

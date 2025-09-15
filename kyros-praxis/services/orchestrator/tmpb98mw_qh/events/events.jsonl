@@ -1,0 +1,2 @@
+{"ts": "2025-09-14T12:24:07.943114", "event": "test", "actor": "events@example.com", "target": "x", "details": {"k": "v"}}
+{"ts": "2025-09-14T12:24:08.241916", "event": "stream-test", "actor": "events2@example.com", "target": "y", "details": {"n": 1}}

@@ -1,11 +1,15 @@
-from sqlalchemy import select
 from typing import List
+
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from ..models import Job, Event
+
+from ..models import Event, Job
+
 
 async def get_jobs(session: AsyncSession) -> List[Job]:
     result = await session.execute(select(Job).order_by(Job.id))
     return result.scalars().all()
+
 
 async def create_job(session: AsyncSession, name: str) -> Job:
     job = Job(name=name)
@@ -18,11 +22,8 @@ async def create_job(session: AsyncSession, name: str) -> Job:
         await session.rollback()
         raise
 
-async def add_event(
-    session: AsyncSession,
-    event_type: str,
-    payload: dict
-) -> Event:
+
+async def add_event(session: AsyncSession, event_type: str, payload: dict) -> Event:
     event = Event(type=event_type, payload=payload)
     session.add(event)
     try:

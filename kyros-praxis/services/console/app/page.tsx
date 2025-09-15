@@ -9,7 +9,8 @@ import { useWebSocket } from '@/lib/ws'
 export default function Home() {
   const { data: session, status } = useSession()
   const router = useRouter()
-  const { isConnected } = useWebSocket(process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8000/ws')
+  const wsUrl = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8000/ws'
+  const { status: wsStatus } = useWebSocket(wsUrl, (session as any)?.accessToken)
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -30,7 +31,7 @@ export default function Home() {
       <h1 className="text-2xl font-bold mb-4">Welcome to Kyros Console</h1>
       <p className="mb-4">Dashboard for jobs and tasks.</p>
       <p>Session: {session.user?.email}</p>
-      <p>WS Connected: {isConnected.toString()}</p>
+      <p>WS Connected: {wsStatus.connected.toString()}</p>
       <button onClick={() => router.push('/jobs')}>Go to Jobs</button>
     </main>
   )
