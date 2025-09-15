@@ -34,6 +34,7 @@ import {
 } from '@carbon/icons-react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+import { signOut } from 'next-auth/react';
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -53,6 +54,11 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         { title: 'Create Agent', href: '/agents/new' },
         { title: 'Templates', href: '/agents/templates' },
       ],
+    },
+    {
+      title: 'Super',
+      href: '/super',
+      icon: Terminal,
     },
     {
       title: 'Translations',
@@ -103,6 +109,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         { title: 'Jobs Queue', href: '/system/jobs' },
         { title: 'Webhooks', href: '/system/webhooks' },
         { title: 'Audit Log', href: '/system/audit' },
+        { title: 'Review Plan', href: '/review-plan' },
       ],
     },
   ];
@@ -123,6 +130,9 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
               Praxis
             </HeaderName>
             <HeaderNavigation aria-label="Main navigation">
+              <HeaderMenuItem as={Link} href="/jobs" isActive={isActive('/jobs')}>
+                Jobs
+              </HeaderMenuItem>
               <HeaderMenuItem as={Link} href="/agents" isActive={isActive('/agents')}>
                 Agents
               </HeaderMenuItem>
@@ -163,8 +173,9 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                 <Switcher size={20} />
               </HeaderGlobalAction>
               <HeaderGlobalAction
-                aria-label="User Profile"
+                aria-label="Sign out"
                 tooltipAlignment="end"
+                onClick={() => signOut({ callbackUrl: '/auth/login' })}
               >
                 <UserAvatar size={20} />
               </HeaderGlobalAction>

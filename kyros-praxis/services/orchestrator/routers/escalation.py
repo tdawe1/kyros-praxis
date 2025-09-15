@@ -1,9 +1,28 @@
 """
-Escalation System API Integration
+Escalation System API Integration Module
 
-This module provides API endpoints for the escalation system, integrating
+This module provides RESTful API endpoints for the escalation system, integrating
 all components (trigger detection, context analysis, workflow automation,
-and validation) into a cohesive service.
+and validation) into a cohesive service. It enables intelligent decision-making
+on when to escalate tasks to more capable AI models based on complexity,
+risk factors, and business impact.
+
+The escalation system evaluates tasks based on multiple factors:
+- Task complexity and technical challenges
+- Business impact assessment
+- Risk level analysis
+- Cost impact estimation
+- Historical performance data
+
+ENDPOINTS:
+1. POST /v1/escalation/submit - Submit a new escalation request
+2. GET /v1/escalation/status/{workflow_id} - Get the status of an escalation workflow
+3. GET /v1/escalation/statistics - Get escalation system statistics
+4. POST /v1/escalation/validate - Validate an escalation trigger
+5. POST /v1/escalation/analyze - Analyze task context for escalation decision
+6. POST /v1/escalation/detect - Detect escalation triggers for a task
+7. GET /v1/escalation/health - Health check for the escalation system
+8. DELETE /v1/escalation/workflow/{workflow_id} - Cancel a running escalation workflow
 """
 
 import logging
@@ -102,7 +121,43 @@ async def submit_escalation_request(request: EscalationRequest):
     Submit a new escalation request
     
     This endpoint initiates the escalation process by analyzing the task
-    and determining if escalation to Claude 4.1 Opus is warranted.
+    and determining if escalation to Claude 4.1 Opus is warranted. The escalation
+    decision is based on multiple factors including task complexity, business impact,
+    risk assessment, and historical performance data.
+    
+    The endpoint performs the following steps:
+    1. Validates the escalation request parameters
+    2. Analyzes the task context and complexity
+    3. Determines if escalation is warranted based on predefined criteria
+    4. Creates a new escalation workflow if escalation is recommended
+    5. Returns the escalation decision and workflow information
+    
+    Args:
+        request (EscalationRequest): The escalation request containing task details
+            - task_description (str): Description of the task to perform
+            - files_to_modify (List[str]): List of files that will be modified
+            - current_files (Optional[List[str]]): Current workspace files
+            - task_type (str): Type of task (default: "implementation")
+            - requester (str): Who requested the escalation (default: "system")
+            - priority (str): Priority level (default: "normal")
+            - timeout_seconds (Optional[int]): Custom timeout in seconds
+            - metadata (Optional[Dict[str, Any]]): Additional metadata
+            
+    Returns:
+        EscalationResponse: The escalation decision and workflow information
+            - workflow_id (str): Unique identifier for the escalation workflow
+            - request_id (str): Unique identifier for the escalation request
+            - status (str): Current status of the escalation workflow
+            - should_escalate (bool): Whether the task should be escalated
+            - confidence (float): Confidence level in the escalation decision (0.0-1.0)
+            - recommended_model (str): Recommended AI model for the task
+            - fallback_model (str): Fallback AI model if primary is unavailable
+            - message (str): Human-readable message about the escalation decision
+            
+    Raises:
+        HTTPException: If there's an error processing the escalation request
+            - 400: Invalid request parameters
+            - 500: Internal server error during escalation processing
     """
     try:
         # Submit escalation request
@@ -139,6 +194,31 @@ async def get_escalation_workflow_status(workflow_id: str):
     Get the status of an escalation workflow
     
     Returns the current state, progress, and results of an escalation workflow.
+    This endpoint provides detailed information about the escalation process,
+    including the workflow state, execution progress, and final outcome.
+    
+    Args:
+        workflow_id (str): The unique identifier of the escalation workflow
+        
+    Returns:
+        dict: The workflow status information
+            - workflow_id (str): Unique identifier for the escalation workflow
+            - state (str): Current state of the workflow (pending, analyzing, escalating, completed, failed)
+            - current_step (int): Current step in the workflow process
+            - total_steps (int): Total number of steps in the workflow
+            - steps_completed (int): Number of steps completed
+            - should_escalate (bool): Whether the task should be escalated
+            - recommended_model (str): Recommended AI model for the task
+            - outcome (str): Final outcome of the workflow (success, failure, cancelled)
+            - error_message (str): Error message if the workflow failed
+            - started_at (str): ISO format timestamp when the workflow started
+            - completed_at (str): ISO format timestamp when the workflow completed
+            - execution_log (List[str]): Last 5 log entries from the workflow execution
+            
+    Raises:
+        HTTPException: If there's an error retrieving the workflow status
+            - 404: Workflow not found
+            - 500: Internal server error during status retrieval
     """
     try:
         workflow = get_escalation_status(workflow_id)

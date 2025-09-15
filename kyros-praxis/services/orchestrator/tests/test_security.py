@@ -25,11 +25,36 @@ from security_middleware import (
 
 class TestSecureDatabase:
     """Test secure database operations"""
-    
+
     @pytest.fixture
     def db(self):
-        """Create test database instance"""
-        return SecureDatabase("sqlite:///:memory:")
+        """Create test database instance with tables"""
+        from models import Base
+        from sqlalchemy import create_engine
+        from sqlalchemy.orm import sessionmaker
+        from sqlalchemy.pool import StaticPool
+
+        # Create in-memory database with tables
+        engine = create_engine(
+            "sqlite:///:memory:",
+            connect_args={"check_same_thread": False},
+            poolclass=StaticPool,
+        )
+
+        # Create all tables
+        Base.metadata.create_all(bind=engine)
+
+        # Create SecureDatabase instance with the same engine
+        secure_db = SecureDatabase("sqlite:///:memory:")
+        # Replace the engine with our table-created engine
+        secure_db.engine = engine
+        secure_db.SessionLocal = sessionmaker(
+            autocommit=False,
+            autoflush=False,
+            bind=engine
+        )
+
+        return secure_db
     
     def test_sql_injection_prevention(self, db):
         """Test that SQL injection attempts are prevented"""
@@ -174,18 +199,19 @@ class TestCSRFProtection:
         assert token1 != token2
         
         # Tokens should be of expected length
-        assert len(token1) == 43  # base64url(32 bytes) = 43 chars
+        # New format: random_data(32) + timestamp + session_data + signature(32) = ~100+ chars
+        assert len(token1) > 80  # Much longer with new secure format
         
     def test_token_validation(self):
         """Test CSRF token validation"""
         csrf = CSRFProtection("test_secret")
-        
+
         # Generate a token
         token = csrf.generate_token()
-        
+
         # Should validate successfully
         assert csrf.validate_token(token) is True
-        
+
         # Invalid tokens should fail
         assert csrf.validate_token("invalid_token") is False
         assert csrf.validate_token("") is False
@@ -209,7 +235,7 @@ class TestJWTAuthentication:
         assert len(token) > 0
         
         # Decode to verify contents
-        payload = jwt.decode(token, "test_secret", algorithms=["HS256"])
+        payload = jwt.decode(token, "test_secret", algorithms=["HS512"])
         
         assert payload["sub"] == user_id
         assert payload["role"] == role

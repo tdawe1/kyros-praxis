@@ -21,6 +21,65 @@ The Kyros Orchestrator is the core backend service of the Kyros Praxis platform,
 - **Business Logic**: Core platform workflow execution
 - **Service Coordination**: Integration with other services
 
+## ⚡ Quick Start
+
+1) Start the API locally
+   ```bash
+   export SECRET_KEY=dev-secret
+   uvicorn services.orchestrator.main:app --reload --port 8000
+   ```
+
+2) Seed a user and get a token
+   ```bash
+   python - <<'PY'
+from services.orchestrator.database import SessionLocal, engine
+from services.orchestrator.models import Base, User
+from services.orchestrator.auth import pwd_context
+Base.metadata.create_all(bind=engine)
+s = SessionLocal()
+if not s.query(User).filter(User.email=='dev@example.com').first():
+    s.add(User(email='dev@example.com', password_hash=pwd_context.hash('password')))
+    s.commit()
+s.close()
+PY
+   TOKEN=$(curl -s http://localhost:8000/auth/login \
+     -H 'Content-Type: application/json' \
+     -d '{"email":"dev@example.com","password":"password"}' | jq -r .access_token)
+   echo "$TOKEN"
+   ```
+
+3) Create a task and list with ETag/304
+   ```bash
+   curl -s http://localhost:8000/api/v1/collab/tasks \
+     -H "Authorization: Bearer $TOKEN" \
+     -H 'Content-Type: application/json' \
+     -d '{"title":"Demo","description":"hello"}' | jq
+
+   curl -i http://localhost:8000/api/v1/collab/state/tasks
+   # Copy ETag value (quoted) and then:
+   ETAG='"paste-etag-here"'
+   curl -i http://localhost:8000/api/v1/collab/state/tasks -H "If-None-Match: $ETAG"
+   ```
+
+4) Events SSE: append and tail
+   ```bash
+   curl -i http://localhost:8000/api/v1/events \
+     -H "Authorization: Bearer $TOKEN" \
+     -H 'Content-Type: application/json' \
+     -d '{"event":"demo","target":"x","details":{"k":"v"}}'
+
+   # Backlog only once (exits after emitting stored events)
+   curl -N -H "Authorization: Bearer $TOKEN" \
+     "http://localhost:8000/api/v1/events/tail?once=1"
+   ```
+
+5) Run focused tests
+   ```bash
+   export SECRET_KEY=test-secret
+   make -C services/orchestrator test-thread
+   make -C services/orchestrator test-events
+   ```
+
 ## 🚀 Development Setup
 
 ### Prerequisites
@@ -88,12 +147,12 @@ uvicorn main:app --host 0.0.0.0 --port 8000 --workers 4
    curl http://localhost:8000/healthz
    ```
 
-2. **Authentication Test**:
+2. **Authentication Test** (JSON body):
    ```bash
-   # Get JWT token
-   curl -X POST http://localhost:8000/auth/login \
-     -H "Content-Type: application/x-www-form-urlencoded" \
-     -d "username=test@example.com&password=password"
+   # Get JWT token (login is not prefixed by /api/v1)
+   curl -s http://localhost:8000/auth/login \
+     -H 'Content-Type: application/json' \
+     -d '{"email":"test@example.com","password":"password"}'
    ```
 
 3. **Create Job Test**:
@@ -103,6 +162,40 @@ uvicorn main:app --host 0.0.0.0 --port 8000 --workers 4
      -H "Authorization: Bearer JWT_TOKEN" \
      -H "Content-Type: application/json" \
      -d '{"title":"Test Job"}'
+   ```
+
+4. **Tasks API (ETag + Conditional GET)**:
+   ```bash
+   # List tasks (note: prefixed by /api/v1)
+   curl -i http://localhost:8000/api/v1/collab/state/tasks
+   # Copy the ETag value from headers (quoted)
+   ETAG="\"your-etag-here\""
+   # Conditional GET (should return 304 Not Modified if unchanged)
+   curl -i http://localhost:8000/api/v1/collab/state/tasks -H "If-None-Match: $ETAG"
+
+   # Create task (requires Authorization header)
+   curl -s http://localhost:8000/api/v1/collab/tasks \
+     -H "Authorization: Bearer JWT_TOKEN" \
+     -H 'Content-Type: application/json' \
+     -d '{"title":"Demo","description":"hello"}'
+   ```
+
+5. **Events API (SSE)**:
+   ```bash
+   # Append an event (returns quoted ETag of the events file)
+   curl -i http://localhost:8000/api/v1/events \
+     -H "Authorization: Bearer JWT_TOKEN" \
+     -H 'Content-Type: application/json' \
+     -d '{"event":"demo","target":"x","details":{"k":"v"}}'
+
+   # Tail events as Server-Sent Events (SSE)
+   # Backlog-only once (test-friendly):
+   curl -N -H "Authorization: Bearer $JWT_TOKEN" \
+     "http://localhost:8000/api/v1/events/tail?once=1"
+
+   # Continuous stream (with keep-alive comments):
+   curl -N -H "Authorization: Bearer $JWT_TOKEN" \
+     "http://localhost:8000/api/v1/events/tail"
    ```
 
 ## 📁 Project Structure
@@ -146,13 +239,17 @@ services/orchestrator/
 
 ### Tasks API (`/api/v1/collab`)
 - `POST /api/v1/collab/tasks` - Create new task
-- `GET /api/v1/collab/state/tasks` - List all tasks
+- `GET /api/v1/collab/state/tasks` - List all tasks (returns quoted ETag; supports If-None-Match → 304)
 
 ### Utilities API (`/api/v1/utils`)
 - Various utility endpoints for internal operations
 
 ### WebSocket
 - `WS /ws` - Real-time communication endpoint
+
+### Events API (`/api/v1/events`)
+- `POST /api/v1/events` - Append event (returns quoted ETag of the events log)
+- `GET /api/v1/events/tail` - SSE stream of events (supports `?once=1` to flush backlog and end)
 
 ## 🔐 Authentication
 

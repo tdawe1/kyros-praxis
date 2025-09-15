@@ -299,72 +299,78 @@ function AgentsPageContent() {
                 <TableHead>
                   <TableRow>
                     <TableSelectAll {...getSelectionProps()} />
-                    {headers.map((header) => (
-                      <TableHeader
-                        key={header.key}
-                        {...getHeaderProps({ header })}
-                      >
-                        {header.header}
-                      </TableHeader>
-                    ))}
+                     {headers.map((header) => {
+                       const { key, ...headerProps } = getHeaderProps({ header, isSortable: header.key !== 'actions' });
+                       return (
+                         <TableHeader
+                           key={header.key}
+                           {...headerProps}
+                         >
+                           {header.header}
+                         </TableHeader>
+                       );
+                     })}
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {rows.map((row) => (
-                    <TableRow key={row.id} {...getRowProps({ row })}>
-                      <TableSelectRow {...getSelectionProps({ row })} />
-                      <TableCell>
-                        <Link
-                          href={`/agents/${row.cells[0].value}`}
-                          style={{ color: 'var(--cds-link-primary)', textDecoration: 'none' }}
-                        >
-                          {row.cells[0].value}
-                        </Link>
-                      </TableCell>
-                      <TableCell>
-                        <Tag type={statusConfig[row.cells[1].value as keyof typeof statusConfig]?.type}>
-                          {statusConfig[row.cells[1].value as keyof typeof statusConfig]?.label}
-                        </Tag>
-                      </TableCell>
-                      <TableCell>{row.cells[2].value}</TableCell>
-                      <TableCell>{row.cells[3].value}</TableCell>
-                      <TableCell>{row.cells[4].value}</TableCell>
-                      <TableCell>{row.cells[5].value}</TableCell>
-                      <TableCell>{row.cells[6].value}</TableCell>
-                      <TableCell>
-                        <OverflowMenu size="sm" flipped>
-                          <OverflowMenuItem
-                            itemText="View"
-                            onClick={() => router.push(`/agents/${row.id}`)}
-                          />
-                          <OverflowMenuItem
-                            itemText="Edit"
-                            onClick={() => router.push(`/agents/${row.id}/edit`)}
-                          />
-                          <OverflowMenuItem
-                            itemText="Playground"
-                            onClick={() => router.push(`/agents/${row.id}/playground`)}
-                          />
-                          <OverflowMenuItem
-                            itemText="Run Now"
-                            onClick={() => runAgent.mutate({ id: row.id })}
-                          />
-                          <OverflowMenuItem
-                            itemText="Clone"
-                            onClick={() => router.push(`/agents/${row.id}/clone`)}
-                          />
-                          <OverflowMenuItem
-                            itemText="Export"
-                            hasDivider
-                          />
-                          <OverflowMenuItem
-                            itemText="Delete"
-                            isDelete
-                          />
-                        </OverflowMenu>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                   {rows.map((row) => {
+                     const { key, ...rowProps } = getRowProps({ row });
+                     return (
+                       <TableRow key={row.id} {...rowProps}>
+                         <TableSelectRow {...getSelectionProps({ row })} />
+                         <TableCell>
+                           <Link
+                             href={`/agents/${row.cells[0].value}`}
+                             style={{ color: 'var(--cds-link-primary)', textDecoration: 'none' }}
+                           >
+                             {row.cells[0].value}
+                           </Link>
+                         </TableCell>
+                         <TableCell>
+                           <Tag type={statusConfig[row.cells[1].value as keyof typeof statusConfig]?.type}>
+                             {statusConfig[row.cells[1].value as keyof typeof statusConfig]?.label}
+                           </Tag>
+                         </TableCell>
+                         <TableCell>{row.cells[2].value}</TableCell>
+                         <TableCell>{row.cells[3].value}</TableCell>
+                         <TableCell>{row.cells[4].value}</TableCell>
+                         <TableCell>{row.cells[5].value}</TableCell>
+                         <TableCell>{row.cells[6].value}</TableCell>
+                         <TableCell>
+                           <OverflowMenu size="sm" flipped>
+                             <OverflowMenuItem
+                               itemText="View"
+                               onClick={() => router.push(`/agents/${row.id}`)}
+                             />
+                             <OverflowMenuItem
+                               itemText="Edit"
+                               onClick={() => router.push(`/agents/${row.id}/edit`)}
+                             />
+                             <OverflowMenuItem
+                               itemText="Playground"
+                               onClick={() => router.push(`/agents/${row.id}/playground`)}
+                             />
+                             <OverflowMenuItem
+                               itemText="Run Now"
+                               onClick={() => runAgent.mutate({ id: row.id })}
+                             />
+                             <OverflowMenuItem
+                               itemText="Clone"
+                               onClick={() => router.push(`/agents/${row.id}/clone`)}
+                             />
+                             <OverflowMenuItem
+                               itemText="Export"
+                               hasDivider
+                             />
+                             <OverflowMenuItem
+                               itemText="Delete"
+                               isDelete
+                             />
+                           </OverflowMenu>
+                         </TableCell>
+                       </TableRow>
+                     );
+                   })}
                 </TableBody>
               </Table>
               <Pagination

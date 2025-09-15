@@ -8,16 +8,32 @@ class ApiClient {
   
   private async request(path: string, options: RequestInit = {}) {
     const url = `${this.baseURL}${path}`;
-    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    let token: string | null = null;
+    if (typeof window !== 'undefined') {
+      try {
+        // Prefer NextAuth session token
+        const { getSession } = await import('next-auth/react');
+        const session: any = await getSession();
+        token = session?.accessToken || localStorage.getItem('token');
+      } catch {
+        token = localStorage.getItem('token');
+      }
+    }
     
     const headers = {
       ...options.headers,
       ...(token && { Authorization: `Bearer ${token}` }),
     };
     
-    const response = await fetch(url, {
+    // Use HTTPS in production
+    const finalUrl = process.env.NODE_ENV === 'production' 
+      ? url.replace('http://', 'https://') 
+      : url;
+    
+    const response = await fetch(finalUrl, {
       ...options,
       headers,
+      credentials: 'include',
     });
     
     if (!response.ok) {
@@ -73,6 +89,8 @@ export const api = {
     create: (data: any) => apiClient.post('/jobs', data),
     get: (id: string) => apiClient.get(`/jobs/${id}`),
     update: (id: string, data: any) => apiClient.put(`/jobs/${id}`, data),
+    updateStatus: (id: string, status: 'pending' | 'running' | 'completed' | 'failed' | 'cancelled') =>
+      apiClient.put(`/jobs/${id}/status?status=${encodeURIComponent(status)}`, {}),
     delete: (id: string) => apiClient.delete(`/jobs/${id}`),
   },
   

@@ -3,12 +3,14 @@ uvicorn[standard]==0.32.0
 sqlalchemy[asyncio]==2.0.35
 alembic==1.16.5
 pydantic==2.11.7
+pydantic-settings==2.5.2
 python-jose==3.3.0
 passlib[bcrypt]==1.7.4
 bcrypt==4.1.2  # Direct bcrypt for better control
 pyjwt==2.8.0  # JWT handling
 cryptography==41.0.7  # Cryptographic operations
 python-dotenv==1.1.1
+python-json-logger==2.0.7
 
 # Dev/Test
 pytest==8.4.2
@@ -20,3 +22,4 @@ asgi-lifespan==2.1.0
 slowapi==0.1.9
 redis==5.0.8
 aiosqlite==0.20.0
+psutil==6.0.0

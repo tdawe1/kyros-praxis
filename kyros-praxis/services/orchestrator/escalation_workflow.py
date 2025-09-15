@@ -1,23 +1,138 @@
 """
-Escalation Workflow Automation
+Escalation Workflow Automation for the Kyros Orchestrator Hybrid AI Model System.
 
 This module implements automated escalation workflows that handle the entire
-escalation process from detection to execution and validation.
+escalation process from detection to execution and validation. It orchestrates
+the intelligent switching between junior AI models (GLM-4.5) and senior AI
+models (Claude 4.1 Opus) based on task complexity and risk assessment.
+
+The workflow automation ensures cost-effective model selection while maintaining
+quality for critical decisions through a multi-step process that includes
+detection, analysis, decision-making, execution, and validation.
+
+MODULE RESPONSIBILITIES:
+------------------------
+1. Workflow Orchestration:
+   - Manages the complete lifecycle of escalation workflows
+   - Coordinates between junior and senior AI models
+   - Handles workflow state management and concurrency control
+
+2. Escalation Automation:
+   - Automatic escalation detection and triggering
+   - Intelligent model selection based on task analysis
+   - Cost-effective decision making for model usage
+
+3. Process Management:
+   - Multi-step escalation process (detection, analysis, decision, execution, validation)
+   - Error handling and retry logic with fallback mechanisms
+   - Performance monitoring and statistics tracking
+
+4. Integration Hub:
+   - Connects escalation triggers with context analysis
+   - Coordinates with external AI model services
+   - Provides audit logging for compliance and debugging
 
 WORKFLOW COMPONENTS:
-1. Escalation Engine - Orchestrates the escalation process
-2. Workflow Manager - Manages escalation workflows
-3. Execution Handler - Executes escalated tasks
-4. Validation System - Validates escalation outcomes
-5. Fallback Mechanism - Handles fallback scenarios
+--------------------
+1. Escalation Engine:
+   - Main orchestrator that manages the entire escalation process
+   - Handles workflow state management and concurrency control
+   - Coordinates between different AI models based on task requirements
+
+2. Workflow Manager:
+   - Manages individual escalation workflows
+   - Tracks workflow progress and status
+   - Handles workflow persistence and recovery
+
+3. Execution Handler:
+   - Executes tasks with appropriate AI models
+   - Manages model selection based on escalation decisions
+   - Handles task execution and result collection
+
+4. Validation System:
+   - Validates escalation outcomes and task results
+   - Performs quality assurance on AI-generated outputs
+   - Ensures results meet required standards
+
+5. Fallback Mechanism:
+   - Handles fallback scenarios when escalation fails
+   - Provides alternative approaches for task completion
+   - Ensures system resilience and reliability
 
 AUTOMATION FEATURES:
-- Automatic escalation detection and triggering
-- Workflow state management
-- Integration with existing systems
-- Error handling and retry logic
-- Performance monitoring
-- Audit logging
+--------------------
+- Automatic escalation detection and triggering through escalation_triggers.py
+- Context analysis using context_analysis.py for intelligent decision making
+- Workflow state management with comprehensive status tracking
+- Integration with existing systems through standardized interfaces
+- Error handling and retry logic with exponential backoff
+- Performance monitoring with detailed statistics and metrics
+- Audit logging for compliance, debugging, and optimization
+- Concurrency control to manage multiple workflows simultaneously
+
+ESCALATION DECISION PROCESS:
+----------------------------
+1. Detection Phase:
+   - Analyze task description and files using escalation_triggers.py
+   - Identify potential escalation triggers and risk factors
+   - Generate initial escalation assessment
+
+2. Analysis Phase:
+   - Perform detailed context analysis using context_analysis.py
+   - Evaluate code complexity, business impact, and risk assessment
+   - Analyze dependencies and quality requirements
+
+3. Decision Phase:
+   - Combine trigger detection and context analysis results
+   - Calculate overall confidence score for escalation
+   - Make final decision on model selection (GLM-4.5 vs Claude 4.1 Opus)
+
+4. Escalation Phase:
+   - Execute escalation to senior AI model when required
+   - Handle model switching and context transfer
+   - Monitor escalation progress and performance
+
+5. Execution Phase:
+   - Execute task with selected AI model
+   - Collect and process model outputs
+   - Handle any execution errors or timeouts
+
+6. Validation Phase:
+   - Validate results against quality standards
+   - Perform automated testing and verification
+   - Generate final outcome assessment
+
+INTEGRATION WITH OTHER MODULES:
+-------------------------------
+- escalation_triggers.py: Provides initial escalation trigger detection
+- context_analysis.py: Delivers detailed context analysis for decision making
+- main.py: Exposes escalation endpoints and integrates with orchestrator
+- models.py: May use models for workflow persistence (future enhancement)
+
+USAGE EXAMPLE:
+--------------
+# Submit an escalation request
+workflow = await submit_escalation(
+    task_description="Implement secure user authentication with JWT",
+    files_to_modify=["auth.py", "models.py"],
+    task_type="implementation",
+    priority="high"
+)
+
+# Check workflow status
+status = get_escalation_status(workflow.workflow_id)
+if status.outcome == EscalationOutcome.SUCCESS:
+    print("Escalation completed successfully")
+
+# Get statistics
+stats = get_escalation_stats()
+print(f"Total escalations: {stats['escalated']}")
+
+See Also:
+--------
+- escalation_triggers.py: Initial escalation trigger detection
+- context_analysis.py: Detailed context analysis for escalation decisions
+- main.py: Main orchestrator application that exposes escalation endpoints
 """
 
 import asyncio
@@ -132,10 +247,17 @@ class EscalationWorkflow:
 
 class EscalationEngine:
     """
-    Main escalation engine that orchestrates the entire escalation process
+    Main escalation engine that orchestrates the entire escalation process.
     
     This engine manages the lifecycle of escalation workflows from detection
-    through execution and validation.
+    through execution and validation. It coordinates between junior AI models
+    (GLM-4.5) and senior AI models (Claude 4.1 Opus) based on task requirements,
+    ensuring cost-effective model selection while maintaining quality for
+    critical decisions.
+    
+    The engine handles workflow state management, concurrency control,
+    error handling, retries, and statistics tracking. It provides a complete
+    automation solution for the hybrid AI model system.
     """
     
     def __init__(self):
@@ -176,20 +298,41 @@ class EscalationEngine:
         metadata: Optional[Dict[str, Any]] = None
     ) -> EscalationWorkflow:
         """
-        Submit a new escalation request
+        Submit a new escalation request to the workflow engine.
+        
+        This method creates a new escalation workflow and begins processing
+        the request through the automated escalation pipeline. It performs
+        initial validation, creates workflow tracking structures, and starts
+        the asynchronous execution process.
+        
+        The method checks concurrency limits and creates a comprehensive
+        EscalationRequest object with all necessary parameters before
+        initializing the workflow execution.
         
         Args:
-            task_description: Description of the task
-            files_to_modify: Files to be modified
-            current_files: Current workspace files
-            task_type: Type of task
-            requester: Who requested the escalation
-            priority: Priority level
-            timeout_seconds: Custom timeout
-            metadata: Additional metadata
+            task_description: Description of the task to be performed,
+                used for escalation detection and context analysis
+            files_to_modify: List of files that will be modified by the task,
+                analyzed for risk and complexity patterns
+            current_files: Optional list of files in the current workspace
+                for contextual analysis (defaults to empty list)
+            task_type: Type of task being performed (implementation, review,
+                debug, etc.), which may influence escalation criteria
+            requester: Identifier for who requested the escalation (user, system,
+                automated process, etc.)
+            priority: Priority level of the request (low, normal, high, critical)
+                which may affect processing order or resource allocation
+            timeout_seconds: Custom timeout for the workflow execution
+                (defaults to engine's default_timeout setting)
+            metadata: Optional dictionary of additional metadata that may
+                be useful for the workflow execution or auditing
             
         Returns:
-            EscalationWorkflow instance
+            EscalationWorkflow instance representing the created workflow,
+            which can be used to track status and retrieve results
+            
+        Raises:
+            Exception: If maximum concurrent workflows limit is reached
         """
         
         # Check concurrency limit
@@ -604,17 +747,26 @@ async def submit_escalation(
     **kwargs
 ) -> EscalationWorkflow:
     """
-    Submit an escalation request
+    Submit an escalation request to the global escalation engine.
+    
+    Convenience function that provides easy access to the escalation workflow
+    system without needing to manage engine instances directly. This function
+    is useful for quick integration into task processing pipelines.
     
     Args:
-        task_description: Description of the task
-        files_to_modify: Files to be modified
-        current_files: Current workspace files
-        task_type: Type of task
-        **kwargs: Additional arguments
-        
+        task_description: Description of the task to be performed,
+            used for escalation detection and context analysis
+        files_to_modify: List of files that will be modified by the task
+        current_files: Optional list of files in the current workspace
+            for contextual analysis (defaults to None)
+        task_type: Type of task being performed (implementation, review,
+            debug, etc.)
+        **kwargs: Additional arguments passed to the escalation engine,
+            including requester, priority, timeout_seconds, and metadata
+            
     Returns:
-        EscalationWorkflow instance
+        EscalationWorkflow instance representing the created workflow,
+        which can be used to track status and retrieve results
     """
     engine = get_escalation_engine()
     return await engine.submit_escalation_request(
@@ -627,12 +779,33 @@ async def submit_escalation(
 
 
 def get_escalation_status(workflow_id: str) -> Optional[EscalationWorkflow]:
-    """Get escalation workflow status"""
+    """
+    Get the current status of an escalation workflow.
+    
+    Retrieves the current state and progress of a specific escalation workflow
+    by its unique identifier. Can be used to track active workflows or retrieve
+    completed workflow results.
+    
+    Args:
+        workflow_id: Unique identifier of the workflow to retrieve
+        
+    Returns:
+        EscalationWorkflow instance if found, None otherwise
+    """
     engine = get_escalation_engine()
     return engine.get_workflow_status(workflow_id)
 
 
 def get_escalation_stats() -> Dict[str, Any]:
-    """Get escalation statistics"""
+    """
+    Get statistics about the escalation engine's operation.
+    
+    Returns comprehensive statistics about the escalation engine's performance,
+    including total requests, escalation rates, completion rates, failure rates,
+    and success metrics. Useful for monitoring and optimization.
+    
+    Returns:
+        Dictionary containing various statistics about the escalation engine
+    """
     engine = get_escalation_engine()
     return engine.get_workflow_statistics()

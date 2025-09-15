@@ -5,6 +5,12 @@ This module provides comprehensive validation for escalation triggers to ensure
 accurate and reliable escalation decisions. It includes rule-based validation,
 historical validation, cost-benefit analysis, and performance monitoring.
 
+The validation system ensures that escalation decisions are well-founded by
+applying multiple validation strategies including business rules, technical
+requirements, cost considerations, quality assurance, and security requirements.
+It helps prevent both false positives (unnecessary escalations) and false
+negatives (missed critical escalations).
+
 VALIDATION COMPONENTS:
 1. Rule Validator - Validates triggers against business rules
 2. Historical Validator - Uses historical data for validation
@@ -116,10 +122,25 @@ class HistoricalValidation:
 
 class TriggerValidator:
     """
-    Comprehensive trigger validation system
+    Comprehensive trigger validation system.
     
     This class validates escalation triggers using multiple validation
-    strategies to ensure accurate and reliable escalation decisions.
+    strategies to ensure accurate and reliable escalation decisions. It applies
+    a comprehensive set of rules across business, technical, cost, quality, and
+    security dimensions to determine whether an escalation trigger is valid.
+    
+    The validator maintains historical performance data to continuously improve
+    validation accuracy and provides detailed validation reports with confidence
+    scores for each decision. It helps prevent both false positives (unnecessary
+    escalations) and false negatives (missed critical escalations).
+    
+    Key features:
+    - Multi-dimensional validation (business, technical, cost, quality, security)
+    - Historical performance tracking and analysis
+    - Confidence scoring for validation decisions
+    - Cost-benefit analysis for escalation decisions
+    - Performance metrics and statistics
+    - Improvement suggestions based on validation history
     """
     
     def __init__(self):
@@ -274,16 +295,34 @@ class TriggerValidator:
         context_analysis: Optional[ContextAnalysisResult] = None
     ) -> ValidationReport:
         """
-        Validate an escalation trigger against all rules
+        Validate an escalation trigger against all validation rules.
+        
+        This method performs comprehensive validation of an escalation trigger
+        by applying multiple validation strategies across different dimensions:
+        business rules, technical requirements, cost considerations, quality
+        assurance, and security requirements.
+        
+        The validation process generates a detailed ValidationReport with
+        individual check results, overall validation outcome, and confidence
+        scores. It also updates historical performance metrics for continuous
+        improvement of the validation system.
         
         Args:
-            trigger: The escalation trigger to validate
-            context: Context information for validation
-            assessment: Optional escalation assessment
-            context_analysis: Optional context analysis result
-            
+            trigger: The escalation trigger to validate, containing the reason,
+                priority, description, and evidence for the potential escalation
+            context: Context information for validation including task description,
+                files to modify, current files, and task type
+            assessment: Optional escalation assessment from the escalation detector
+                containing trigger detection results and recommendations
+            context_analysis: Optional context analysis result from the context
+                analyzer providing detailed complexity, impact, and risk assessment
+                
         Returns:
-            ValidationReport with validation results
+            ValidationReport with detailed validation results including:
+            - Overall validation result and confidence score
+            - Individual validation check results for each rule category
+            - Evidence and recommendations for each check
+            - Metadata about the validation process
         """
         
         validation_id = f"val_{int(time.time())}_{hash(trigger.description) % 10000:04d}"
@@ -774,28 +813,61 @@ def validate_escalation_trigger(
     context_analysis: Optional[ContextAnalysisResult] = None
 ) -> ValidationReport:
     """
-    Validate an escalation trigger
+    Validate an escalation trigger using the global trigger validator.
+    
+    Convenience function that provides easy access to the trigger validation
+    system without needing to manage validator instances directly. This function
+    is useful for quick integration into escalation decision pipelines.
     
     Args:
-        trigger: The escalation trigger to validate
-        context: Context information
-        assessment: Optional escalation assessment
-        context_analysis: Optional context analysis
-        
+        trigger: The escalation trigger to validate, containing the reason,
+            priority, description, and evidence for the potential escalation
+        context: Context information for validation including task description,
+            files to modify, current files, and task type
+        assessment: Optional escalation assessment from the escalation detector
+            containing trigger detection results and recommendations
+        context_analysis: Optional context analysis result from the context
+            analyzer providing detailed complexity, impact, and risk assessment
+            
     Returns:
-        ValidationReport with validation results
+        ValidationReport with detailed validation results including:
+        - Overall validation result and confidence score
+        - Individual validation check results for each rule category
+        - Evidence and recommendations for each check
+        - Metadata about the validation process
     """
     validator = get_trigger_validator()
     return validator.validate_escalation_trigger(trigger, context, assessment, context_analysis)
 
 
 def get_validation_statistics() -> Dict[str, Any]:
-    """Get validation statistics"""
+    """
+    Get validation statistics from the global trigger validator.
+    
+    Returns comprehensive statistics about the trigger validation system's
+    performance, including total validations, valid/invalid trigger counts,
+    average confidence scores, and validation history information.
+    
+    Returns:
+        Dictionary containing various statistics about the validation system
+    """
     validator = get_trigger_validator()
     return validator.get_validation_statistics()
 
 
 def analyze_validation_performance(days: int = 30) -> HistoricalValidation:
-    """Analyze historical validation performance"""
+    """
+    Analyze historical validation performance.
+    
+    Performs analysis of the validation system's historical performance over
+    a specified time period, including success rates, false positive/negative
+    analysis, and improvement suggestions based on validation patterns.
+    
+    Args:
+        days: Number of days of historical data to analyze (default: 30)
+        
+    Returns:
+        HistoricalValidation object containing performance analysis results
+    """
     validator = get_trigger_validator()
     return validator.analyze_historical_performance(days)

@@ -1,16 +1,132 @@
 """
-Context Analysis for Critical Decisions
+Context Analysis for Critical Decisions in the Kyros Orchestrator Escalation System.
 
 This module provides deep analysis of task context, files, and requirements
 to make intelligent escalation decisions. It analyzes code complexity,
-dependencies, business impact, and risk factors.
+dependencies, business impact, and risk factors to determine whether a task
+should be handled by a junior AI model (GLM-4.5) or escalated to a senior
+AI model (Claude 4.1 Opus).
+
+The analysis considers multiple dimensions to provide a comprehensive assessment
+and confidence score for the escalation recommendation.
+
+MODULE RESPONSIBILITIES:
+------------------------
+1. Task Context Analysis:
+   - Analyzes task descriptions for complexity indicators
+   - Evaluates file modification requirements
+   - Assesses overall task complexity and risk
+
+2. Escalation Decision Making:
+   - Determines whether tasks require senior AI model intervention
+   - Provides confidence scores for escalation recommendations
+   - Identifies key factors influencing escalation decisions
+
+3. Multi-Dimensional Assessment:
+   - Code Complexity Metrics: Cyclomatic complexity, coupling, cohesion
+   - Business Impact Analysis: Revenue, compliance, customer impact
+   - Risk Assessment: Security, performance, reliability risks
+   - Dependency Analysis: Cross-module, cross-service dependencies
+   - Quality Requirements: Testing, documentation, maintainability
 
 ANALYSIS DIMENSIONS:
-1. Code Complexity Metrics - Cyclomatic complexity, coupling, cohesion
-2. Business Impact Analysis - Revenue, compliance, customer impact
-3. Risk Assessment - Security, performance, reliability risks
-4. Dependency Analysis - Cross-module, cross-service dependencies
-5. Quality Requirements - Testing, documentation, maintainability
+--------------------
+1. Code Complexity Metrics:
+   - Cyclomatic complexity for control flow analysis
+   - Coupling scores for module interdependencies
+   - Cohesion scores for module internal consistency
+   - Lines of code and function/class counts
+
+2. Business Impact Analysis:
+   - Revenue impact assessment
+   - Customer experience impact
+   - Compliance and regulatory considerations
+   - Operational efficiency impact
+   - Strategic importance evaluation
+
+3. Risk Assessment:
+   - Security risk evaluation
+   - Performance risk analysis
+   - Reliability risk factors
+   - Maintainability concerns
+   - Compliance risk identification
+
+4. Dependency Analysis:
+   - Internal dependency mapping
+   - External dependency identification
+   - Cross-service dependency detection
+   - Circular dependency analysis
+   - Critical dependency assessment
+
+5. Quality Requirements:
+   - Testing complexity evaluation
+   - Documentation needs assessment
+   - Maintainability scoring
+   - Code coverage requirements
+   - Review complexity analysis
+
+INTEGRATION WITH ESCALATION SYSTEM:
+-----------------------------------
+This module is a core component of the Kyros Orchestrator's hybrid AI model system:
+
+1. escalation_triggers.py: Provides initial trigger detection that feeds into context analysis
+2. escalation_workflow.py: Uses context analysis results to make final escalation decisions
+3. The analyzer works in conjunction with trigger detection to provide comprehensive assessment
+
+ESCALATION DECISION PROCESS:
+----------------------------
+1. Task Context Analysis:
+   - Analyze task description for keywords and complexity indicators
+   - Evaluate files to be modified for risk patterns
+   - Assess overall complexity using code metrics
+
+2. Business Impact Assessment:
+   - Evaluate revenue and customer impact
+   - Assess compliance and regulatory requirements
+   - Determine operational significance
+
+3. Risk Evaluation:
+   - Identify security vulnerabilities
+   - Assess performance implications
+   - Evaluate reliability concerns
+
+4. Dependency Analysis:
+   - Map internal and external dependencies
+   - Identify cross-service impacts
+   - Assess dependency complexity
+
+5. Quality Requirements:
+   - Determine testing complexity
+   - Evaluate documentation needs
+   - Assess maintainability requirements
+
+6. Recommendation Generation:
+   - Calculate overall confidence score
+   - Generate escalation recommendation
+   - Identify key decision factors
+
+USAGE EXAMPLE:
+--------------
+analyzer = ContextAnalyzer()
+result = analyzer.analyze_task_context(
+    task_description="Implement user authentication with JWT tokens",
+    files_to_modify=["auth.py", "models.py", "database.py"],
+    file_contents={"auth.py": "...", "models.py": "...", "database.py": "..."},
+    task_type="implementation"
+)
+
+if result.escalation_recommendation.startswith("ESCALATE"):
+    # Use Claude 4.1 Opus for security-critical task
+    pass
+else:
+    # Use GLM-4.5 for routine implementation
+    pass
+
+See Also:
+--------
+- escalation_triggers.py: Initial escalation trigger detection
+- escalation_workflow.py: Complete escalation workflow automation
+- main.py: Main orchestrator application that integrates escalation decisions
 """
 
 import ast
@@ -134,7 +250,13 @@ class ContextAnalyzer:
     Analyzes task context to determine complexity and business impact
     
     This class provides deep analysis capabilities for making informed
-    escalation decisions.
+    escalation decisions. It evaluates multiple factors including code complexity,
+    business impact, risk assessment, dependencies, and quality requirements
+    to determine whether a task should be handled by a junior developer (GLM-4.5)
+    or escalated to a senior developer (Claude 4.1 Opus).
+    
+    The analyzer uses thresholds and pattern matching to assess various dimensions
+    and provides a confidence score with the escalation recommendation.
     """
     
     def __init__(self):
@@ -201,16 +323,30 @@ class ContextAnalyzer:
         task_type: str = "implementation"
     ) -> ContextAnalysisResult:
         """
-        Perform comprehensive context analysis
+        Perform comprehensive context analysis to determine escalation needs.
+        
+        This method analyzes the task description, files to be modified, and file contents
+        to evaluate the complexity, business impact, risks, dependencies, and quality
+        requirements of the task. It then makes a recommendation on whether the task
+        should be handled by a junior developer (GLM-4.5) or escalated to a senior
+        developer (Claude 4.1 Opus).
         
         Args:
-            task_description: Description of the task
-            files_to_modify: List of files to be modified
-            file_contents: Optional mapping of file paths to contents
-            task_type: Type of task being performed
+            task_description: Description of the task to be analyzed
+            files_to_modify: List of files that will be modified by the task
+            file_contents: Optional mapping of file paths to their contents for deeper analysis
+            task_type: Type of task being performed (implementation, bugfix, refactoring, etc.)
             
         Returns:
-            ContextAnalysisResult with comprehensive analysis
+            ContextAnalysisResult with comprehensive analysis including:
+            - Overall complexity assessment
+            - Business impact metrics
+            - Risk assessment
+            - Dependency analysis
+            - Quality requirements
+            - Escalation recommendation
+            - Confidence score
+            - Key factors influencing the decision
         """
         # Analyze code complexity
         complexity_metrics = self._analyze_code_complexity(files_to_modify, file_contents)
@@ -702,16 +838,28 @@ def analyze_task_context(
     task_type: str = "implementation"
 ) -> ContextAnalysisResult:
     """
-    Quick context analysis for escalation decisions
+    Quick context analysis for escalation decisions.
+    
+    Convenience function that creates a ContextAnalyzer instance and performs
+    a comprehensive context analysis to determine whether a task should be
+    handled by a junior developer (GLM-4.5) or escalated to a senior developer
+    (Claude 4.1 Opus).
     
     Args:
-        task_description: Description of the task
-        files_to_modify: Files to be modified
-        file_contents: Optional file contents
-        task_type: Type of task
+        task_description: Description of the task to be analyzed
+        files_to_modify: List of files that will be modified by the task
+        file_contents: Optional mapping of file paths to their contents for deeper analysis
+        task_type: Type of task being performed (implementation, bugfix, refactoring, etc.)
         
     Returns:
-        ContextAnalysisResult with analysis
+        ContextAnalysisResult with comprehensive analysis including:
+        - Overall complexity assessment
+        - Business impact metrics
+        - Risk assessment
+        - Dependency analysis
+        - Quality requirements
+        - Escalation recommendation with confidence score
+        - Key factors influencing the decision
     """
     analyzer = ContextAnalyzer()
     return analyzer.analyze_task_context(

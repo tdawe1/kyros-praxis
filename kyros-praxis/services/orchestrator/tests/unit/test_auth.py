@@ -1,6 +1,12 @@
 import pytest
+import os
 from fastapi.testclient import TestClient
 from services.orchestrator.main import app
+
+
+# Set environment variables for testing
+os.environ["SECRET_KEY"] = "test-secret-key-for-testing-purposes-only"
+os.environ["ENVIRONMENT"] = "local"
 
 
 @pytest.fixture

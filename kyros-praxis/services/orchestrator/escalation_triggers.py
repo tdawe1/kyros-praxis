@@ -1,18 +1,151 @@
 """
-Claude 4.1 Opus Escalation Triggers for Hybrid Model System
+Claude 4.1 Opus Escalation Triggers for the Kyros Orchestrator Hybrid AI Model System.
 
 This module implements intelligent escalation detection that determines when
 tasks require Claude 4.1 Opus instead of GLM-4.5, providing cost-effective
 model selection while ensuring quality for critical decisions.
 
+The system analyzes various factors including security sensitivity, architectural
+complexity, performance requirements, and quality needs to make informed decisions
+about which AI model should handle a given task. It evaluates multiple dimensions
+to provide a confidence score and recommendation for model selection.
+
+MODULE RESPONSIBILITIES:
+------------------------
+1. Escalation Detection:
+   - Identifies tasks that require senior AI model intervention
+   - Analyzes task context for complexity and risk indicators
+   - Provides confidence scoring for escalation recommendations
+
+2. Pattern Analysis:
+   - Examines task descriptions for escalation keywords
+   - Analyzes file patterns for high-risk modifications
+   - Evaluates complexity and security aspects
+
+3. Decision Support:
+   - Generates detailed escalation assessments
+   - Provides evidence-based reasoning for recommendations
+   - Calculates confidence scores for decision making
+
+4. Hybrid Model Integration:
+   - Supports cost-effective model selection
+   - Ensures quality for critical decisions
+   - Facilitates intelligent switching between AI models
+
 ESCALATION CRITERIA:
-1. Critical Decision Threshold: Tasks with high business impact or risk
-2. Complexity Analysis: Multi-file refactors, architectural changes
-3. Security Sensitivity: Auth, encryption, compliance, security reviews
-4. Performance Critical: Database, caching, algorithmic optimization
-5. Integration Complexity: Multi-service, cross-platform, API design
-6. Quality Requirements: Code review, testing, validation
-7. Error Handling: Complex error scenarios, debugging, troubleshooting
+--------------------
+1. Critical Decision Threshold:
+   - Tasks with high business impact or risk
+   - Security-critical changes requiring expert review
+   - Compliance-related modifications with regulatory implications
+
+2. Complexity Analysis:
+   - Multi-file refactors spanning multiple modules
+   - Architectural changes affecting system design
+   - Legacy system integration with complex dependencies
+
+3. Security Sensitivity:
+   - Authentication and authorization system modifications
+   - Encryption and cryptographic implementation
+   - Compliance and regulatory requirement handling
+
+4. Performance Critical:
+   - Database schema changes and query optimization
+   - Caching strategy implementation and tuning
+   - Algorithmic optimization for efficiency
+
+5. Integration Complexity:
+   - Multi-service communication and coordination
+   - Cross-platform integration challenges
+   - API design and contract management
+
+6. Quality Requirements:
+   - Comprehensive code review and analysis
+   - Testing strategy development and implementation
+   - Validation and verification processes
+
+7. Error Handling:
+   - Complex error scenarios and exception management
+   - Debugging of intricate issues and problems
+   - Troubleshooting of system failures
+
+HYBRID MODEL SYSTEM:
+--------------------
+- GLM-4.5: Junior AI model for routine tasks
+  * Cost-effective for simple implementations
+  * Suitable for straightforward bug fixes
+  * Appropriate for basic code generation
+
+- Claude 4.1 Opus: Senior AI model for complex/critical tasks
+  * Expert-level analysis for security-critical changes
+  * Advanced reasoning for architectural decisions
+  * High-quality output for complex problem solving
+
+ESCALATION DETECTION PROCESS:
+----------------------------
+1. Task Description Analysis:
+   - Scan for security, architecture, and complexity keywords
+   - Identify high-risk patterns and indicators
+   - Evaluate task type and requirements
+
+2. File Pattern Analysis:
+   - Examine files to be modified for risk patterns
+   - Identify high-risk file types and locations
+   - Detect cross-service and multi-file changes
+
+3. Complexity Assessment:
+   - Evaluate algorithmic and architectural complexity
+   - Assess integration and dependency requirements
+   - Determine testing and quality needs
+
+4. Security Assessment:
+   - Identify security-sensitive aspects of the task
+   - Evaluate compliance and regulatory requirements
+   - Assess risk levels for different security domains
+
+5. Decision Making:
+   - Aggregate all evidence and triggers
+   - Calculate overall confidence score
+   - Generate final escalation recommendation
+
+INTEGRATION WITH OTHER MODULES:
+-------------------------------
+- context_analysis.py: Provides detailed analysis that complements trigger detection
+- escalation_workflow.py: Uses trigger detection results for workflow automation
+- main.py: Exposes escalation endpoints for external integration
+
+USAGE EXAMPLE:
+--------------
+# Quick escalation check
+assessment = should_escalate_task(
+    task_description="Implement JWT authentication with refresh tokens",
+    files_to_modify=["auth.py", "models.py", "database.py"],
+    task_type="implementation"
+)
+
+if assessment.should_escalate:
+    print(f"Escalate to {assessment.recommended_model}")
+    print(f"Reason: {assessment.primary_reason}")
+else:
+    print("Use junior model for this task")
+
+# Detailed analysis with detector
+detector = EscalationDetector()
+assessment = detector.analyze_task_context(
+    task_description="Refactor user management system with role-based access control",
+    files_to_modify=["auth.py", "models.py", "database.py", "api/users.py"],
+    current_files=["auth.py", "models.py", "database.py", "api/users.py", "api/roles.py"],
+    task_type="refactor"
+)
+
+for trigger in assessment.triggers:
+    print(f"Trigger: {trigger.reason.value} - {trigger.description}")
+
+See Also:
+--------
+- context_analysis.py: Detailed context analysis for escalation decisions
+- escalation_workflow.py: Complete escalation workflow automation
+- main.py: Main orchestrator application that integrates escalation triggers
 """
 
 import logging
@@ -93,10 +226,33 @@ class EscalationAssessment:
 
 class EscalationDetector:
     """
-    Detects when tasks should be escalated to Claude 4.1 Opus
+    Detects when tasks should be escalated to Claude 4.1 Opus.
     
     This class analyzes task context, files, and requirements to determine
-    if escalation to a higher-capability model is warranted.
+    if escalation to a higher-capability model is warranted. It evaluates
+    multiple factors including security sensitivity, architectural complexity,
+    performance requirements, and quality needs to make informed decisions
+    about which AI model should handle a given task.
+    
+    The detector uses pattern matching, keyword analysis, and file path
+    examination to identify escalation triggers with associated confidence
+    scores. It then makes a recommendation based on the collected evidence.
+    
+    The hybrid model system consists of:
+    - GLM-4.5: Junior AI model for routine tasks (cost-effective)
+    - Claude 4.1 Opus: Senior AI model for complex/critical tasks (higher quality)
+    
+    KEY ANALYSIS DIMENSIONS:
+    1. Task Description Analysis: Keywords indicating complexity, security, or risk
+    2. File Pattern Analysis: High-risk files, multi-file changes, cross-service changes
+    3. Complexity Assessment: Algorithmic complexity, architectural decisions
+    4. Security Assessment: Authentication, encryption, compliance requirements
+    5. Decision Making: Aggregation of evidence into escalation recommendation
+    
+    ESCALATION DECISION FACTORS:
+    - Critical security triggers always escalate
+    - High priority triggers with good confidence (>70%) escalate
+    - Multiple medium priority triggers with moderate confidence (>60%) escalate
     """
     
     def __init__(self):
@@ -152,16 +308,50 @@ class EscalationDetector:
         task_type: str = "implementation"
     ) -> EscalationAssessment:
         """
-        Analyze task context to determine if escalation is needed
+        Analyze task context to determine if escalation is needed.
+        
+        This method performs a comprehensive analysis of the task description,
+        files to be modified, and current workspace to identify potential
+        escalation triggers. It examines security keywords, file patterns,
+        complexity indicators, and other factors to make an informed decision
+        about whether the task should be handled by GLM-4.5 or escalated to
+        Claude 4.1 Opus.
+        
+        The analysis follows a four-step process:
+        1. Task Keyword Analysis: Examine task description for escalation-indicating keywords
+        2. File Pattern Analysis: Analyze files for high-risk patterns and cross-service changes
+        3. Complexity Assessment: Evaluate task complexity and algorithmic requirements
+        4. Security Assessment: Identify security-sensitive aspects of the task
+        
+        The method then aggregates all identified triggers to make a final escalation decision
+        with confidence scoring and detailed reasoning.
         
         Args:
-            task_description: Description of the task to perform
-            files_to_modify: List of files that will be modified
-            current_files: List of files in the current workspace
-            task_type: Type of task (implementation, review, debug, etc.)
-            
+            task_description: Description of the task to perform, used to identify
+                keywords and context that may indicate escalation needs
+            files_to_modify: List of files that will be modified by the task,
+                analyzed for high-risk patterns and cross-service changes
+            current_files: List of files in the current workspace, used for
+                contextual analysis of the task environment
+            task_type: Type of task (implementation, review, debug, etc.),
+                which may influence escalation criteria
+                
         Returns:
-            EscalationAssessment with recommendation
+            EscalationAssessment with recommendation including:
+            - Whether escalation is recommended
+            - Confidence level in the decision
+            - List of identified triggers
+            - Primary reason for the recommendation
+            - Recommended model to use
+            - Fallback model if needed
+            - Cost impact estimate
+            - Risk assessment
+            
+        ESCALATION DECISION PROCESS:
+        - Critical security triggers always result in escalation
+        - High priority triggers with good confidence (>70%) result in escalation
+        - Multiple medium priority triggers with moderate confidence (>60%) result in escalation
+        - All other tasks are handled by the junior model (GLM-4.5)
         """
         triggers = []
         
@@ -369,7 +559,39 @@ class EscalationDetector:
         return triggers
     
     def _make_escalation_decision(self, triggers: List[EscalationTrigger], task_type: str) -> EscalationAssessment:
-        """Make final escalation decision based on all triggers"""
+        """
+        Make final escalation decision based on all triggers.
+        
+        This method aggregates all identified escalation triggers to make a final
+        decision about whether the task should be handled by the junior AI model
+        (GLM-4.5) or escalated to the senior AI model (Claude 4.1 Opus). It
+        calculates overall confidence and applies hierarchical decision logic
+        based on trigger priority levels.
+        
+        DECISION HIERARCHY:
+        1. Critical Triggers: Always escalate regardless of other factors
+        2. High Priority Triggers: Escalate if confidence >= 70%
+        3. Medium Priority Triggers: Escalate if 2+ triggers and confidence > 60%
+        4. No Triggers: Handle with junior model (GLM-4.5)
+        
+        The method also generates cost and risk assessments for transparency
+        about the implications of the escalation decision.
+        
+        Args:
+            triggers: List of identified escalation triggers with priorities and confidence scores
+            task_type: Type of task being performed (implementation, review, debug, etc.)
+            
+        Returns:
+            EscalationAssessment with final decision including:
+            - Whether escalation is recommended
+            - Overall confidence in the decision
+            - All identified triggers that influenced the decision
+            - Primary reason for the recommendation
+            - Recommended model to use
+            - Fallback model if needed
+            - Cost impact estimate
+            - Risk assessment
+        """
         if not triggers:
             return EscalationAssessment(
                 should_escalate=False,
@@ -437,7 +659,33 @@ class EscalationDetector:
         )
     
     def validate_escalation_decision(self, assessment: EscalationAssessment) -> bool:
-        """Validate escalation decision with additional checks"""
+        """
+        Validate escalation decision with additional checks.
+        
+        This method performs additional validation on the escalation decision to
+        ensure it meets quality and safety standards. It checks for low-confidence
+        escalation decisions that might indicate an error in the analysis process.
+        
+        In a production implementation, this method could incorporate:
+        - Historical performance data for similar tasks
+        - User preferences for model selection
+        - Budget constraints for AI model usage
+        - Time constraints for task completion
+        - Organizational policies for model selection
+        
+        For the current implementation, it performs basic validation to prevent
+        escalation decisions with very low confidence scores.
+        
+        Args:
+            assessment: EscalationAssessment to validate
+            
+        Returns:
+            bool: True if the decision is valid, False otherwise
+            
+        VALIDATION CRITERIA:
+        - Escalation decisions with confidence < 50% are flagged as potentially invalid
+        - Future implementations could include additional validation criteria
+        """
         # Additional validation could include:
         # - Historical performance data
         # - User preferences
@@ -460,16 +708,32 @@ def should_escalate_task(
     task_type: str = "implementation"
 ) -> EscalationAssessment:
     """
-    Quick check if a task should be escalated to Claude 4.1 Opus
+    Quick check if a task should be escalated to Claude 4.1 Opus.
+    
+    Convenience function that creates an EscalationDetector instance and performs
+    a comprehensive analysis to determine whether a task should be handled by
+    a junior AI model (GLM-4.5) or escalated to a senior AI model (Claude 4.1 Opus).
+    
+    This function is useful for quick integration into task processing pipelines
+    where a simple function call is preferred over creating an instance.
     
     Args:
-        task_description: Description of the task
-        files_to_modify: Files that will be modified
-        current_files: Current workspace files (optional)
-        task_type: Type of task
+        task_description: Description of the task to be analyzed for escalation needs
+        files_to_modify: List of files that will be modified by the task
+        current_files: Optional list of files in the current workspace for
+            contextual analysis (defaults to empty list if not provided)
+        task_type: Type of task being performed (implementation, review, debug, etc.)
         
     Returns:
-        EscalationAssessment with recommendation
+        EscalationAssessment with comprehensive recommendation including:
+        - Whether escalation is recommended
+        - Confidence level in the decision
+        - List of identified triggers
+        - Primary reason for the recommendation
+        - Recommended model to use
+        - Fallback model if needed
+        - Cost impact estimate
+        - Risk assessment
     """
     detector = EscalationDetector()
     return detector.analyze_task_context(

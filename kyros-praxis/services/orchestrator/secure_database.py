@@ -15,6 +15,7 @@ import bcrypt
 import secrets
 import hashlib
 import hmac
+from uuid import uuid4
 
 logger = logging.getLogger(__name__)
 
@@ -140,10 +141,11 @@ class SecureDatabase:
             password.encode('utf-8'),
             bcrypt.gensalt(rounds=12)
         ).decode('utf-8')
+        user_id = str(uuid4())
         
         query = """
-            INSERT INTO users (username, email, password_hash, role, created_at, active)
-            VALUES (:username, :email, :password_hash, :role, :created_at, true)
+            INSERT INTO users (id, username, email, password_hash, role, created_at, active)
+            VALUES (:id, :username, :email, :password_hash, :role, :created_at, true)
             RETURNING id
         """
         
@@ -151,6 +153,7 @@ class SecureDatabase:
             results = self.execute_safe_query(
                 query,
                 {
+                    "id": user_id,
                     "username": username,
                     "email": email,
                     "password_hash": password_hash,

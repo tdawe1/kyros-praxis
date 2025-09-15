@@ -6,7 +6,8 @@ from pathlib import Path
 
 # Set required environment variables for testing
 os.environ["SECRET_KEY"] = "test-secret-key-for-testing"
-os.environ["DATABASE_URL"] = "sqlite:///:memory:"
+# Use a file-based SQLite DB to ensure the same database is visible across connections
+os.environ["DATABASE_URL"] = "sqlite:///./test_unit.db"
 
 # Add the orchestrator directory to the path
 orchestrator_dir = Path(__file__).parents[2]

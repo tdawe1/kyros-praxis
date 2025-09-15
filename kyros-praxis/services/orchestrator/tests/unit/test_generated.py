@@ -43,7 +43,11 @@ class TestHealthEndpoints:
         
         response = client.get("/healthz")
         assert response.status_code == 500
-        assert response.json() == {"detail": "DB unavailable"}
+        data = response.json()
+        assert "error" in data
+        assert data["error"]["type"] == "http_exception"
+        assert data["error"]["code"] == 500
+        assert "DB unavailable" in data["error"]["message"]
         
         # Restore
         app.dependency_overrides.clear()
@@ -52,7 +56,7 @@ class TestHealthEndpoints:
 class TestAuthEndpoints:
     """Test authentication endpoints."""
 
-    @patch('auth.authenticate_user')
+    @patch('main.authenticate_user')
     def test_login_success(self, mock_authenticate, client):
         """Test successful login with valid credentials."""
         # Mock user object
@@ -62,7 +66,7 @@ class TestAuthEndpoints:
         
         response = client.post(
             "/auth/login",
-            data={"username": "test@example.com", "password": "testpass123"},
+            json={"username": "test@example.com", "password": "testpass123"},
         )
         
         assert response.status_code == 200
@@ -70,14 +74,14 @@ class TestAuthEndpoints:
         assert "access_token" in data
         assert data["token_type"] == "bearer"
 
-    @patch('auth.authenticate_user')
+    @patch('main.authenticate_user')
     def test_login_invalid_credentials(self, mock_authenticate, client):
         """Test login with invalid credentials."""
         mock_authenticate.return_value = None
         
         response = client.post(
             "/auth/login",
-            data={"username": "invalid@example.com", "password": "wrongpass"},
+            json={"username": "invalid@example.com", "password": "wrongpass"},
         )
         
         assert response.status_code == 401
@@ -120,23 +124,42 @@ class TestAPIRoutes:
 class TestWebSocket:
     """Test WebSocket endpoint."""
 
-    @patch('auth.get_current_user')
-    def test_websocket_connection(self, mock_get_current_user, client):
-        """Test WebSocket connection and echo functionality."""
-        # Mock authenticated user
-        mock_user = Mock()
-        mock_user.email = "test@example.com"
-        mock_get_current_user.return_value = mock_user
-        
-        # WebSocket testing requires special handling
-        with client.websocket_connect("/ws") as websocket:
+    def test_websocket_connection(self, client, test_db):
+        """Test WebSocket connection and echo functionality with JWT authentication."""
+        # Create a test user
+        from services.orchestrator.auth import pwd_context, create_access_token
+        from services.orchestrator.models import User
+
+        if not test_db.query(User).filter(User.username == "wstest").first():
+            user = User(
+                username="wstest",
+                email="ws@example.com",
+                password_hash=pwd_context.hash("password")
+            )
+            test_db.add(user)
+            test_db.commit()
+
+        # Create JWT token
+        token = create_access_token(data={"sub": "wstest"})
+
+        # WebSocket testing with JWT token in query parameter
+        with client.websocket_connect(f"/ws?token={token}") as websocket:
+            # First receive the connection success message
+            connection_msg = websocket.receive_json()
+            assert connection_msg["type"] == "connection"
+            assert connection_msg["status"] == "connected"
+            assert connection_msg["user"] == "wstest"
+
             # Send test data
             test_data = {"message": "test", "value": 123}
             websocket.send_json(test_data)
-            
+
             # Receive echoed data
             response = websocket.receive_json()
-            assert response == {"data": test_data}
+            assert "data" in response
+            assert response["data"] == test_data
+            assert "timestamp" in response
+            assert "user" in response
 
 
 class TestValidation:
@@ -182,37 +205,98 @@ class TestCORS:
 
 class TestAsyncCRUD:
     """Test async CRUD operations for tasks."""
-    
-    @pytest.mark.asyncio
-    async def test_create_task_success(self):
+
+    def test_create_task_success(self, client, test_db):
         """Test creating a task successfully."""
-        from main import app
-        async with AsyncClient(app=app, base_url="http://test") as ac:
-            task_data = {
-                "title": "Test Task",
-                "description": "This is a test task",
-                "status": "pending"
-            }
-            response = await ac.post("/api/v1/tasks", json=task_data)
-            # Might return 401 if auth is required
-            assert response.status_code in [200, 201, 401, 404]
-    
-    @pytest.mark.asyncio
-    async def test_get_tasks_list(self):
+        # Create a test user and login to get JWT token
+        from services.orchestrator.auth import pwd_context
+        from services.orchestrator.models import User
+
+        if not test_db.query(User).filter(User.username == "cruduser").first():
+            user = User(
+                username="cruduser",
+                email="crud@example.com",
+                password_hash=pwd_context.hash("password")
+            )
+            test_db.add(user)
+            test_db.commit()
+
+        # Login to get token
+        login_response = client.post(
+            "/auth/login",
+            json={"username": "cruduser", "password": "password"}
+        )
+        assert login_response.status_code == 200
+        token = login_response.json()["access_token"]
+
+        task_data = {
+            "title": "Test Task",
+            "description": "This is a test task"
+        }
+        response = client.post(
+            "/api/v1/collab/tasks",
+            json=task_data,
+            headers={"Authorization": f"Bearer {token}"}
+        )
+        assert response.status_code in [200, 201]
+
+    def test_get_tasks_list(self, client, test_db):
         """Test retrieving list of tasks."""
-        from main import app
-        async with AsyncClient(app=app, base_url="http://test") as ac:
-            response = await ac.get("/api/v1/tasks")
-            # Might return 401 if auth is required or 404 if route doesn't exist
-            assert response.status_code in [200, 401, 404]
-    
-    @pytest.mark.asyncio  
-    async def test_validation_error_422(self):
+        # Create a test user and login to get JWT token
+        from services.orchestrator.auth import pwd_context
+        from services.orchestrator.models import User
+
+        if not test_db.query(User).filter(User.username == "cruduser").first():
+            user = User(
+                username="cruduser",
+                email="crud@example.com",
+                password_hash=pwd_context.hash("password")
+            )
+            test_db.add(user)
+            test_db.commit()
+
+        # Login to get token
+        login_response = client.post(
+            "/auth/login",
+            json={"username": "cruduser", "password": "password"}
+        )
+        assert login_response.status_code == 200
+        token = login_response.json()["access_token"]
+
+        response = client.get(
+            "/api/v1/collab/state/tasks",
+            headers={"Authorization": f"Bearer {token}"}
+        )
+        assert response.status_code == 200
+
+    def test_validation_error_422(self, client, test_db):
         """Test validation error returns 422."""
-        from main import app
-        async with AsyncClient(app=app, base_url="http://test") as ac:
-            # Send invalid data (missing required fields)
-            invalid_data = {"invalid_field": "test"}
-            response = await ac.post("/api/v1/tasks", json=invalid_data)
-            # Should return 422 for validation error or 401/404 if auth/route issue
-            assert response.status_code in [422, 401, 404]
+        # Create a test user and login to get JWT token
+        from services.orchestrator.auth import pwd_context
+        from services.orchestrator.models import User
+
+        if not test_db.query(User).filter(User.username == "cruduser").first():
+            user = User(
+                username="cruduser",
+                email="crud@example.com",
+                password_hash=pwd_context.hash("password")
+            )
+            test_db.add(user)
+            test_db.commit()
+
+        # Login to get token
+        login_response = client.post(
+            "/auth/login",
+            json={"username": "cruduser", "password": "password"}
+        )
+        assert login_response.status_code == 200
+        token = login_response.json()["access_token"]
+
+        # Send invalid data (missing required fields)
+        invalid_data = {"invalid_field": "test"}
+        response = client.post(
+            "/api/v1/collab/tasks",
+            json=invalid_data,
+            headers={"Authorization": f"Bearer {token}"}
+        )
+        assert response.status_code == 422

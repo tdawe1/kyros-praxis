@@ -9,7 +9,8 @@ import { useWebSocket } from '@/lib/ws'
 export default function Home() {
   const { data: session, status } = useSession()
   const router = useRouter()
-  const { status: wsStatus } = useWebSocket(process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8000/ws')
+  const wsUrl = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8000/ws'
+  const { status: wsStatus } = useWebSocket(wsUrl, (session as any)?.accessToken)
 
   useEffect(() => {
     if (status === 'unauthenticated') {
