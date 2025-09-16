@@ -20,7 +20,10 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-oauth2_scheme = HTTPBearer(auto_error=False)
+# Require credentials; FastAPI will raise 401 if the Authorization header is
+# missing or malformed instead of returning a 500 later when accessing
+# credentials.credentials.
+oauth2_scheme = HTTPBearer(auto_error=True)
 
 
 class Token(BaseModel):
@@ -63,8 +66,17 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     if expires_delta:
         expire = datetime.utcnow() + expires_delta
     else:
-        expire = datetime.utcnow() + timedelta(minutes=15)
-    to_encode.update({"exp": expire})
+        expire = datetime.utcnow() + timedelta(
+            minutes=ACCESS_TOKEN_EXPIRE_MINUTES
+        )
+    # Include standard claims required by get_current_user
+    to_encode.update(
+        {
+            "exp": expire,
+            "aud": "api",
+            "iss": "https://orchestrator.local",
+        }
+    )
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
