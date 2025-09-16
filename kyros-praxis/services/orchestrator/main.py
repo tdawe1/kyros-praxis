@@ -4,7 +4,6 @@ from fastapi import (
     Depends,
     FastAPI,
     HTTPException,
-    OAuth2PasswordRequestForm,
     WebSocket,
     status,
 )
@@ -18,8 +17,10 @@ from .auth import (
     create_access_token,
     ACCESS_TOKEN_EXPIRE_MINUTES,
     get_current_user,
+    Login,
 )
-from .database import get_db, text
+from .database import get_db
+from sqlalchemy import text
 from .routers import jobs, tasks
 
 app = FastAPI(title="Orchestrator API", version="0.1.0")
@@ -51,11 +52,9 @@ def healthz(db=Depends(get_db)) -> dict:
 
 
 @app.post("/auth/login")
-async def login(
-    form_data: OAuth2PasswordRequestForm = Depends(), db=Depends(get_db)
-) -> dict:
+async def login(payload: Login, db=Depends(get_db)) -> dict:
     """Login endpoint."""
-    user = authenticate_user(db, form_data.username, form_data.password)
+    user = authenticate_user(db, payload.email, payload.password)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
