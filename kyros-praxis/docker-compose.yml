@@ -7,7 +7,7 @@ services:
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-kyros}
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-your_secure_database_password}
     ports:
       - "5432:5432"
     volumes:
@@ -18,6 +18,8 @@ services:
   kyros-praxis-redis:
     image: redis:7-alpine
     container_name: kyros-praxis-redis
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-your_secure_redis_password}
     ports:
       - "6379:6379"
     env_file:

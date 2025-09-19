@@ -20,14 +20,19 @@ jobs:
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-      - name: Install dependencies
-        run: |
-          pip install -r services/orchestrator/requirements.txt
-          pip install -r packages/service-registry/requirements.txt
-          pip install ruff
-      - name: Lint with ruff
-        run: ruff check .
-      - name: Run pytest with coverage
+       - name: Install dependencies
+         run: |
+           pip install -r services/orchestrator/requirements.txt
+           pip install -r packages/service-registry/requirements.txt
+           pip install ruff
+           pip install bandit safety
+       - name: Lint with ruff
+         run: ruff check .
+       - name: Security scan with bandit
+         run: bandit -r services/orchestrator packages/service-registry -f json -o bandit-report.json
+       - name: Check for vulnerable dependencies with safety
+         run: safety check --full-report
+       - name: Run pytest with coverage
         run: |
           pytest services/orchestrator/tests/ packages/service-registry/tests/ \
             --cov=services/orchestrator --cov=packages/service-registry \

@@ -7,26 +7,42 @@ from fastapi import (
     WebSocket,
     status,
 )
+from jose import jwt
 from sqlalchemy.ext.asyncio import (
     AsyncSession,  # noqa: F401 (placeholder for future async endpoints)
 )
 
-from .auth import (
+# Load environment variables from .env file
+from dotenv import load_dotenv
+load_dotenv()
+
+import auth
+from auth import (
     User,
     authenticate_user,
     create_access_token,
     ACCESS_TOKEN_EXPIRE_MINUTES,
     get_current_user,
     Login,
+    SECRET_KEY,
+    ALGORITHM,
+    get_user,
 )
-from .database import get_db
+import database
+from database import get_db
 from sqlalchemy import text
-from .routers import jobs, tasks
+import routers.jobs as jobs
+import routers.tasks as tasks
 
 app = FastAPI(title="Orchestrator API", version="0.1.0")
 
 app.include_router(jobs.router, prefix="/jobs", tags=["jobs"])
 app.include_router(tasks.router, prefix="/collab", tags=["collab"])
+
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)
 
 
 @app.get("/")
@@ -70,9 +86,38 @@ async def login(payload: Login, db=Depends(get_db)) -> dict:
 
 @app.websocket("/ws")
 async def websocket_endpoint(
-    websocket: WebSocket, current_user: User = Depends(get_current_user)
+    websocket: WebSocket, token: str = None
 ) -> None:
     """WebSocket endpoint with authentication."""
+    # Verify JWT token from query parameters
+    if not token:
+        await websocket.close(code=4000)
+        return
+
+    try:
+        payload = jwt.decode(
+            token,
+            SECRET_KEY,
+            algorithms=[ALGORITHM],
+            audience="api",
+            issuer="https://orchestrator.local",
+        )
+        email: str = payload.get("sub")
+        if email is None:
+            await websocket.close(code=4001)
+            return
+
+        # Get user from database
+        db = next(get_db())
+        user = get_user(db, email=email)
+        if user is None:
+            await websocket.close(code=4001)
+            return
+
+    except jwt.JWTError:
+        await websocket.close(code=4001)
+        return
+
     await websocket.accept()
     while True:
         data = await websocket.receive_json()

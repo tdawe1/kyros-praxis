@@ -29,7 +29,7 @@ AsyncSessionLocal = sessionmaker(
 
 # Ensure tables exist on import to support test seeding prior to app startup
 try:
-    from .models import Base  # type: ignore
+    from models import Base  # type: ignore
 
     Base.metadata.create_all(bind=engine)
 except Exception:

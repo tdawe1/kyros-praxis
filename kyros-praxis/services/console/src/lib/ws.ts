@@ -14,7 +14,7 @@ interface WebSocketStatus {
   error: string | null;
 }
 
-export const useWebSocket = (url: string = "ws://localhost:8000/ws") => {
+export const useWebSocket = (url: string = "ws://localhost:8000/ws", token?: string) => {
   const [status, setStatus] = useState<WebSocketStatus>({
     connected: false,
     connecting: false,
@@ -24,7 +24,9 @@ export const useWebSocket = (url: string = "ws://localhost:8000/ws") => {
   const socketRef = useRef<WebSocket | null>(null);
 
   useEffect(() => {
-    const socket = new WebSocket(url);
+    // Add token as query parameter if provided
+    const wsUrl = token ? `${url}?token=${encodeURIComponent(token)}` : url;
+    const socket = new WebSocket(wsUrl);
     socketRef.current = socket;
 
     setStatus((prev) => ({ ...prev, connecting: true }));
@@ -48,13 +50,13 @@ export const useWebSocket = (url: string = "ws://localhost:8000/ws") => {
 
     socket.onerror = (error) => {
       console.error("WebSocket error:", error);
-      setStatus({ connected: false, connecting: false, error: error.message });
+      setStatus({ connected: false, connecting: false, error: "WebSocket connection failed" });
     };
 
     return () => {
       socket.close();
     };
-  }, [url]);
+  }, [url, token]);
 
   const sendMessage = (message: Omit<Message, "timestamp">) => {
     if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
