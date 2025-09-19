@@ -1,8 +1,9 @@
 import os
+import configparser
 from logging.config import fileConfig
 
 from alembic import context
-from alembic.configuration import async_engine_from_config
+from sqlalchemy.ext.asyncio import async_engine_from_config
 from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 
@@ -13,13 +14,18 @@ config = context.config
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
 if config.config_file_name is not None:
-    fileConfig(config.config_file_name)
+    try:
+        fileConfig(config.config_file_name)
+    except (KeyError, configparser.NoSectionError):
+        pass  # Skip logging config if not present
 
 # add your model's MetaData object here
 # for 'autogenerate' support
-from models import Base
-
-target_metadata = Base.metadata
+try:
+    from models import Base
+    target_metadata = Base.metadata
+except ImportError:
+    target_metadata = None
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:

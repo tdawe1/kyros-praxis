@@ -1,5 +1,4 @@
 version: '3.8'
-
 services:
   kyros-praxis-postgres:
     image: postgres:15
@@ -17,7 +16,7 @@ services:
     image: redis:7-alpine
     container_name: kyros-praxis-redis
     ports:
-      - "6379:6379"
+      - "6381:6379"
     volumes:
       - redis_data:/data
 

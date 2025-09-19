@@ -44,5 +44,9 @@ class User(Base):
     __tablename__ = "users"
 
     id = Column(String(36), primary_key=True, default=lambda: str(uuid4()))
+    username = Column(String(255), unique=True, index=True, nullable=False)
     email = Column(String(255), unique=True, index=True, nullable=False)
     password_hash = Column(String(255), nullable=False)
+    role = Column(String(50), server_default="user")
+    active = Column(Integer, server_default="1")
+    created_at = Column(DateTime, server_default=func.now())

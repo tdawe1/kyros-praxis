@@ -19,7 +19,9 @@ def test_healthz(client):
 def test_websocket_endpoint():
     from services.orchestrator.main import app as the_app
 
-    assert hasattr(the_app, "websocket_endpoint")
+    # Check if websocket route exists
+    ws_routes = [r for r in the_app.routes if hasattr(r, 'path') and r.path == '/ws']
+    assert len(ws_routes) > 0, "WebSocket route /ws should be registered"
 
 
 def test_secret_key_env(monkeypatch):

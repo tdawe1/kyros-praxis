@@ -9,15 +9,43 @@ const handler = NextAuth({
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
       },
-      // Dev-only authorize to unblock local flows
       async authorize(credentials) {
-        const email = (credentials as any)?.email || "user@example.com";
-        return { id: "dev-user", name: email, email } as any;
+        try {
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/auth/login`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              email: credentials?.email,
+              password: credentials?.password,
+            }),
+          });
+
+          if (!response.ok) {
+            return null;
+          }
+
+          const data = await response.json();
+          const token = data.access_token;
+
+          // Decode token to get user info
+          const decoded = JSON.parse(atob(token.split('.')[1]));
+          return {
+            id: decoded.sub,
+            name: decoded.name || decoded.email,
+            email: decoded.email,
+            token: token,
+          } as any;
+        } catch (error) {
+          console.error('Authentication error:', error);
+          return null;
+        }
       },
     }),
   ],
   session: { strategy: "jwt" },
-  secret: process.env.NEXTAUTH_SECRET || "dev-secret",
+  secret: process.env.NEXTAUTH_SECRET,
 });
 
 export { handler as GET, handler as POST };
