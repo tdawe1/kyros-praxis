@@ -1,3 +1,9 @@
+"""Database configuration and session management for the Orchestrator.
+
+This module sets up SQLAlchemy engines and session factories for both
+synchronous and asynchronous database operations using SQLite.
+"""
+
 import os
 from pathlib import Path
 
@@ -37,6 +43,14 @@ except Exception:
 
 
 def get_db():
+    """Dependency function providing database session.
+
+    Yields a synchronous database session for use in FastAPI endpoints.
+    Automatically closes the session when the request is complete.
+
+    Yields:
+        SQLAlchemy Session object
+    """
     db = SessionLocal()
     try:
         yield db
@@ -45,5 +59,13 @@ def get_db():
 
 
 async def get_db_session():
+    """Dependency function providing async database session.
+
+    Yields an asynchronous database session for use in async endpoints.
+    Automatically closes the session when the request is complete.
+
+    Yields:
+        SQLAlchemy AsyncSession object
+    """
     async with AsyncSessionLocal() as session:
         yield session

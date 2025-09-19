@@ -1,3 +1,9 @@
+"""Main FastAPI application for the Orchestrator service.
+
+This module defines the FastAPI application with authentication, job management,
+and WebSocket endpoints for the Kyros platform.
+"""
+
 from datetime import timedelta
 
 from fastapi import (
@@ -47,13 +53,21 @@ if __name__ == "__main__":
 
 @app.get("/")
 async def root() -> dict:
-    """Root endpoint."""
+    """Root endpoint returning API status message.
+
+    Returns:
+        Dictionary with status message
+    """
     return {"message": "Orchestrator API is running"}
 
 
 @app.get("/health")
 async def health() -> dict:
-    """Health check."""
+    """Basic health check endpoint.
+
+    Returns:
+        Dictionary with health status
+    """
     return {"status": "healthy"}
 
 
@@ -69,7 +83,18 @@ def healthz(db=Depends(get_db)) -> dict:
 
 @app.post("/auth/login")
 async def login(payload: Login, db=Depends(get_db)) -> dict:
-    """Login endpoint."""
+    """Authenticate user and return JWT access token.
+
+    Args:
+        payload: Login credentials (email, password)
+        db: Database session dependency
+
+    Returns:
+        Dictionary containing access token and token type
+
+    Raises:
+        HTTPException: If authentication fails
+    """
     user = authenticate_user(db, payload.email, payload.password)
     if not user:
         raise HTTPException(
@@ -88,7 +113,19 @@ async def login(payload: Login, db=Depends(get_db)) -> dict:
 async def websocket_endpoint(
     websocket: WebSocket, token: str = None
 ) -> None:
-    """WebSocket endpoint with authentication."""
+    """WebSocket endpoint with JWT authentication.
+
+    Establishes a WebSocket connection after validating JWT token
+    from query parameters. Echoes back received JSON messages.
+
+    Args:
+        websocket: WebSocket connection object
+        token: JWT token from query parameters
+
+    WebSocket Close Codes:
+        4000: Missing token
+        4001: Invalid token or user not found
+    """
     # Verify JWT token from query parameters
     if not token:
         await websocket.close(code=4000)
