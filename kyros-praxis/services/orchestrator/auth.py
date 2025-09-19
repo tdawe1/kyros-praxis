@@ -1,3 +1,9 @@
+"""Authentication module for the Orchestrator API.
+
+This module handles JWT token generation, validation, and user authentication
+using HS512 algorithm with bcrypt password hashing.
+"""
+
 import os
 from datetime import datetime, timedelta
 from typing import Optional
@@ -41,17 +47,42 @@ class TokenData(BaseModel):
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """Verify plain password against hashed."""
+    """Verify a plain text password against its hashed version.
+
+    Args:
+        plain_password: The plain text password to verify
+        hashed_password: The hashed password to compare against
+
+    Returns:
+        True if the password matches, False otherwise
+    """
     return pwd_context.verify(plain_password, hashed_password)
 
 
 def get_user(db: Session, email: str) -> Optional[User]:
-    """Get user by email from DB."""
+    """Retrieve a user from the database by email address.
+
+    Args:
+        db: Database session
+        email: User's email address
+
+    Returns:
+        User object if found, None otherwise
+    """
     return db.query(User).filter(User.email == email).first()
 
 
 def authenticate_user(db: Session, email: str, password: str):
-    """Authenticate user by email and password."""
+    """Authenticate a user with email and password.
+
+    Args:
+        db: Database session
+        email: User's email address
+        password: User's plain text password
+
+    Returns:
+        User object if authentication successful, False otherwise
+    """
     user = get_user(db, email)
     if not user:
         return False
@@ -61,7 +92,15 @@ def authenticate_user(db: Session, email: str, password: str):
 
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
-    """Create JWT access token."""
+    """Create a JWT access token with standard claims.
+
+    Args:
+        data: Dictionary containing token payload data (e.g., {"sub": user_email})
+        expires_delta: Optional custom expiration time, defaults to ACCESS_TOKEN_EXPIRE_MINUTES
+
+    Returns:
+        Encoded JWT token string
+    """
     to_encode = data.copy()
     if expires_delta:
         expire = datetime.utcnow() + expires_delta
@@ -85,7 +124,18 @@ async def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(oauth2_scheme),
     db: Session = Depends(get_db),
 ):
-    """Get current user from token."""
+    """Extract and validate the current user from JWT token.
+
+    Args:
+        credentials: HTTP Authorization credentials from request
+        db: Database session
+
+    Returns:
+        User object for the authenticated user
+
+    Raises:
+        HTTPException: If token is invalid or user doesn't exist
+    """
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",

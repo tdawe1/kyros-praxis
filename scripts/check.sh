@@ -12,6 +12,3 @@ else
   echo "Fix issues above, or run with --fix for auto-fixes"
   exit 1
 fi
-  echo "Fix issues above, or run with --fix for auto-fixes"
-  exit 1
-fi

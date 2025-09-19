@@ -1,4 +1,10 @@
 from fastapi import APIRouter, Body, Depends, HTTPException, Response
+"""Job management router for the Orchestrator API.
+
+This module provides endpoints for creating, reading, and managing jobs
+with proper authentication and ETag support for caching.
+"""
+
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -20,6 +26,15 @@ from utils import generate_etag
 
 
 async def _create_job(session: AsyncSession, title: str):
+    """Create a new job in the database.
+
+    Args:
+        session: Database session
+        title: Job title/name
+
+    Returns:
+        Created Job object
+    """
     # Map Day-1 JobCreate.title -> Job.name
     job = Job(name=title)
     session.add(job)
@@ -44,6 +59,20 @@ async def create_job(
     current_user: User = Depends(get_current_user),
     response: Response = None,
 ):
+    """Create a new job.
+
+    Validates input, creates job in database, and returns job details
+    with ETag for caching.
+
+    Args:
+        job_input: Validated job creation data
+        session: Database session
+        current_user: Authenticated user
+        response: HTTP response object for headers
+
+    Returns:
+        Job response with ID, name, and status
+    """
     validated_input = validate_job_input(job_input.model_dump())
     try:
         job = await _create_job(session, validated_input.title)
