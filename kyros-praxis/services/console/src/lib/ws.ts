@@ -1,40 +1,73 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useState, useEffect, useRef } from "react";
 
-export function useWebSocket(url: string) {
-  const ws = useRef<WebSocket | null>(null)
-  const [isConnected, setIsConnected] = useState(false)
-  const reconnectDelay = useRef(1000)  // Start with 1s, double on failure
+// Type for message
+interface Message {
+  type: string;
+  payload: any;
+  timestamp: number;
+}
 
-  const connect = useCallback(() => {
-    ws.current = new WebSocket(url)
+// Type for WebSocket status
+interface WebSocketStatus {
+  connected: boolean;
+  connecting: boolean;
+  error: string | null;
+}
 
-    ws.current.onopen = () => {
-      setIsConnected(true)
-      reconnectDelay.current = 1000  // Reset on success
-    }
-
-    ws.current.onclose = () => {
-      setIsConnected(false)
-      setTimeout(() => connect(), reconnectDelay.current)
-      reconnectDelay.current = Math.min(reconnectDelay.current * 2, 30000)  // Max 30s
-    }
-
-    ws.current.onerror = () => {
-      setIsConnected(false)
-    }
-
-    return ws.current
-  }, [url])
+export const useWebSocket = (url: string = "ws://localhost:8000/ws", token?: string) => {
+  const [status, setStatus] = useState<WebSocketStatus>({
+    connected: false,
+    connecting: false,
+    error: null,
+  });
+  const [messages, setMessages] = useState<Message[]>([]);
+  const socketRef = useRef<WebSocket | null>(null);
 
   useEffect(() => {
-    connect()
+    // Add token as query parameter if provided
+    const wsUrl = token ? `${url}?token=${encodeURIComponent(token)}` : url;
+    const socket = new WebSocket(wsUrl);
+    socketRef.current = socket;
+
+    setStatus((prev) => ({ ...prev, connecting: true }));
+
+    socket.onopen = () => {
+      setStatus({ connected: true, connecting: false, error: null });
+    };
+
+    socket.onmessage = (event) => {
+      try {
+        const message: Message = JSON.parse(event.data);
+        setMessages((prev) => [...prev, { ...message, timestamp: Date.now() }]);
+      } catch (error) {
+        console.error("Failed to parse message:", error);
+      }
+    };
+
+    socket.onclose = () => {
+      setStatus({ connected: false, connecting: false, error: null });
+    };
+
+    socket.onerror = (event: Event) => {
+      console.error("WebSocket error:", event);
+      setStatus({ connected: false, connecting: false, error: "WebSocket error" });
+    };
 
     return () => {
-      if (ws.current) {
-        ws.current.close()
-      }
-    }
-  }, [connect])
+      socket.close();
+    };
+  }, [url, token]);
 
-  return { isConnected, sendMessage: (message: any) => ws.current?.send(JSON.stringify(message)) }
-}
+  const sendMessage = (message: Omit<Message, "timestamp">) => {
+    if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
+      const fullMessage: Message = { ...message, timestamp: Date.now() };
+      socketRef.current.send(JSON.stringify(fullMessage));
+    }
+  };
+
+  return {
+    status,
+    messages,
+    sendMessage,
+  };
+};

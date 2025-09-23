@@ -1,6 +1,6 @@
 import pytest
+from services.orchestrator.models import Base, Event, Job
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from services.orchestrator.models import Job, Event, Base
 
 
 @pytest.fixture

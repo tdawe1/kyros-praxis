@@ -1,7 +1,7 @@
-import pytest
 from unittest.mock import AsyncMock, patch
-from services.orchestrator.repositories.jobs import get_jobs, create_job, add_event
-from services.orchestrator.models import Job, Event
+
+import pytest
+from services.orchestrator.repositories.jobs import add_event, create_job, get_jobs
 
 
 @pytest.mark.asyncio
@@ -19,9 +19,7 @@ async def test_get_jobs_empty():
 async def test_create_job_invalid_name():
     mock_session = AsyncMock()
     with patch.object(
-        mock_session,
-        'commit',
-        side_effect=ValueError("Invalid name")
+        mock_session, "commit", new=AsyncMock(side_effect=ValueError("Invalid name"))
     ):
         with pytest.raises(ValueError):
             await create_job(mock_session, "")
@@ -32,8 +30,8 @@ async def test_add_event_invalid_payload():
     mock_session = AsyncMock()
     with patch.object(
         mock_session,
-        'commit',
-        side_effect=ValueError("Invalid payload")
+        "commit",
+        new=AsyncMock(side_effect=ValueError("Invalid payload")),
     ):
         with pytest.raises(ValueError):
             await add_event(mock_session, "test", None)
