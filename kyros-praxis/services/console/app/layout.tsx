@@ -1,14 +1,17 @@
-import './globals.css';
-import { Providers } from './providers';
-import type { Metadata } from 'next';
-import React from 'react';
-import { Inter } from 'next/font/google';
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { AuthProvider } from "@/lib/auth";
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({ subsets: ["latin"] });
+
+// Create a new QueryClient instance
+const queryClient = new QueryClient();
 
 export const metadata: Metadata = {
-  title: 'Kyros Console',
-  description: 'Production-grade monorepo console with typed API client',
+  title: "Kyros Console",
+  description: "Frontend for Kyros Praxis",
 };
 
 export default function RootLayout({
@@ -19,14 +22,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <nav className="bg-blue-600 p-4 text-white">
-          <h1 className="text-xl font-bold">Kyros Console</h1>
-        </nav>
-        <Providers>
-          <main className="p-4">
+        <AuthProvider>
+          <QueryClientProvider client={queryClient}>
             {children}
-          </main>
-        </Providers>
+          </QueryClientProvider>
+        </AuthProvider>
       </body>
     </html>
   );

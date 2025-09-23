@@ -13,8 +13,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application code
 COPY . /app/
 
-# Set PYTHONPATH to include the app directory
+# Set PYTHONPATH to include the app directory and make it a package
 ENV PYTHONPATH=/app
+RUN touch /app/__init__.py
 
 EXPOSE 8000
 

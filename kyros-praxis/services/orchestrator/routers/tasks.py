@@ -1,13 +1,13 @@
+import hashlib
+import json
+
 from fastapi import APIRouter, Depends, Response
-from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
-from ..database import get_db
-from ..models import Task
-from ..auth import get_current_user, User
-from ..utils.validation import validate_task_input, TaskCreate
-import json
-import hashlib
+from auth import User, get_current_user
+from database import get_db
+from models import Task
+from utils.validation import TaskCreate, validate_task_input
 
 router = APIRouter()
 
@@ -35,7 +35,7 @@ def create_task(
     etag = hashlib.sha256(canonical.encode()).hexdigest()
     if response is not None:
         response.status_code = 201
-        response.headers["ETag"] = f"\"{etag}\""
+        response.headers["ETag"] = f'"{etag}"'
         response.headers["Location"] = f"/collab/tasks/{task_dict['id']}"
     return task_dict
 
@@ -45,13 +45,15 @@ def list_tasks(db: Session = Depends(get_db), response: Response = None):
     tasks = db.query(Task).all()
     items = []
     for t in tasks:
-        items.append({
-            "id": t.id,
-            "title": t.title,
-            "description": t.description,
-            "version": t.version,
-            "created_at": t.created_at.isoformat()
-        })
+        items.append(
+            {
+                "id": t.id,
+                "title": t.title,
+                "description": t.description,
+                "version": t.version,
+                "created_at": t.created_at.isoformat(),
+            }
+        )
     canonical = json.dumps(items, sort_keys=True)
     etag = hashlib.sha256(canonical.encode()).hexdigest()
     if response is not None:

@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
+import hashlib
+import json
 import os
 import sys
-import json
 import time
-import hashlib
 from pathlib import Path
 from typing import Any, Dict, Tuple
 
@@ -65,7 +65,13 @@ def respond(req_id, result=None, error=None):
     if error is not None:
         send({"jsonrpc": "2.0", "id": req_id, "error": error})
     else:
-        send({"jsonrpc": "2.0", "id": req_id, "result": result if result is not None else {}})
+        send(
+            {
+                "jsonrpc": "2.0",
+                "id": req_id,
+                "result": result if result is not None else {},
+            }
+        )
 
 
 def handle_tools_list():
@@ -74,7 +80,11 @@ def handle_tools_list():
             {
                 "name": "collab/get_state",
                 "description": "Return tasks, locks, agents with etags",
-                "inputSchema": {"type": "object", "properties": {}, "additionalProperties": False},
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {},
+                    "additionalProperties": False,
+                },
             },
             {
                 "name": "collab/patch_task",
@@ -171,7 +181,14 @@ def call_tool(name: str, args: Dict[str, Any]):
             return {"ok": False, "error": "not_found"}
         _write_json_atomic(TASKS_FILE, tasks)
         tasks2, etag2 = _read_json(TASKS_FILE)
-        _append_event({"event": "task_patched", "actor": "kyros_collab_mcp", "target": task_id, "details": {"patch": patch}})
+        _append_event(
+            {
+                "event": "task_patched",
+                "actor": "kyros_collab_mcp",
+                "target": task_id,
+                "details": {"patch": patch},
+            }
+        )
         return {"ok": True, "etag": etag2, "tasks": tasks2}
 
     if name == "collab/acquire_lease":
@@ -184,13 +201,29 @@ def call_tool(name: str, args: Dict[str, Any]):
             locks = []
         # Clean expired and check existing
         locks = [l for l in locks if int(l.get("expiresAt", 0)) > now]
-        for l in locks:
-            if l.get("resourceId") == resource_id and int(l.get("expiresAt", 0)) > now:
-                return {"ok": False, "error": "already_locked", "heldBy": l.get("agentId"), "expiresAt": l.get("expiresAt")}
-        lock = {"resourceId": resource_id, "agentId": agent_id, "expiresAt": now + ttl_ms}
+        for lock in locks:
+            if lock.get("resourceId") == resource_id and int(lock.get("expiresAt", 0)) > now:
+                return {
+                    "ok": False,
+                    "error": "already_locked",
+                    "heldBy": lock.get("agentId"),
+                    "expiresAt": lock.get("expiresAt"),
+                }
+        lock = {
+            "resourceId": resource_id,
+            "agentId": agent_id,
+            "expiresAt": now + ttl_ms,
+        }
         locks.append(lock)
         _write_json_atomic(LOCKS_FILE, locks)
-        _append_event({"event": "lease_acquired", "actor": agent_id, "target": resource_id, "details": {"ttlMs": ttl_ms}})
+        _append_event(
+            {
+                "event": "lease_acquired",
+                "actor": agent_id,
+                "target": resource_id,
+                "details": {"ttlMs": ttl_ms},
+            }
+        )
         return {"ok": True, "lock": lock}
 
     if name == "collab/release_lease":
@@ -199,9 +232,15 @@ def call_tool(name: str, args: Dict[str, Any]):
         locks, _ = _read_json(LOCKS_FILE)
         if not isinstance(locks, list):
             locks = []
-        new_locks = [l for l in locks if not (l.get("resourceId") == resource_id and l.get("agentId") == agent_id)]
+        new_locks = [
+            l
+            for l in locks
+            if not (l.get("resourceId") == resource_id and l.get("agentId") == agent_id)
+        ]
         _write_json_atomic(LOCKS_FILE, new_locks)
-        _append_event({"event": "lease_released", "actor": agent_id, "target": resource_id})
+        _append_event(
+            {"event": "lease_released", "actor": agent_id, "target": resource_id}
+        )
         return {"ok": True}
 
     if name == "collab/emit_event":
@@ -223,7 +262,13 @@ def mcp_initialize_result():
     return {
         "serverInfo": {"name": "kyros-collab-mcp", "version": "0.1.0"},
         "protocolVersion": os.getenv("MCP_PROTOCOL_VERSION", "1.0"),
-        "capabilities": {"tools": {}, "resources": {}, "prompts": {}, "logging": {}, "sampling": {}},
+        "capabilities": {
+            "tools": {},
+            "resources": {},
+            "prompts": {},
+            "logging": {},
+            "sampling": {},
+        },
     }
 
 
@@ -236,7 +281,12 @@ def main():
         try:
             req = json.loads(line)
         except Exception as e:
-            send({"jsonrpc": "2.0", "error": {"code": -32700, "message": f"parse error: {e}"}})
+            send(
+                {
+                    "jsonrpc": "2.0",
+                    "error": {"code": -32700, "message": f"parse error: {e}"},
+                }
+            )
             continue
         method = req.get("method")
         req_id = req.get("id")
@@ -258,9 +308,12 @@ def main():
             respond(req_id, result)
             continue
 
-        respond(req_id, error={"code": -32601, "message": f"Method not found: {method}"})
+        if req_id is not None:
+            respond(
+                req_id,
+                error={"code": -32601, "message": f"Method not found: {method}"},
+            )
 
 
 if __name__ == "__main__":
     main()
-

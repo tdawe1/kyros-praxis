@@ -1,8 +1,15 @@
+"""Database configuration and session management for the Orchestrator.
+
+This module sets up SQLAlchemy engines and session factories for both
+synchronous and asynchronous database operations using SQLite.
+"""
+
 import os
-from sqlalchemy import create_engine
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
-from sqlalchemy.orm import sessionmaker
 from pathlib import Path
+
+from sqlalchemy import create_engine
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy.orm import sessionmaker
 
 # Ensure a stable absolute path for the local SQLite file regardless of CWD
 _db_path = Path(__file__).resolve().parent / "orchestrator.db"
@@ -22,22 +29,43 @@ engine = create_engine(DATABASE_URL, **_sync_kwargs)
 async_engine = create_async_engine(ASYNC_DATABASE_URL, **_async_kwargs)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-AsyncSessionLocal = sessionmaker(async_engine, class_=AsyncSession, expire_on_commit=False)
+AsyncSessionLocal = sessionmaker(
+    async_engine, class_=AsyncSession, expire_on_commit=False
+)
 
 # Ensure tables exist on import to support test seeding prior to app startup
 try:
-    from .models import Base  # type: ignore
+    from models import Base  # type: ignore
+
     Base.metadata.create_all(bind=engine)
 except Exception:
     pass
 
+
 def get_db():
+    """Dependency function providing database session.
+
+    Yields a synchronous database session for use in FastAPI endpoints.
+    Automatically closes the session when the request is complete.
+
+    Yields:
+        SQLAlchemy Session object
+    """
     db = SessionLocal()
     try:
         yield db
     finally:
         db.close()
 
+
 async def get_db_session():
+    """Dependency function providing async database session.
+
+    Yields an asynchronous database session for use in async endpoints.
+    Automatically closes the session when the request is complete.
+
+    Yields:
+        SQLAlchemy AsyncSession object
+    """
     async with AsyncSessionLocal() as session:
         yield session

@@ -1,28 +1,47 @@
-from fastapi import APIRouter, HTTPException, Depends, Body, Response
-from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import APIRouter, Body, Depends, HTTPException, Response
+"""Job management router for the Orchestrator API.
+
+This module provides endpoints for creating, reading, and managing jobs
+with proper authentication and ETag support for caching.
+"""
+
 from pydantic import BaseModel
-from ..auth import get_current_user, User
-from ..database import get_db_session
-from ..models import Job
-from ..repositories.jobs import get_jobs
-from ..utils.validation import JobCreate, validate_job_input
-from ..utils.validation import validate_job_input, JobCreate
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from database import get_db_session
+from models import Job
+from utils.validation import JobCreate, validate_job_input
+
+
 # Lazy wrapper to avoid importing database/session machinery unless endpoints are invoked
 async def get_db_session_wrapper():
-    from ..database import get_db_session as _inner
+    from database import get_db_session as _inner
+
     async for s in _inner():
         yield s
-from ..auth import get_current_user, User
-from ..utils import generate_etag
+
+
+from auth import User, get_current_user
+from utils import generate_etag
 
 
 async def _create_job(session: AsyncSession, title: str):
+    """Create a new job in the database.
+
+    Args:
+        session: Database session
+        title: Job title/name
+
+    Returns:
+        Created Job object
+    """
     # Map Day-1 JobCreate.title -> Job.name
     job = Job(name=title)
     session.add(job)
     await session.commit()
     await session.refresh(job)
     return job
+
 
 class JobResponse(BaseModel):
     id: str
@@ -40,6 +59,20 @@ async def create_job(
     current_user: User = Depends(get_current_user),
     response: Response = None,
 ):
+    """Create a new job.
+
+    Validates input, creates job in database, and returns job details
+    with ETag for caching.
+
+    Args:
+        job_input: Validated job creation data
+        session: Database session
+        current_user: Authenticated user
+        response: HTTP response object for headers
+
+    Returns:
+        Job response with ID, name, and status
+    """
     validated_input = validate_job_input(job_input.model_dump())
     try:
         job = await _create_job(session, validated_input.title)
@@ -68,12 +101,10 @@ async def get_jobs_endpoint(
     current_user: User = Depends(get_current_user),
     response: Response = None,
 ):
-    from ..repositories.jobs import get_jobs as _get_jobs
+    from repositories.jobs import get_jobs as _get_jobs
+
     jobs = await _get_jobs(session)
-    items = [
-        {"id": str(j.id), "name": j.name, "status": j.status}
-        for j in jobs
-    ]
+    items = [{"id": str(j.id), "name": j.name, "status": j.status} for j in jobs]
     payload = {"jobs": items}
     if response is not None:
         response.headers["ETag"] = generate_etag(items)

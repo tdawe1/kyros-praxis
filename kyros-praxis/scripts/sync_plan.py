@@ -48,7 +48,14 @@ def write_csv(path: Path, headers, rows):
 
 
 def write_md(path: Path, counts, items):
-    lines = ["# Deduplicated Tasks", "", f"- Source A: {counts[0]} rows", f"- Source B: {counts[1]} rows", f"- Unique (by Title): {len(items)} rows", "", "## Tasks", ""]
+    lines = ["# Deduplicated Tasks", ""]
+    lines += [f"- Source {i + 1}: {c} rows" for i, c in enumerate(counts)]
+    lines += [
+        f"- Unique (by Title): {len(items)} rows",
+        "",
+        "## Tasks",
+        "",
+    ]
     for _, row in items:
         title = (row.get("Title", "") or "").strip()
         tid = (row.get("ID", "") or "").strip()
@@ -81,7 +88,11 @@ def main():
     parser.add_argument(
         "--plan",
         type=Path,
-        default=Path(os.environ.get("PLAN_PATH", str(Path.home() / ".kilocode/rules/PLAN.md"))),
+        default=(
+            Path(os.environ["PLAN_PATH"]).expanduser().resolve()
+            if os.environ.get("PLAN_PATH", "").strip()
+            else (Path.home() / ".kilocode" / "rules" / "PLAN.md")
+        ),
         help="Destination PLAN.md path",
     )
     parser.add_argument("--no-write-plan", action="store_true")
@@ -108,4 +119,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
