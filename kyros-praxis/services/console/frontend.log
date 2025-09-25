@@ -1,0 +1,1527 @@
+
+> kyros-console@0.1.0 dev
+> next dev -p 3001
+
+  ▲ Next.js 14.2.5
+  - Local:        http://localhost:3001
+
+ ✓ Starting...
+ ✓ Ready in 1115ms
+ ⚠ Found a change in next.config.js. Restarting the server to apply the changes...
+  ▲ Next.js 14.2.5
+  - Local:        http://localhost:3001
+  - Experiments (use with caution):
+    · instrumentationHook
+
+ ✓ Starting...
+ ○ Compiling /instrumentation ...
+ ✓ Compiled /instrumentation in 1321ms (1119 modules)
+ ✓ Ready in 2.5s
+ ✓ Compiled in 150ms (1119 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 3s (3316 modules)
+ GET / 200 in 3259ms
+ ✓ Compiled in 203ms (649 modules)
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 1240ms (2818 modules)
+ GET /api/auth/session 200 in 1669ms
+ GET /api/auth/session 200 in 22ms
+ ○ Compiling /auth/login ...
+ ✓ Compiled /auth/login in 571ms (3457 modules)
+ GET /api/auth/session 200 in 614ms
+ GET /api/auth/session 200 in 9ms
+ GET /api/auth/session 200 in 10ms
+ GET /auth/login?_rsc=6y222 200 in 12ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 7ms
+ GET /api/auth/session 200 in 10ms
+ ✓ Compiled /auth in 309ms (3463 modules)
+ ✓ Compiled /sentry-example-page in 425ms (3471 modules)
+ GET /sentry-example-page 200 in 561ms
+ GET /api/auth/session 200 in 29ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 3ms
+ GET /api/auth/session 200 in 3ms
+ GET /api/auth/session 200 in 3ms
+ GET /api/auth/session 200 in 3ms
+ GET /api/auth/session 200 in 3ms
+ GET /sentry-example-page 200 in 23ms
+(node:1856903) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ GET /api/auth/session 200 in 31ms
+ GET /api/auth/session 200 in 19ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 3ms
+ GET /api/auth/session 200 in 3ms
+ GET /api/auth/session 200 in 2ms
+ GET /api/auth/session 200 in 3ms
+ ✓ Compiled /api/sentry-example-api in 338ms (2824 modules)
+ ⨯ SentryExampleAPIError: This error is raised on the backend called by the example page.
+    at GET$1 (webpack-internal:///(rsc)/./app/api/sentry-example-api/route.ts:30:11)
+    at eval (webpack-internal:///(rsc)/./node_modules/@sentry/nextjs/build/cjs/common/wrapRouteHandlerWithSentry.js:42:38)
+    at Module.handleCallbackErrors (webpack-internal:///(rsc)/./node_modules/@sentry/core/build/cjs/utils/handleCallbackErrors.js:21:26)
+    at eval (webpack-internal:///(rsc)/./node_modules/@sentry/nextjs/build/cjs/common/wrapRouteHandlerWithSentry.js:41:41)
+    at eval (webpack-internal:///(instrument)/./node_modules/@sentry/opentelemetry/build/cjs/index.js:1308:14)
+    at AsyncLocalStorage.run (node:internal/async_local_storage/async_context_frame:63:14)
+    at SentryContextManager.with (webpack-internal:///(instrument)/./node_modules/@opentelemetry/context-async-hooks/build/src/AsyncLocalStorageContextManager.js:33:40)
+    at SentryContextManager.with (webpack-internal:///(instrument)/./node_modules/@sentry/opentelemetry/build/cjs/index.js:1433:24)
+    at ContextAPI.with (webpack-internal:///(instrument)/./node_modules/@opentelemetry/api/build/esm/api/context.js:95:54)
+    at Object.withScope (webpack-internal:///(instrument)/./node_modules/@sentry/opentelemetry/build/cjs/index.js:1307:28)
+    at Module.withScope (webpack-internal:///(rsc)/./node_modules/@sentry/core/build/cjs/currentScopes.js:61:14)
+    at eval (webpack-internal:///(rsc)/./node_modules/@sentry/nextjs/build/cjs/common/wrapRouteHandlerWithSentry.js:36:23)
+    at eval (webpack-internal:///(instrument)/./node_modules/@sentry/opentelemetry/build/cjs/index.js:1343:14)
+    at AsyncLocalStorage.run (node:internal/async_local_storage/async_context_frame:63:14)
+    at SentryContextManager.with (webpack-internal:///(instrument)/./node_modules/@opentelemetry/context-async-hooks/build/src/AsyncLocalStorageContextManager.js:33:40)
+    at SentryContextManager.with (webpack-internal:///(instrument)/./node_modules/@sentry/opentelemetry/build/cjs/index.js:1433:24)
+    at ContextAPI.with (webpack-internal:///(instrument)/./node_modules/@opentelemetry/api/build/esm/api/context.js:95:54)
+    at Object.withSetIsolationScope (webpack-internal:///(instrument)/./node_modules/@sentry/opentelemetry/build/cjs/index.js:1342:28)
+    at Module.withIsolationScope (webpack-internal:///(rsc)/./node_modules/@sentry/core/build/cjs/currentScopes.js:93:16)
+    at Object.apply (webpack-internal:///(rsc)/./node_modules/@sentry/nextjs/build/cjs/common/wrapRouteHandlerWithSentry.js:33:19)
+    at Object.apply (webpack-internal:///(rsc)/./app/api/sentry-example-api/route.ts:73:10)
+    at /home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:55044
+    at /home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/server/lib/trace/tracer.js:140:36
+    at AsyncLocalStorage.run (node:internal/async_local_storage/async_context_frame:63:14)
+    at SentryContextManager.with (webpack-internal:///(instrument)/./node_modules/@opentelemetry/context-async-hooks/build/src/AsyncLocalStorageContextManager.js:33:40)
+    at SentryContextManager.with (webpack-internal:///(instrument)/./node_modules/@sentry/opentelemetry/build/cjs/index.js:1433:24)
+    at ContextAPI.with (webpack-internal:///(instrument)/./node_modules/@opentelemetry/api/build/esm/api/context.js:95:54)
+    at Tracer.startActiveSpan (webpack-internal:///(instrument)/./node_modules/@opentelemetry/sdk-trace-base/build/esm/Tracer.js:153:76)
+    at /home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/server/lib/trace/tracer.js:122:103
+    at AsyncLocalStorage.run (node:internal/async_local_storage/async_context_frame:63:14)
+    at SentryContextManager.with (webpack-internal:///(instrument)/./node_modules/@opentelemetry/context-async-hooks/build/src/AsyncLocalStorageContextManager.js:33:40)
+    at SentryContextManager.with (webpack-internal:///(instrument)/./node_modules/@sentry/opentelemetry/build/cjs/index.js:1433:24)
+    at ContextAPI.with (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/@opentelemetry/api/build/src/api/context.js:60:46)
+    at NextTracerImpl.trace (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/server/lib/trace/tracer.js:122:28)
+    at /home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:47853
+    at AsyncLocalStorage.run (node:internal/async_local_storage/async_context_frame:63:14)
+    at Object.wrap (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:40244)
+    at /home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:46429
+    at AsyncLocalStorage.run (node:internal/async_local_storage/async_context_frame:63:14)
+    at Object.wrap (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:37583)
+    at /home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:46391
+    at AsyncLocalStorage.run (node:internal/async_local_storage/async_context_frame:63:14)
+    at ek.execute (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:45838)
+    at ek.handle (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:6:56303)
+    at doRender (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/server/base-server.js:1377:60)
+    at cacheEntry.responseCache.get.routeKind (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/server/base-server.js:1599:34)
+    at ResponseCache.get (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/server/response-cache/index.js:49:26)
+    at DevServer.renderToResponseWithComponentsImpl (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/server/base-server.js:1507:53)
+    at /home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/server/base-server.js:1002:121
+    at NextTracerImpl.trace (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/server/lib/trace/tracer.js:105:20)
+ GET /api/sentry-example-api 500 in 392ms
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 1205ms (3986 modules)
+ GET /sentry-example-page?_rsc=tn61c 200 in 728ms
+ GET /sentry-example-page?_rsc=tn61c 200 in 6ms
+ GET /auth 200 in 118ms
+ GET /api/auth/session 200 in 62ms
+ GET /api/auth/session 200 in 7ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 3ms
+ GET /api/auth/session 200 in 3ms
+ GET /api/auth/session 200 in 4ms
+ GET /auth 200 in 24ms
+ GET /api/auth/session 200 in 35ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 7ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 9ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 3ms
+ GET /api/auth/providers 200 in 18ms
+ GET /api/auth/csrf 200 in 6ms
+ POST /api/auth/callback/credentials? 200 in 8ms
+ GET /api/auth/session 200 in 8ms
+ ○ Compiling / ...
+ ✓ Compiled / in 846ms (2866 modules)
+ ✓ Compiled /jobs in 395ms (3993 modules)
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 701ms (3836 modules)
+ GET /dashboard 404 in 822ms
+ ✓ Compiled /api/auth/[...nextauth] in 492ms (2871 modules)
+ GET /api/auth/session 200 in 561ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 7ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 8ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 3ms
+ GET /jobs 200 in 99ms
+ GET /api/auth/session 200 in 42ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 3ms
+ GET /api/auth/session 200 in 4ms
+ ✓ Compiled in 983ms (4295 modules)
+ GET /jobs?_rsc=1vu3x 200 in 17ms
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/cache/webpack/edge-server-development/1.pack.gz_' -> '/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/cache/webpack/edge-server-development/1.pack.gz'
+ ○ Compiling /agents ...
+ ✓ Compiled /agents in 3.5s (4758 modules)
+Warning: Received `true` for a non-boolean attribute `inert`.
+
+If you want to write it to the DOM, pass a string instead: inert="true" or inert={value.toString()}.
+    at nav
+    at SideNavRenderFunction (webpack-internal:///(ssr)/./node_modules/@carbon/react/es/components/UIShell/SideNav.js:50:13)
+    at header
+    at Header (webpack-internal:///(ssr)/./node_modules/@carbon/react/es/components/UIShell/Header.js:27:14)
+    at render (webpack-internal:///(ssr)/./app/(dashboard)/layout.tsx:136:28)
+    at HeaderContainer (webpack-internal:///(ssr)/./node_modules/@carbon/react/es/components/UIShell/HeaderContainer.js:28:11)
+    at DashboardLayout (webpack-internal:///(ssr)/./app/(dashboard)/layout.tsx:27:28)
+    at Lazy
+    at InnerLayoutRouter (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/layout-router.js:242:11)
+    at RedirectErrorBoundary (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/redirect-boundary.js:73:9)
+    at RedirectBoundary (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/redirect-boundary.js:81:11)
+    at NotFoundErrorBoundary (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/not-found-boundary.js:76:9)
+    at NotFoundBoundary (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/not-found-boundary.js:84:11)
+    at LoadingBoundary (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/layout-router.js:347:11)
+    at ErrorBoundary (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/error-boundary.js:158:11)
+    at InnerScrollAndFocusHandler (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/layout-router.js:153:9)
+    at ScrollAndFocusHandler (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/layout-router.js:228:11)
+    at RenderFromTemplateContext (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/render-from-template-context.js:16:44)
+    at Lazy
+    at OuterLayoutRouter (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/layout-router.js:367:11)
+    at Lazy
+    at QueryClientProvider (webpack-internal:///(ssr)/./node_modules/@tanstack/react-query/build/modern/QueryClientProvider.js:23:30)
+    at SessionProvider (webpack-internal:///(ssr)/./node_modules/next-auth/react.js:247:13)
+    at Providers (webpack-internal:///(ssr)/./app/providers.tsx:39:22)
+    at Lazy
+    at body
+    at html
+    at RedirectErrorBoundary (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/redirect-boundary.js:73:9)
+    at RedirectBoundary (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/redirect-boundary.js:81:11)
+    at ReactDevOverlay (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/react-dev-overlay/app/ReactDevOverlay.js:87:9)
+    at HotReload (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:322:11)
+    at Router (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/app-router.js:202:11)
+    at ErrorBoundaryHandler (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/error-boundary.js:112:9)
+    at ErrorBoundary (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/error-boundary.js:158:11)
+    at AppRouter (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/app-router.js:564:13)
+    at Lazy
+    at r4 (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:18826)
+    at r4 (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:18826)
+    at ServerInsertedHTMLProvider (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:24256)
+ GET /agents 200 in 3899ms
+ ✓ Compiled /api/auth/[...nextauth] in 380ms (3343 modules)
+ GET /api/auth/session 200 in 494ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 7ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 4ms
+ ✓ Compiled in 1214ms (5073 modules)
+ GET /agents?_rsc=1qut7 200 in 90ms
+ ✓ Compiled in 114ms (1590 modules)
+ GET /agents?_rsc=1qut7 200 in 9ms
+ ✓ Compiled in 627ms (5073 modules)
+ GET /agents?_rsc=1qut7 200 in 52ms
+ ✓ Compiled in 133ms (1587 modules)
+ ✓ Compiled in 742ms (5051 modules)
+ GET /agents?_rsc=1qut7 200 in 765ms
+ GET /agents?_rsc=1qut7 200 in 5ms
+ ✓ Compiled in 1695ms (5051 modules)
+ GET /agents?_rsc=1qut7 200 in 72ms
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 1000ms (3339 modules)
+ GET /api/auth/session 200 in 1158ms
+ ○ Compiling /jobs ...
+ ✓ Compiled /jobs in 932ms (4760 modules)
+ ✓ Compiled /api/auth/[...nextauth] in 345ms (3344 modules)
+ GET /api/auth/session 200 in 453ms
+ GET /api/auth/session 200 in 4ms
+ ✓ Compiled /translations in 456ms (4926 modules)
+ ✓ Compiled /inventory in 443ms (4928 modules)
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 515ms (4931 modules)
+ GET /remote 404 in 121ms
+ GET /api/auth/session 200 in 73ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 7ms
+ GET /api/auth/session 200 in 4ms
+Warning: A props object containing a "key" prop is being spread into JSX:
+  let props = {key: someKey, sortDirection: ..., isSortable: ..., isSortHeader: ..., slug: ..., decorator: ..., onClick: ..., children: ...};
+  <TableHeader {...props} />
+React keys must be passed directly to JSX without using spread:
+  let props = {sortDirection: ..., isSortable: ..., isSortHeader: ..., slug: ..., decorator: ..., onClick: ..., children: ...};
+  <TableHeader key={someKey} {...props} />
+    at DataTable (webpack-internal:///(ssr)/./node_modules/@carbon/react/es/components/DataTable/DataTable.js:134:5)
+    at div
+    at InventoryPage
+    at ClientPageRoot (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/client-page.js:14:11)
+    at Lazy
+    at InnerLayoutRouter (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/layout-router.js:242:11)
+    at RedirectErrorBoundary (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/redirect-boundary.js:73:9)
+    at RedirectBoundary (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/redirect-boundary.js:81:11)
+    at NotFoundBoundary (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/not-found-boundary.js:84:11)
+    at LoadingBoundary (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/layout-router.js:347:11)
+    at ErrorBoundary (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/error-boundary.js:158:11)
+    at InnerScrollAndFocusHandler (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/layout-router.js:153:9)
+    at ScrollAndFocusHandler (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/layout-router.js:228:11)
+    at RenderFromTemplateContext (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/render-from-template-context.js:16:44)
+    at Lazy
+    at OuterLayoutRouter (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/layout-router.js:367:11)
+    at Lazy
+    at InnerLayoutRouter (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/layout-router.js:242:11)
+    at RedirectErrorBoundary (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/redirect-boundary.js:73:9)
+    at RedirectBoundary (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/redirect-boundary.js:81:11)
+    at NotFoundErrorBoundary (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/not-found-boundary.js:76:9)
+    at NotFoundBoundary (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/not-found-boundary.js:84:11)
+    at LoadingBoundary (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/layout-router.js:347:11)
+    at ErrorBoundary (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/error-boundary.js:158:11)
+    at InnerScrollAndFocusHandler (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/layout-router.js:153:9)
+    at ScrollAndFocusHandler (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/layout-router.js:228:11)
+    at RenderFromTemplateContext (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/render-from-template-context.js:16:44)
+    at Lazy
+    at OuterLayoutRouter (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/layout-router.js:367:11)
+    at Lazy
+    at main
+    at DashboardLayout (webpack-internal:///(ssr)/./app/(dashboard)/layout.tsx:27:28)
+    at Lazy
+    at InnerLayoutRouter (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/layout-router.js:242:11)
+    at RedirectErrorBoundary (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/redirect-boundary.js:73:9)
+    at RedirectBoundary (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/redirect-boundary.js:81:11)
+    at NotFoundErrorBoundary (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/not-found-boundary.js:76:9)
+    at NotFoundBoundary (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/not-found-boundary.js:84:11)
+    at LoadingBoundary (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/layout-router.js:347:11)
+    at ErrorBoundary (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/error-boundary.js:158:11)
+    at InnerScrollAndFocusHandler (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/layout-router.js:153:9)
+    at ScrollAndFocusHandler (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/layout-router.js:228:11)
+    at RenderFromTemplateContext (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/render-from-template-context.js:16:44)
+    at Lazy
+    at OuterLayoutRouter (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/layout-router.js:367:11)
+    at Lazy
+    at QueryClientProvider (webpack-internal:///(ssr)/./node_modules/@tanstack/react-query/build/modern/QueryClientProvider.js:23:30)
+    at SessionProvider (webpack-internal:///(ssr)/./node_modules/next-auth/react.js:247:13)
+    at Providers (webpack-internal:///(ssr)/./app/providers.tsx:39:22)
+    at Lazy
+    at body
+    at html
+    at RedirectErrorBoundary (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/redirect-boundary.js:73:9)
+    at RedirectBoundary (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/redirect-boundary.js:81:11)
+    at ReactDevOverlay (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/react-dev-overlay/app/ReactDevOverlay.js:87:9)
+    at HotReload (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:322:11)
+    at Router (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/app-router.js:202:11)
+    at ErrorBoundaryHandler (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/error-boundary.js:112:9)
+    at ErrorBoundary (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/error-boundary.js:158:11)
+    at AppRouter (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/app-router.js:564:13)
+    at Lazy
+    at r4 (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:18826)
+    at r4 (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:18826)
+    at ServerInsertedHTMLProvider (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:24256)
+Warning: A props object containing a "key" prop is being spread into JSX:
+  let props = {key: someKey, onClick: ..., onExpand: ..., isExpanded: ..., aria-label: ..., aria-controls: ..., isSelected: ..., disabled: ..., children: ...};
+  <ForwardRef {...props} />
+React keys must be passed directly to JSX without using spread:
+  let props = {onClick: ..., onExpand: ..., isExpanded: ..., aria-label: ..., aria-controls: ..., isSelected: ..., disabled: ..., children: ...};
+  <ForwardRef key={someKey} {...props} />
+    at DataTable (webpack-internal:///(ssr)/./node_modules/@carbon/react/es/components/DataTable/DataTable.js:134:5)
+    at div
+    at InventoryPage
+    at ClientPageRoot (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/client-page.js:14:11)
+    at Lazy
+    at InnerLayoutRouter (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/layout-router.js:242:11)
+    at RedirectErrorBoundary (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/redirect-boundary.js:73:9)
+    at RedirectBoundary (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/redirect-boundary.js:81:11)
+    at NotFoundBoundary (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/not-found-boundary.js:84:11)
+    at LoadingBoundary (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/layout-router.js:347:11)
+    at ErrorBoundary (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/error-boundary.js:158:11)
+    at InnerScrollAndFocusHandler (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/layout-router.js:153:9)
+    at ScrollAndFocusHandler (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/layout-router.js:228:11)
+    at RenderFromTemplateContext (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/render-from-template-context.js:16:44)
+    at Lazy
+    at OuterLayoutRouter (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/layout-router.js:367:11)
+    at Lazy
+    at InnerLayoutRouter (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/layout-router.js:242:11)
+    at RedirectErrorBoundary (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/redirect-boundary.js:73:9)
+    at RedirectBoundary (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/redirect-boundary.js:81:11)
+    at NotFoundErrorBoundary (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/not-found-boundary.js:76:9)
+    at NotFoundBoundary (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/not-found-boundary.js:84:11)
+    at LoadingBoundary (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/layout-router.js:347:11)
+    at ErrorBoundary (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/error-boundary.js:158:11)
+    at InnerScrollAndFocusHandler (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/layout-router.js:153:9)
+    at ScrollAndFocusHandler (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/layout-router.js:228:11)
+    at RenderFromTemplateContext (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/render-from-template-context.js:16:44)
+    at Lazy
+    at OuterLayoutRouter (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/layout-router.js:367:11)
+    at Lazy
+    at main
+    at DashboardLayout (webpack-internal:///(ssr)/./app/(dashboard)/layout.tsx:27:28)
+    at Lazy
+    at InnerLayoutRouter (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/layout-router.js:242:11)
+    at RedirectErrorBoundary (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/redirect-boundary.js:73:9)
+    at RedirectBoundary (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/redirect-boundary.js:81:11)
+    at NotFoundErrorBoundary (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/not-found-boundary.js:76:9)
+    at NotFoundBoundary (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/not-found-boundary.js:84:11)
+    at LoadingBoundary (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/layout-router.js:347:11)
+    at ErrorBoundary (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/error-boundary.js:158:11)
+    at InnerScrollAndFocusHandler (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/layout-router.js:153:9)
+    at ScrollAndFocusHandler (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/layout-router.js:228:11)
+    at RenderFromTemplateContext (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/render-from-template-context.js:16:44)
+    at Lazy
+    at OuterLayoutRouter (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/layout-router.js:367:11)
+    at Lazy
+    at QueryClientProvider (webpack-internal:///(ssr)/./node_modules/@tanstack/react-query/build/modern/QueryClientProvider.js:23:30)
+    at SessionProvider (webpack-internal:///(ssr)/./node_modules/next-auth/react.js:247:13)
+    at Providers (webpack-internal:///(ssr)/./app/providers.tsx:39:22)
+    at Lazy
+    at body
+    at html
+    at RedirectErrorBoundary (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/redirect-boundary.js:73:9)
+    at RedirectBoundary (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/redirect-boundary.js:81:11)
+    at ReactDevOverlay (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/react-dev-overlay/app/ReactDevOverlay.js:87:9)
+    at HotReload (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:322:11)
+    at Router (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/app-router.js:202:11)
+    at ErrorBoundaryHandler (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/error-boundary.js:112:9)
+    at ErrorBoundary (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/error-boundary.js:158:11)
+    at AppRouter (webpack-internal:///(ssr)/./node_modules/next/dist/client/components/app-router.js:564:13)
+    at Lazy
+    at r4 (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:18826)
+    at r4 (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:18826)
+    at ServerInsertedHTMLProvider (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:39:24256)
+ GET /inventory 200 in 168ms
+ GET /api/auth/session 200 in 28ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 3ms
+ GET /api/auth/session 200 in 35ms
+ GET /api/auth/session 200 in 7ms
+ GET /api/auth/session 200 in 27ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 21ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 19ms
+ GET /api/auth/session 200 in 4ms
+ GET / 200 in 24ms
+ GET /api/auth/session 200 in 41ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 14ms
+ GET /api/auth/session 200 in 8ms
+ GET /api/auth/session 200 in 32ms
+ GET /api/auth/session 200 in 7ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 22ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 25ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 9ms
+ GET /api/auth/session 200 in 22ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 4ms
+ GET /assistant 404 in 12ms
+ GET /api/auth/session 200 in 43ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 4ms
+ GET /agents 200 in 27ms
+ GET /api/auth/session 200 in 30ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 7ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 35ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 5ms
+ GET /jobs/page.tx 404 in 14ms
+ GET /api/auth/session 200 in 45ms
+ GET /api/auth/session 200 in 8ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 6ms
+ GET /translations 200 in 21ms
+ GET /api/auth/session 200 in 37ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 4ms
+ ⨯ ./app/layout.tsx
+Module not found: Can't resolve '@carbon/react/css/index.min.css'
+
+https://nextjs.org/docs/messages/module-not-found
+ ○ Compiling /_error ...
+ ⨯ ./app/layout.tsx
+Module not found: Can't resolve '@carbon/react/css/index.min.css'
+
+https://nextjs.org/docs/messages/module-not-found
+ GET /jobs 500 in 7ms
+ GET /translations 500 in 15ms
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/cache/webpack/client-development-fallback/0.pack.gz_' -> '/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/cache/webpack/client-development-fallback/0.pack.gz'
+ GET / 500 in 9ms
+ ✓ Compiled /_not-found in 5.2s (5485 modules)
+ ⨯ createContext only works in Client Components. Add the "use client" directive at the top of the file to use it. Read more: https://nextjs.org/docs/messages/context-in-server-component
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (./app/layout.tsx:18:71)
+    at (rsc)/./app/layout.tsx (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/app/_not-found/page.js:573:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+digest: "957976351"
+ ⨯ createContext only works in Client Components. Add the "use client" directive at the top of the file to use it. Read more: https://nextjs.org/docs/messages/context-in-server-component
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (./app/layout.tsx:18:71)
+    at (rsc)/./app/layout.tsx (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/app/_not-found/page.js:573:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+digest: "957976351"
+ ⨯ createContext only works in Client Components. Add the "use client" directive at the top of the file to use it. Read more: https://nextjs.org/docs/messages/context-in-server-component
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (./app/layout.tsx:18:71)
+    at (rsc)/./app/layout.tsx (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/app/_not-found/page.js:573:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+digest: "3412073466"
+createContext only works in Client Components. Add the "use client" directive at the top of the file to use it. Read more: https://nextjs.org/docs/messages/context-in-server-component
+    at eval (webpack-internal:///(rsc)/./node_modules/@carbon/react/es/internal/usePrefix.js:17:81)
+    at (rsc)/./node_modules/@carbon/react/es/internal/usePrefix.js (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/vendor-chunks/@carbon.js:7631:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/./node_modules/@carbon/react/es/components/Accordion/Accordion.js:8:80)
+    at (rsc)/./node_modules/@carbon/react/es/components/Accordion/Accordion.js (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/vendor-chunks/@carbon.js:4320:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/./node_modules/@carbon/react/es/index.js:295:92)
+    at (rsc)/./node_modules/@carbon/react/es/index.js (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/vendor-chunks/@carbon.js:7356:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/./app/layout.tsx:18:71)
+    at (rsc)/./app/layout.tsx (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/app/_not-found/page.js:573:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at async te (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:396904)
+    at async tS (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:400412)
+    at async tw (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:401005)
+    at async tO (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:36:2130)
+    at async /home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:36:2722 {
+  digest: '3412073466'
+}
+ ⨯ createContext only works in Client Components. Add the "use client" directive at the top of the file to use it. Read more: https://nextjs.org/docs/messages/context-in-server-component
+    at eval (webpack-internal:///(rsc)/./node_modules/@carbon/react/es/internal/usePrefix.js:17:81)
+    at (rsc)/./node_modules/@carbon/react/es/internal/usePrefix.js (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/vendor-chunks/@carbon.js:7631:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/./node_modules/@carbon/react/es/components/Accordion/Accordion.js:8:80)
+    at (rsc)/./node_modules/@carbon/react/es/components/Accordion/Accordion.js (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/vendor-chunks/@carbon.js:4320:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/./node_modules/@carbon/react/es/index.js:295:92)
+    at (rsc)/./node_modules/@carbon/react/es/index.js (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/vendor-chunks/@carbon.js:7356:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/./app/layout.tsx:18:71)
+    at (rsc)/./app/layout.tsx (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/app/_not-found/page.js:573:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at async te (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:396904)
+    at async tS (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:400412)
+    at async tw (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:401005)
+    at async tO (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:36:2130)
+    at async /home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:36:2722 {
+  digest: '3412073466'
+}
+ GET /_next/static/webpack/16de988dea5339d4.webpack.hot-update.json 500 in 5473ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /jobs 200 in 124ms
+ ⨯ createContext only works in Client Components. Add the "use client" directive at the top of the file to use it. Read more: https://nextjs.org/docs/messages/context-in-server-component
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (./app/layout.tsx:18:71)
+    at (rsc)/./app/layout.tsx (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/app/page.js:584:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+digest: "2065738921"
+ ⨯ createContext only works in Client Components. Add the "use client" directive at the top of the file to use it. Read more: https://nextjs.org/docs/messages/context-in-server-component
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (./app/layout.tsx:18:71)
+    at (rsc)/./app/layout.tsx (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/app/page.js:584:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+digest: "2065738921"
+ ⨯ createContext only works in Client Components. Add the "use client" directive at the top of the file to use it. Read more: https://nextjs.org/docs/messages/context-in-server-component
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (./app/layout.tsx:18:71)
+    at (rsc)/./app/layout.tsx (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/app/page.js:584:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+digest: "351234597"
+ ⨯ createContext only works in Client Components. Add the "use client" directive at the top of the file to use it. Read more: https://nextjs.org/docs/messages/context-in-server-component
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (./app/layout.tsx:18:71)
+    at (rsc)/./app/layout.tsx (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/app/(dashboard)/jobs/page.js:617:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+digest: "2062043345"
+createContext only works in Client Components. Add the "use client" directive at the top of the file to use it. Read more: https://nextjs.org/docs/messages/context-in-server-component
+    at eval (webpack-internal:///(rsc)/./node_modules/@carbon/react/es/internal/usePrefix.js:17:81)
+    at (rsc)/./node_modules/@carbon/react/es/internal/usePrefix.js (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/vendor-chunks/@carbon.js:7631:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/./node_modules/@carbon/react/es/components/Accordion/Accordion.js:8:80)
+    at (rsc)/./node_modules/@carbon/react/es/components/Accordion/Accordion.js (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/vendor-chunks/@carbon.js:4320:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/./node_modules/@carbon/react/es/index.js:295:92)
+    at (rsc)/./node_modules/@carbon/react/es/index.js (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/vendor-chunks/@carbon.js:7356:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/./app/layout.tsx:18:71)
+    at (rsc)/./app/layout.tsx (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/app/page.js:584:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at async e7 (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:396747)
+    at async tS (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:400444)
+    at async tw (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:401005)
+    at async tO (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:36:2130)
+    at async /home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:36:2722 {
+  digest: '351234597'
+}
+ ⨯ createContext only works in Client Components. Add the "use client" directive at the top of the file to use it. Read more: https://nextjs.org/docs/messages/context-in-server-component
+    at eval (webpack-internal:///(rsc)/./node_modules/@carbon/react/es/internal/usePrefix.js:17:81)
+    at (rsc)/./node_modules/@carbon/react/es/internal/usePrefix.js (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/vendor-chunks/@carbon.js:7631:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/./node_modules/@carbon/react/es/components/Accordion/Accordion.js:8:80)
+    at (rsc)/./node_modules/@carbon/react/es/components/Accordion/Accordion.js (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/vendor-chunks/@carbon.js:4320:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/./node_modules/@carbon/react/es/index.js:295:92)
+    at (rsc)/./node_modules/@carbon/react/es/index.js (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/vendor-chunks/@carbon.js:7356:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/./app/layout.tsx:18:71)
+    at (rsc)/./app/layout.tsx (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/app/page.js:584:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at async e7 (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:396747)
+    at async tS (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:400444)
+    at async tw (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:401005)
+    at async tO (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:36:2130)
+    at async /home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:36:2722 {
+  digest: '351234597',
+  page: '/'
+}
+ ⨯ createContext only works in Client Components. Add the "use client" directive at the top of the file to use it. Read more: https://nextjs.org/docs/messages/context-in-server-component
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (./app/layout.tsx:18:71)
+    at (rsc)/./app/layout.tsx (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/app/(dashboard)/jobs/page.js:617:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+digest: "2062043345"
+ ⨯ createContext only works in Client Components. Add the "use client" directive at the top of the file to use it. Read more: https://nextjs.org/docs/messages/context-in-server-component
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (./app/layout.tsx:18:71)
+    at (rsc)/./app/layout.tsx (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/app/(dashboard)/jobs/page.js:617:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+digest: "2062043345"
+ ⨯ createContext only works in Client Components. Add the "use client" directive at the top of the file to use it. Read more: https://nextjs.org/docs/messages/context-in-server-component
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (./app/layout.tsx:18:71)
+    at (rsc)/./app/layout.tsx (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/app/(dashboard)/jobs/page.js:617:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+digest: "2062043345"
+ GET / 500 in 154ms
+ ⨯ createContext only works in Client Components. Add the "use client" directive at the top of the file to use it. Read more: https://nextjs.org/docs/messages/context-in-server-component
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (./app/layout.tsx:18:71)
+    at (rsc)/./app/layout.tsx (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/app/(dashboard)/jobs/page.js:617:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+digest: "1712519446"
+ ⨯ createContext only works in Client Components. Add the "use client" directive at the top of the file to use it. Read more: https://nextjs.org/docs/messages/context-in-server-component
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (./app/layout.tsx:18:71)
+    at (rsc)/./app/layout.tsx (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/app/(dashboard)/jobs/page.js:617:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+digest: "2138650161"
+createContext only works in Client Components. Add the "use client" directive at the top of the file to use it. Read more: https://nextjs.org/docs/messages/context-in-server-component
+    at eval (webpack-internal:///(rsc)/./node_modules/@carbon/react/es/internal/usePrefix.js:17:81)
+    at (rsc)/./node_modules/@carbon/react/es/internal/usePrefix.js (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/vendor-chunks/@carbon.js:7631:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/./node_modules/@carbon/react/es/components/Accordion/Accordion.js:8:80)
+    at (rsc)/./node_modules/@carbon/react/es/components/Accordion/Accordion.js (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/vendor-chunks/@carbon.js:4320:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/./node_modules/@carbon/react/es/index.js:295:92)
+    at (rsc)/./node_modules/@carbon/react/es/index.js (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/vendor-chunks/@carbon.js:7356:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/./app/layout.tsx:18:71)
+    at (rsc)/./app/layout.tsx (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/app/(dashboard)/jobs/page.js:617:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at runNextTicks (node:internal/process/task_queues:65:5)
+    at listOnTimeout (node:internal/timers:569:9)
+    at process.processTimers (node:internal/timers:543:7)
+    at async te (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:396904)
+    at async tS (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:400412)
+    at async tw (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:401005)
+    at async tO (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:36:2130)
+    at async /home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:36:2722 {
+  digest: '1712519446'
+}
+ ⨯ createContext only works in Client Components. Add the "use client" directive at the top of the file to use it. Read more: https://nextjs.org/docs/messages/context-in-server-component
+    at eval (webpack-internal:///(rsc)/./node_modules/@carbon/react/es/internal/usePrefix.js:17:81)
+    at (rsc)/./node_modules/@carbon/react/es/internal/usePrefix.js (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/vendor-chunks/@carbon.js:7631:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/./node_modules/@carbon/react/es/components/Accordion/Accordion.js:8:80)
+    at (rsc)/./node_modules/@carbon/react/es/components/Accordion/Accordion.js (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/vendor-chunks/@carbon.js:4320:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/./node_modules/@carbon/react/es/index.js:295:92)
+    at (rsc)/./node_modules/@carbon/react/es/index.js (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/vendor-chunks/@carbon.js:7356:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/./app/layout.tsx:18:71)
+    at (rsc)/./app/layout.tsx (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/app/(dashboard)/jobs/page.js:617:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at runNextTicks (node:internal/process/task_queues:65:5)
+    at listOnTimeout (node:internal/timers:569:9)
+    at process.processTimers (node:internal/timers:543:7)
+    at async te (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:396904)
+    at async tS (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:400412)
+    at async tw (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:401005)
+    at async tO (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:36:2130)
+    at async /home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:36:2722 {
+  digest: '1712519446'
+}
+createContext only works in Client Components. Add the "use client" directive at the top of the file to use it. Read more: https://nextjs.org/docs/messages/context-in-server-component
+    at eval (webpack-internal:///(rsc)/./node_modules/@carbon/react/es/internal/usePrefix.js:17:81)
+    at (rsc)/./node_modules/@carbon/react/es/internal/usePrefix.js (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/vendor-chunks/@carbon.js:7631:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/./node_modules/@carbon/react/es/components/Accordion/Accordion.js:8:80)
+    at (rsc)/./node_modules/@carbon/react/es/components/Accordion/Accordion.js (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/vendor-chunks/@carbon.js:4320:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/./node_modules/@carbon/react/es/index.js:295:92)
+    at (rsc)/./node_modules/@carbon/react/es/index.js (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/vendor-chunks/@carbon.js:7356:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/./app/layout.tsx:18:71)
+    at (rsc)/./app/layout.tsx (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/app/(dashboard)/jobs/page.js:617:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at runNextTicks (node:internal/process/task_queues:65:5)
+    at process.processTimers (node:internal/timers:540:9)
+    at async e7 (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:396747)
+    at async tS (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:400444)
+    at async tw (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:401005)
+    at async tO (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:36:2130)
+    at async /home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:36:2722 {
+  digest: '2138650161'
+}
+ ⨯ createContext only works in Client Components. Add the "use client" directive at the top of the file to use it. Read more: https://nextjs.org/docs/messages/context-in-server-component
+    at eval (webpack-internal:///(rsc)/./node_modules/@carbon/react/es/internal/usePrefix.js:17:81)
+    at (rsc)/./node_modules/@carbon/react/es/internal/usePrefix.js (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/vendor-chunks/@carbon.js:7631:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/./node_modules/@carbon/react/es/components/Accordion/Accordion.js:8:80)
+    at (rsc)/./node_modules/@carbon/react/es/components/Accordion/Accordion.js (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/vendor-chunks/@carbon.js:4320:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/./node_modules/@carbon/react/es/index.js:295:92)
+    at (rsc)/./node_modules/@carbon/react/es/index.js (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/vendor-chunks/@carbon.js:7356:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/./app/layout.tsx:18:71)
+    at (rsc)/./app/layout.tsx (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/app/(dashboard)/jobs/page.js:617:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at runNextTicks (node:internal/process/task_queues:65:5)
+    at process.processTimers (node:internal/timers:540:9)
+    at async e7 (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:396747)
+    at async tS (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:400444)
+    at async tw (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:401005)
+    at async tO (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:36:2130)
+    at async /home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:36:2722 {
+  digest: '2138650161',
+  page: '/jobs'
+}
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /_next/static/webpack/16de988dea5339d4.webpack.hot-update.json 500 in 36ms
+ ⨯ createContext only works in Client Components. Add the "use client" directive at the top of the file to use it. Read more: https://nextjs.org/docs/messages/context-in-server-component
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (./app/layout.tsx:18:71)
+    at (rsc)/./app/layout.tsx (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/app/(dashboard)/jobs/page.js:617:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+digest: "2062043345"
+ ⨯ createContext only works in Client Components. Add the "use client" directive at the top of the file to use it. Read more: https://nextjs.org/docs/messages/context-in-server-component
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (./app/layout.tsx:18:71)
+    at (rsc)/./app/layout.tsx (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/app/(dashboard)/jobs/page.js:617:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+digest: "2062043345"
+ ⨯ createContext only works in Client Components. Add the "use client" directive at the top of the file to use it. Read more: https://nextjs.org/docs/messages/context-in-server-component
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (./app/layout.tsx:18:71)
+    at (rsc)/./app/layout.tsx (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/app/(dashboard)/jobs/page.js:617:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+digest: "973396701"
+createContext only works in Client Components. Add the "use client" directive at the top of the file to use it. Read more: https://nextjs.org/docs/messages/context-in-server-component
+    at eval (webpack-internal:///(rsc)/./node_modules/@carbon/react/es/internal/usePrefix.js:17:81)
+    at (rsc)/./node_modules/@carbon/react/es/internal/usePrefix.js (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/vendor-chunks/@carbon.js:7631:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/./node_modules/@carbon/react/es/components/Accordion/Accordion.js:8:80)
+    at (rsc)/./node_modules/@carbon/react/es/components/Accordion/Accordion.js (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/vendor-chunks/@carbon.js:4320:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/./node_modules/@carbon/react/es/index.js:295:92)
+    at (rsc)/./node_modules/@carbon/react/es/index.js (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/vendor-chunks/@carbon.js:7356:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/./app/layout.tsx:18:71)
+    at (rsc)/./app/layout.tsx (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/app/(dashboard)/jobs/page.js:617:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at async e7 (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:396747)
+    at async tS (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:400444)
+    at async tw (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:401005)
+    at async tO (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:36:2130)
+    at async /home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:36:2722 {
+  digest: '973396701'
+}
+ ⨯ createContext only works in Client Components. Add the "use client" directive at the top of the file to use it. Read more: https://nextjs.org/docs/messages/context-in-server-component
+    at eval (webpack-internal:///(rsc)/./node_modules/@carbon/react/es/internal/usePrefix.js:17:81)
+    at (rsc)/./node_modules/@carbon/react/es/internal/usePrefix.js (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/vendor-chunks/@carbon.js:7631:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/./node_modules/@carbon/react/es/components/Accordion/Accordion.js:8:80)
+    at (rsc)/./node_modules/@carbon/react/es/components/Accordion/Accordion.js (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/vendor-chunks/@carbon.js:4320:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/./node_modules/@carbon/react/es/index.js:295:92)
+    at (rsc)/./node_modules/@carbon/react/es/index.js (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/vendor-chunks/@carbon.js:7356:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/./app/layout.tsx:18:71)
+    at (rsc)/./app/layout.tsx (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/app/(dashboard)/jobs/page.js:617:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at async e7 (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:396747)
+    at async tS (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:400444)
+    at async tw (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:401005)
+    at async tO (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:36:2130)
+    at async /home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:36:2722 {
+  digest: '973396701',
+  page: '/jobs'
+}
+ GET /jobs 500 in 55ms
+ ⨯ createContext only works in Client Components. Add the "use client" directive at the top of the file to use it. Read more: https://nextjs.org/docs/messages/context-in-server-component
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (./app/layout.tsx:18:71)
+    at (rsc)/./app/layout.tsx (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/app/(dashboard)/jobs/page.js:617:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+digest: "939909139"
+ ⨯ createContext only works in Client Components. Add the "use client" directive at the top of the file to use it. Read more: https://nextjs.org/docs/messages/context-in-server-component
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (./app/layout.tsx:18:71)
+    at (rsc)/./app/layout.tsx (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/app/(dashboard)/jobs/page.js:617:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+digest: "939909139"
+ ⨯ createContext only works in Client Components. Add the "use client" directive at the top of the file to use it. Read more: https://nextjs.org/docs/messages/context-in-server-component
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (./app/layout.tsx:18:71)
+    at (rsc)/./app/layout.tsx (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/app/(dashboard)/jobs/page.js:617:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+digest: "973396701"
+createContext only works in Client Components. Add the "use client" directive at the top of the file to use it. Read more: https://nextjs.org/docs/messages/context-in-server-component
+    at eval (webpack-internal:///(rsc)/./node_modules/@carbon/react/es/internal/usePrefix.js:17:81)
+    at (rsc)/./node_modules/@carbon/react/es/internal/usePrefix.js (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/vendor-chunks/@carbon.js:7631:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/./node_modules/@carbon/react/es/components/Accordion/Accordion.js:8:80)
+    at (rsc)/./node_modules/@carbon/react/es/components/Accordion/Accordion.js (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/vendor-chunks/@carbon.js:4320:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/./node_modules/@carbon/react/es/index.js:295:92)
+    at (rsc)/./node_modules/@carbon/react/es/index.js (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/vendor-chunks/@carbon.js:7356:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/./app/layout.tsx:18:71)
+    at (rsc)/./app/layout.tsx (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/app/(dashboard)/jobs/page.js:617:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at async e7 (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:396747)
+    at async tS (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:400444)
+    at async tw (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:401005)
+    at async tO (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:36:2130)
+    at async /home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:36:2722 {
+  digest: '973396701'
+}
+ ⨯ createContext only works in Client Components. Add the "use client" directive at the top of the file to use it. Read more: https://nextjs.org/docs/messages/context-in-server-component
+    at eval (webpack-internal:///(rsc)/./node_modules/@carbon/react/es/internal/usePrefix.js:17:81)
+    at (rsc)/./node_modules/@carbon/react/es/internal/usePrefix.js (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/vendor-chunks/@carbon.js:7631:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/./node_modules/@carbon/react/es/components/Accordion/Accordion.js:8:80)
+    at (rsc)/./node_modules/@carbon/react/es/components/Accordion/Accordion.js (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/vendor-chunks/@carbon.js:4320:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/./node_modules/@carbon/react/es/index.js:295:92)
+    at (rsc)/./node_modules/@carbon/react/es/index.js (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/vendor-chunks/@carbon.js:7356:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/./app/layout.tsx:18:71)
+    at (rsc)/./app/layout.tsx (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/app/(dashboard)/jobs/page.js:617:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at async e7 (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:396747)
+    at async tS (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:400444)
+    at async tw (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:401005)
+    at async tO (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:36:2130)
+    at async /home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:36:2722 {
+  digest: '973396701',
+  page: '/'
+}
+ GET / 500 in 35ms
+ ⨯ createContext only works in Client Components. Add the "use client" directive at the top of the file to use it. Read more: https://nextjs.org/docs/messages/context-in-server-component
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (./app/layout.tsx:18:71)
+    at (rsc)/./app/layout.tsx (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/app/(dashboard)/translations/page.js:617:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+digest: "3647109725"
+ ⨯ createContext only works in Client Components. Add the "use client" directive at the top of the file to use it. Read more: https://nextjs.org/docs/messages/context-in-server-component
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (./app/layout.tsx:18:71)
+    at (rsc)/./app/layout.tsx (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/app/(dashboard)/translations/page.js:617:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+digest: "3647109725"
+ ⨯ createContext only works in Client Components. Add the "use client" directive at the top of the file to use it. Read more: https://nextjs.org/docs/messages/context-in-server-component
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (./app/layout.tsx:18:71)
+    at (rsc)/./app/layout.tsx (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/app/(dashboard)/translations/page.js:617:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+digest: "4069222737"
+createContext only works in Client Components. Add the "use client" directive at the top of the file to use it. Read more: https://nextjs.org/docs/messages/context-in-server-component
+    at eval (webpack-internal:///(rsc)/./node_modules/@carbon/react/es/internal/usePrefix.js:17:81)
+    at (rsc)/./node_modules/@carbon/react/es/internal/usePrefix.js (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/vendor-chunks/@carbon.js:7631:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/./node_modules/@carbon/react/es/components/Accordion/Accordion.js:8:80)
+    at (rsc)/./node_modules/@carbon/react/es/components/Accordion/Accordion.js (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/vendor-chunks/@carbon.js:4320:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/./node_modules/@carbon/react/es/index.js:295:92)
+    at (rsc)/./node_modules/@carbon/react/es/index.js (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/vendor-chunks/@carbon.js:7356:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/./app/layout.tsx:18:71)
+    at (rsc)/./app/layout.tsx (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/app/(dashboard)/translations/page.js:617:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at async e7 (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:396747)
+    at async tS (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:400444)
+    at async tw (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:401005)
+    at async tO (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:36:2130)
+    at async /home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:36:2722 {
+  digest: '4069222737'
+}
+ ⨯ createContext only works in Client Components. Add the "use client" directive at the top of the file to use it. Read more: https://nextjs.org/docs/messages/context-in-server-component
+    at eval (webpack-internal:///(rsc)/./node_modules/@carbon/react/es/internal/usePrefix.js:17:81)
+    at (rsc)/./node_modules/@carbon/react/es/internal/usePrefix.js (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/vendor-chunks/@carbon.js:7631:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/./node_modules/@carbon/react/es/components/Accordion/Accordion.js:8:80)
+    at (rsc)/./node_modules/@carbon/react/es/components/Accordion/Accordion.js (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/vendor-chunks/@carbon.js:4320:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/./node_modules/@carbon/react/es/index.js:295:92)
+    at (rsc)/./node_modules/@carbon/react/es/index.js (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/vendor-chunks/@carbon.js:7356:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/./app/layout.tsx:18:71)
+    at (rsc)/./app/layout.tsx (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/app/(dashboard)/translations/page.js:617:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at async e7 (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:396747)
+    at async tS (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:400444)
+    at async tw (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:401005)
+    at async tO (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:36:2130)
+    at async /home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:36:2722 {
+  digest: '4069222737',
+  page: '/translations'
+}
+ GET /translations 500 in 21ms
+ ⨯ createContext only works in Client Components. Add the "use client" directive at the top of the file to use it. Read more: https://nextjs.org/docs/messages/context-in-server-component
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (./app/layout.tsx:18:71)
+    at (rsc)/./app/layout.tsx (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/app/(dashboard)/translations/page.js:617:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+digest: "3647109725"
+ ⨯ createContext only works in Client Components. Add the "use client" directive at the top of the file to use it. Read more: https://nextjs.org/docs/messages/context-in-server-component
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (./app/layout.tsx:18:71)
+    at (rsc)/./app/layout.tsx (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/app/(dashboard)/translations/page.js:617:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+digest: "3647109725"
+ ⨯ createContext only works in Client Components. Add the "use client" directive at the top of the file to use it. Read more: https://nextjs.org/docs/messages/context-in-server-component
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (./app/layout.tsx:18:71)
+    at (rsc)/./app/layout.tsx (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/app/(dashboard)/translations/page.js:617:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+digest: "4069222737"
+createContext only works in Client Components. Add the "use client" directive at the top of the file to use it. Read more: https://nextjs.org/docs/messages/context-in-server-component
+    at eval (webpack-internal:///(rsc)/./node_modules/@carbon/react/es/internal/usePrefix.js:17:81)
+    at (rsc)/./node_modules/@carbon/react/es/internal/usePrefix.js (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/vendor-chunks/@carbon.js:7631:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/./node_modules/@carbon/react/es/components/Accordion/Accordion.js:8:80)
+    at (rsc)/./node_modules/@carbon/react/es/components/Accordion/Accordion.js (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/vendor-chunks/@carbon.js:4320:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/./node_modules/@carbon/react/es/index.js:295:92)
+    at (rsc)/./node_modules/@carbon/react/es/index.js (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/vendor-chunks/@carbon.js:7356:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/./app/layout.tsx:18:71)
+    at (rsc)/./app/layout.tsx (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/app/(dashboard)/translations/page.js:617:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at async e7 (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:396747)
+    at async tS (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:400444)
+    at async tw (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:401005)
+    at async tO (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:36:2130)
+    at async /home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:36:2722 {
+  digest: '4069222737'
+}
+ ⨯ createContext only works in Client Components. Add the "use client" directive at the top of the file to use it. Read more: https://nextjs.org/docs/messages/context-in-server-component
+    at eval (webpack-internal:///(rsc)/./node_modules/@carbon/react/es/internal/usePrefix.js:17:81)
+    at (rsc)/./node_modules/@carbon/react/es/internal/usePrefix.js (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/vendor-chunks/@carbon.js:7631:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/./node_modules/@carbon/react/es/components/Accordion/Accordion.js:8:80)
+    at (rsc)/./node_modules/@carbon/react/es/components/Accordion/Accordion.js (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/vendor-chunks/@carbon.js:4320:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/./node_modules/@carbon/react/es/index.js:295:92)
+    at (rsc)/./node_modules/@carbon/react/es/index.js (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/vendor-chunks/@carbon.js:7356:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at eval (webpack-internal:///(rsc)/./app/layout.tsx:18:71)
+    at (rsc)/./app/layout.tsx (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/app/(dashboard)/translations/page.js:617:1)
+    at __webpack_require__ (/home/thomas/kyros-praxis/kyros-praxis/services/console/.next/server/webpack-runtime.js:33:43)
+    at async e7 (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:396747)
+    at async tS (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:400444)
+    at async tw (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:35:401005)
+    at async tO (/home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:36:2130)
+    at async /home/thomas/kyros-praxis/kyros-praxis/services/console/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:36:2722 {
+  digest: '4069222737',
+  page: '/'
+}
+ GET / 500 in 15ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled in 1541ms (5082 modules)
+ GET / 200 in 659ms
+ GET /jobs 200 in 660ms
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 583ms (3346 modules)
+ GET /api/auth/session 200 in 704ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 3ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 7ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 8ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 8ms
+ GET /api/auth/session 200 in 32ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 27ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 4ms
+ ✓ Compiled in 1380ms (5241 modules)
+ GET /?_rsc=r3yhw 200 in 25ms
+ GET /jobs?_rsc=1pa33 200 in 24ms
+ GET /api/auth/session 200 in 45ms
+ GET /api/auth/session 200 in 7ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 40ms
+ GET /api/auth/session 200 in 13ms
+ GET /api/auth/session 200 in 11ms
+ GET /api/auth/session 200 in 30ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 29ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 4ms
+ GET / 200 in 188ms
+ GET /api/auth/session 200 in 36ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 3ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 132ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 7ms
+ GET /api/auth/session 200 in 30ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 40ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 25ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 3ms
+ GET /api/auth/session 200 in 28ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 32ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 23ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 42ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 23ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 26ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 3ms
+ GET /api/auth/session 200 in 27ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 4ms
+ ✓ Compiled in 551ms (3185 modules)
+ ✓ Compiled /api/auth/[...nextauth] in 352ms (3345 modules)
+ GET /api/auth/session 200 in 434ms
+ GET /jobs?_rsc=fpdf5 200 in 81ms
+ GET /jobs?_rsc=1pa33 200 in 81ms
+ GET /api/auth/session 200 in 12ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 27ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 4ms
+ ✓ Compiled in 1648ms (5241 modules)
+ ✓ Compiled in 0ms (3345 modules)
+ ✓ Compiled in 0ms (3345 modules)
+ ✓ Compiled in 0ms (3345 modules)
+ GET /api/auth/session 200 in 1517ms
+ ✓ Compiled in 0ms (3345 modules)
+ GET /?_rsc=r3yhw 200 in 1273ms
+ GET /jobs?_rsc=1pa33 200 in 1275ms
+ GET /api/auth/session 200 in 742ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 3ms
+ GET /api/auth/session 200 in 33ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 30ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 39ms
+ GET /api/auth/session 200 in 8ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 32ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 30ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 26ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/csrf 200 in 30ms
+ POST /api/auth/signout 200 in 8ms
+ ○ Compiling /auth/login ...
+ ✓ Compiled /auth/login in 702ms (3348 modules)
+ ✓ Compiled in 0ms (3348 modules)
+ GET /api/auth/session 200 in 1086ms
+ ✓ Compiled /auth in 0ms (3348 modules)
+ ✓ Compiled in 0ms (3352 modules)
+ GET /auth/login 307 in 2304ms
+ ✓ Compiled in 0ms (3352 modules)
+ GET /jobs?_rsc=fpdf5 200 in 1943ms
+ GET /jobs?_rsc=1pa33 200 in 1942ms
+ ✓ Compiled in 0ms (3352 modules)
+ GET /api/auth/session 200 in 1945ms
+ ✓ Compiled in 1ms (3352 modules)
+ GET /auth 200 in 1191ms
+ GET /api/auth/csrf 200 in 705ms
+ ✓ Compiled in 0ms (3352 modules)
+ GET /jobs?_rsc=1pa33 200 in 2419ms
+ GET /api/auth/session 200 in 46ms
+ GET /api/auth/session 200 in 19ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 2ms
+ GET /api/auth/providers 200 in 31ms
+ GET /api/auth/csrf 200 in 5ms
+ POST /api/auth/callback/credentials? 200 in 6ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 37ms
+ GET /api/auth/session 200 in 8ms
+ GET /api/auth/session 200 in 7ms
+ GET /api/auth/session 200 in 28ms
+ GET /api/auth/session 200 in 7ms
+ GET /api/auth/session 200 in 7ms
+ GET /api/auth/session 200 in 27ms
+ GET /api/auth/session 200 in 8ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 33ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 3ms
+ GET /api/auth/csrf 200 in 37ms
+ POST /api/auth/signout 200 in 5ms
+ GET /api/auth/session 200 in 40ms
+ GET /auth/login 307 in 53ms
+ GET /auth 200 in 13ms
+ GET /api/auth/session 200 in 42ms
+ GET /api/auth/session 200 in 7ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 7ms
+ GET /api/auth/session 200 in 4ms
+   Reload env: .env.local
+ ✓ Compiled in 1236ms (5067 modules)
+ GET /auth?_rsc=eqh4i 200 in 40ms
+ GET /auth?_rsc=eqh4i 200 in 17ms
+ ✓ Compiled in 447ms (5067 modules)
+ GET /auth?_rsc=eqh4i 200 in 16ms
+ GET /auth?_rsc=eqh4i 200 in 6ms
+ GET /auth 200 in 39ms
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 637ms (3345 modules)
+ GET /api/auth/session 200 in 723ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 3ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 2ms
+ GET /api/auth/providers 200 in 36ms
+ GET /api/auth/csrf 200 in 6ms
+ POST /api/auth/callback/credentials? 200 in 11ms
+ GET /api/auth/session 200 in 10ms
+ ✓ Compiled /translations in 429ms (3349 modules)
+ GET /api/auth/session 200 in 54ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 32ms
+ GET /api/auth/session 200 in 7ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 26ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 34ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 29ms
+ GET /api/auth/session 200 in 8ms
+ GET /api/auth/session 200 in 10ms
+ GET /api/auth/csrf 200 in 41ms
+ POST /api/auth/signout 200 in 5ms
+ ○ Compiling /auth/login ...
+ ✓ Compiled /auth/login in 628ms (3347 modules)
+ GET /api/auth/session 200 in 1007ms
+ GET /auth/login 307 in 1221ms
+ GET /auth 200 in 14ms
+ GET /api/auth/session 200 in 36ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 3ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/providers 200 in 26ms
+ GET /api/auth/csrf 200 in 4ms
+ POST /api/auth/callback/credentials? 200 in 5ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/csrf 200 in 32ms
+ POST /api/auth/signout 200 in 4ms
+ GET /api/auth/session 200 in 6ms
+ GET /auth/login 307 in 19ms
+ GET /auth 200 in 11ms
+ GET /api/auth/session 200 in 41ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 7ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 4ms
+ GET /auth 200 in 13ms
+ GET /api/auth/session 200 in 35ms
+ GET /api/auth/session 200 in 8ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/providers 200 in 29ms
+ GET /api/auth/csrf 200 in 4ms
+ POST /api/auth/callback/credentials? 200 in 7ms
+ GET /api/auth/session 200 in 10ms
+   Reload env: .env.local
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ✓ Compiled in 10.4s (5066 modules)
+ GET /auth 200 in 4698ms
+ GET /agents 200 in 4672ms
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 1448ms (3344 modules)
+ GET /api/auth/session 200 in 1576ms
+ GET /auth?_rsc=eqh4i 200 in 134ms
+ GET /agents?_rsc=1qut7 200 in 147ms
+ GET /api/auth/session 200 in 23ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 12ms
+ GET /api/auth/session 200 in 8ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/csrf 200 in 37ms
+ POST /api/auth/signout 200 in 6ms
+ ✓ Compiled /auth/login in 487ms (3347 modules)
+ GET /api/auth/session 200 in 1093ms
+ GET /auth/login 307 in 1202ms
+ GET /auth 200 in 15ms
+ GET /api/auth/session 200 in 40ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 83ms
+ GET /api/auth/session 200 in 10ms
+ GET /api/auth/session 200 in 13ms
+ GET /api/auth/session 200 in 9ms
+ GET /api/auth/providers 200 in 35ms
+ GET /api/auth/csrf 200 in 4ms
+ POST /api/auth/callback/credentials? 200 in 6ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 44ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 33ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 29ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 3ms
+ GET /api/auth/session 200 in 31ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 7ms
+ ✓ Compiled in 1482ms (5080 modules)
+ GET /auth?_rsc=eqh4i 200 in 64ms
+ GET /jobs?_rsc=fpdf5 200 in 70ms
+ ✓ Compiled /api/auth/[...nextauth] in 459ms (4767 modules)
+ ✓ Compiled (4927 modules)
+ GET /api/auth/session 200 in 863ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 36ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 30ms
+ GET /api/auth/session 200 in 10ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 30ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 3ms
+ GET /api/auth/session 200 in 50ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 31ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 6ms
+ ○ Compiling / ...
+ ✓ Compiled / in 912ms (3349 modules)
+ GET /api/auth/session 200 in 65ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 3ms
+ GET /api/auth/session 200 in 37ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 34ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 3ms
+ GET /api/auth/session 200 in 36ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 4ms
+ ✓ Compiled in 3.3s (1688 modules)
+ GET /auth?_rsc=eqh4i 200 in 23ms
+ GET /jobs?_rsc=fpdf5 200 in 54ms
+ ✓ Compiled in 2.9s (1688 modules)
+ GET /auth?_rsc=eqh4i 200 in 16ms
+ GET /jobs?_rsc=fpdf5 200 in 25ms
+ ✓ Compiled in 2.9s (1688 modules)
+ GET /auth?_rsc=eqh4i 200 in 24ms
+ GET /jobs?_rsc=fpdf5 200 in 25ms
+ GET /api/auth/session 200 in 41ms
+ GET /api/auth/session 200 in 7ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 39ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 7ms
+ GET /api/auth/session 200 in 27ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 4ms
+ HEAD / 200 in 176ms
+ GET /api/auth/session 200 in 27ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 27ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 3ms
+ GET /api/auth/session 200 in 36ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 7ms
+ GET /api/auth/session 200 in 28ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 4ms
+ GET /jobs 200 in 35ms
+ GET /api/auth/session 200 in 36ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 3ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 3ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 26ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 2ms
+ GET /api/auth/session 200 in 28ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 27ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 3ms
+ GET /api/auth/session 200 in 27ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 34ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 5ms
+ ✓ Compiled in 1282ms (5036 modules)
+ GET /auth?_rsc=eqh4i 200 in 69ms
+ GET /jobs?_rsc=1pa33 200 in 68ms
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 564ms (3314 modules)
+ GET /api/auth/csrf 200 in 713ms
+ POST /api/auth/signout 200 in 6ms
+ ✓ Compiled /auth/login in 493ms (3317 modules)
+ GET /api/auth/session 200 in 862ms
+ GET /auth/login 307 in 1094ms
+ GET /auth 200 in 13ms
+ GET /api/auth/session 200 in 36ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 3ms
+ GET /api/auth/session 200 in 3ms
+ GET /api/auth/session 200 in 3ms
+ GET /api/auth/providers 200 in 24ms
+ GET /api/auth/csrf 200 in 5ms
+ POST /api/auth/callback/credentials? 200 in 6ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 4ms
+ ○ Compiling /agents ...
+ ✓ Compiled /agents in 654ms (3352 modules)
+ GET /api/auth/session 200 in 1167ms
+ GET /api/auth/session 200 in 40ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 30ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 25ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 30ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 5ms
+ ✓ Compiled /api/auth/[...nextauth] in 805ms (4768 modules)
+ ✓ Compiled (4928 modules)
+ GET /api/auth/session 200 in 818ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 30ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 3ms
+ GET /api/auth/session 200 in 30ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 26ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 38ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 4ms
+ ✓ Compiled /translations in 314ms (3349 modules)
+ GET /api/auth/session 200 in 41ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 27ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 29ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 4ms
+ ✓ Compiled in 168ms (1597 modules)
+ GET /auth?_rsc=eqh4i 200 in 12ms
+ GET /agents?_rsc=1kqi9 200 in 15ms
+ GET /agents?_rsc=1bwio 200 in 303ms
+ GET /auth?_rsc=eqh4i 200 in 145ms
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ✓ Compiled in 1354ms (5245 modules)
+ GET /auth 200 in 1049ms
+ GET /auth?_rsc=eqh4i 200 in 195ms
+ GET /agents?_rsc=1bwio 200 in 199ms
+ GET /agents 200 in 945ms
+ GET /api/auth/session 200 in 45ms
+ GET /api/auth/session 200 in 16ms
+ GET /api/auth/session 200 in 11ms
+ GET /api/auth/session 200 in 13ms
+ GET /api/auth/session 200 in 37ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 3ms
+ GET /api/auth/session 200 in 3ms
+ GET /api/auth/session 200 in 43ms
+ GET /api/auth/session 200 in 6ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/csrf 200 in 33ms
+ POST /api/auth/signout 200 in 8ms
+ ○ Compiling /auth/login ...
+ ✓ Compiled /auth/login in 551ms (3348 modules)
+ GET /api/auth/session 200 in 962ms
+ GET /auth/login 307 in 1144ms
+ GET /auth 200 in 14ms
+ GET /api/auth/session 200 in 33ms
+ GET /api/auth/session 200 in 3ms
+ GET /api/auth/session 200 in 3ms
+ GET /api/auth/session 200 in 3ms
+ GET /api/auth/session 200 in 2ms
+ GET /api/auth/session 200 in 3ms
+ GET /api/auth/providers 200 in 26ms
+ GET /api/auth/csrf 200 in 3ms
+ POST /api/auth/callback/credentials? 200 in 5ms
+ GET /api/auth/session 200 in 5ms
+ GET /api/auth/session 200 in 3ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 15ms
+ GET /api/auth/session 200 in 32ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 27ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 3ms
+ GET /api/auth/session 200 in 33ms
+ GET /api/auth/session 200 in 3ms
+ GET /api/auth/session 200 in 3ms
+ GET /api/auth/session 200 in 26ms
+ GET /api/auth/session 200 in 4ms
+ GET /api/auth/session 200 in 5ms

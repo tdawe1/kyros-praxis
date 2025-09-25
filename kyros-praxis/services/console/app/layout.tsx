@@ -1,14 +1,15 @@
-import './globals.css';
-import { Providers } from './providers';
-import type { Metadata } from 'next';
-import React from 'react';
-import { Inter } from 'next/font/google';
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
+// Carbon Design System global styles
+import "@carbon/react/index.scss";
+import Providers from "./providers";
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'Kyros Console',
-  description: 'Production-grade monorepo console with typed API client',
+  title: "Kyros Console",
+  description: "Frontend for Kyros Praxis",
 };
 
 export default function RootLayout({
@@ -19,14 +20,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <nav className="bg-blue-600 p-4 text-white">
-          <h1 className="text-xl font-bold">Kyros Console</h1>
-        </nav>
-        <Providers>
-          <main className="p-4">
-            {children}
-          </main>
-        </Providers>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

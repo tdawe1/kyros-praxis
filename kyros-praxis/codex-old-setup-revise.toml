@@ -1,0 +1,414 @@
+TODO: revise codex-cli config
+
+# ============================================================================
+# Kyros — Codex CLI (global) configuration  (drop-in)
+# ============================================================================
+
+# ----- Global defaults -----
+model = "gpt-5"
+model_provider = "openai"
+model_reasoning_effort = "high"     # always-think-deep
+
+# Friction-low posture with guardrails
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+
+# UX
+file_opener = "vscode"
+preferred_auth_method = "chatgpt"
+
+# ----- Sandbox (workspace-write) defaults -----
+[sandbox_workspace_write]
+network_access = true
+exclude_tmpdir_env_var = true
+exclude_slash_tmp      = true
+writable_roots = []                 # set per project below
+
+# ----- Subprocess environment hygiene -----
+[shell_environment_policy]
+inherit = "core"
+ignore_default_excludes = false
+include_only = ["HOME","PATH","USER","SHELL"]
+exclude = ["SSH_AUTH_SOCK","AWS_*","GOOGLE_*","ANTHROPIC_*","OPENAI_*"]
+set = { GIT_CONFIG_GLOBAL = "/dev/null", NO_COLOR = "1" }
+
+# ----- History -----
+[history]
+persistence = "save-all"
+
+# ----- Per-project trust & scopes -----
+[projects."/home/thomas/kyros-dashboard"]
+trust_level    = "trusted"
+writable_roots = ["/home/thomas/kyros-dashboard"]
+
+[projects."/home/thomas/kyros-praxis"]
+trust_level    = "trusted"
+writable_roots = ["/home/thomas/kyros-praxis"]
+notes          = "Use scripts/mcp-up.sh to start the full MCP stack for this project."
+
+# ============================================================================
+# Profiles (switch with: codex --profile <name>)
+# ============================================================================
+
+profile = "dev_net"
+
+[profiles.safe]
+model = "gpt-5"
+model_provider = "openai"
+model_reasoning_effort = "high"
+approval_policy = "untrusted"
+sandbox_mode = "read-only"
+
+[profiles.dev]
+model = "gpt-5"
+model_provider = "openai"
+model_reasoning_effort = "high"
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+
+[profiles.dev_net]
+model = "gpt-5"
+model_provider = "openai"
+model_reasoning_effort = "high"
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+[profiles.dev_net.meta]
+max_changed_lines = 300
+max_modules = 3
+disallowed_paths = [
+  "collaboration/state/**",".github/**","**/ci/**","**/.codex/**",
+  "**/.env*","**/secrets/**"
+]
+shell_allowed = true
+notes = "Auto-approve small diffs in allowed paths; prompt when limits exceeded."
+
+[profiles.dev_trusted]
+model = "gpt-5"
+model_provider = "openai"
+model_reasoning_effort = "high"
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+[profiles.dev_trusted.meta]
+max_changed_lines = 800
+max_modules = 6
+disallowed_paths = ["**/.env*","**/secrets/**"]
+shell_allowed = true
+notes = "Use intentionally when large edits are expected."
+
+[profiles.dev_mcp]
+model = "gpt-5"
+model_provider = "openai"
+model_reasoning_effort = "high"
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+[profiles.dev_mcp.meta]
+role = "Dev + MCP"
+shell_allowed = true
+notes = "Run kyros-praxis/scripts/mcp-up.sh to bring up all MCP servers (qdrant, filesystem, memory, context7, github, puppeteer, playwright, notion, seq, composer, exasearch, kyros-mcp)."
+
+# Deep lane
+[profiles.deep]
+model = "o3"
+model_provider = "openai"
+model_reasoning_effort = "high"
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+
+# Implementers (OpenAI)
+[profiles.impl_a]
+model = "gpt-5"
+model_provider = "openai"
+model_reasoning_effort = "high"
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+
+[profiles.impl_b]
+model = "gpt-5"
+model_provider = "openai"
+model_reasoning_effort = "high"
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+
+# Reviewer (strict)
+[profiles.review_strict]
+model = "gpt-5"
+model_provider = "openai"
+model_reasoning_effort = "high"
+approval_policy = "untrusted"
+sandbox_mode = "read-only"
+
+# Planner (no code edits)
+[profiles.planner]
+model = "gpt-5"
+model_provider = "openai"
+model_reasoning_effort = "high"
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+[profiles.planner.meta]
+role = "Planner"
+autorun = false
+tools_allowed = ["mcp.context.get","mcp.context.events.log","mcp.search.repo","mcp.search.query"]
+max_changed_lines = 0
+max_modules = 0
+output_fields = ["Plan","DoD","Next"]
+notes = "Deliver small task slices only; no code changes."
+
+# Integration specialist (merges, conflicts, PRs)
+[profiles.integrator]
+model = "gpt-5"
+model_provider = "openai"
+model_reasoning_effort = "high"      # drop to "medium" per-run if the merge is trivial
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+[profiles.integrator.meta]
+role = "Integrator"
+autorun = false
+shell_allowed = true
+max_changed_lines = 400
+max_modules = 6
+disallowed_paths = ["**/.env*","**/secrets/**"]
+notes = "Resolve conflicts, unify style, run integration tests, open PRs."
+
+# Focused conflict resolver (when git reports conflicts)
+[profiles.conflict_resolver]
+model = "gpt-5"
+model_provider = "openai"
+model_reasoning_effort = "high"
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+[profiles.conflict_resolver.meta]
+role = "Conflict Resolver"
+shell_allowed = true
+max_changed_lines = 200
+notes = "Resolve git conflicts preserving both intents; validate with tests; produce minimal diff."
+
+# Context manager (writes ADRs/conventions; no src edits)
+[profiles.context_manager]
+model = "gpt-5"
+model_provider = "openai"
+model_reasoning_effort = "high"
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+[profiles.context_manager.meta]
+role = "Context Manager"
+autorun = false
+max_changed_lines = 60
+max_modules = 1
+disallowed_paths = ["**/src/**","**/app/**"]
+notes = "Maintains ADRs, conventions, patterns under /docs,/adr,/playbooks."
+
+# Architect using Claude Opus
+[profiles.architect_opus]
+model = "claude-4.1-opus"
+model_provider = "claude_proxy"
+model_reasoning_effort = "high"
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+
+# Claude Sonnet implementer
+[profiles.implementer_sonnet]
+model = "claude-4-sonnet"
+model_provider = "claude_proxy"
+model_reasoning_effort = "high"
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+[profiles.implementer_sonnet.meta]
+role = "Implementer"
+autorun = true
+step_cap = 6
+max_changed_lines = 300
+max_modules = 3
+disallowed_paths = ["collaboration/state/**",".github/**","**/ci/**","**/.codex/**"]
+shell_allowed = true
+process = "plan -> small commits -> local checks -> DRAFT PR + preview"
+stop_conditions = "limits exceeded or acceptance impossible; ask to split"
+
+# Gemini lanes (through your proxy)
+[profiles.impl_gemini_pro]
+model = "gemini-2.5-pro"
+model_provider = "gemini_proxy"
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+
+[profiles.speed_gemini_flash]
+model = "gemini-2.5-flash"           # if your proxy 400s here, revert to gemini-2.5-pro
+model_provider = "gemini_proxy"
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+
+# Critic (tight allowlist for test & repo inspection)
+[profiles.critic]
+model = "gpt-5"
+model_provider = "openai"
+model_reasoning_effort = "high"
+approval_policy = "untrusted"
+sandbox_mode = "read-only"
+[profiles.critic.meta]
+role = "Critic"
+autorun = false
+tools_allowed = [
+  "mcp.tests.run","mcp.tests.execute","mcp.search.repo",
+  "mcp.search.query","mcp.context.get","mcp.context.events.log"
+]
+checklist = [
+  "Prefer ≤600 LOC and ≤5 modules (justify if larger)",
+  "Acceptance evidence present and credible",
+  "tests.run/execute OK (or CI green)",
+  "Preview has 0 console errors (if FE)",
+  "No collaboration/state/** edits"
+]
+output_format = "single structured comment with ✅/❌ and next actions"
+
+# Test writer using Gemini
+[profiles.test_writer]
+model = "gemini-2.5-pro"
+model_provider = "gemini_proxy"
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+[profiles.test_writer.meta]
+role = "Test Writer"
+autorun = true
+max_loc = 150
+paths_only = ["**/tests/**","**/frontend/e2e/**"]
+no_new_deps = true
+preferences = ["pytest for backend","Playwright for E2E"]
+
+# Boilerplate lane (routine tasks, still high-effort per your philosophy)
+[profiles.boilerplate_codex]
+model = "gpt-5"
+model_provider = "openai"
+model_reasoning_effort = "high"
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+[profiles.boilerplate_codex.meta]
+role = "Boilerplate Implementer"
+autorun = true
+max_changed_lines = 80
+stay_within_module = true
+no_refactors = true
+
+# ============================================================================
+# MCP servers
+# ============================================================================
+
+# Example custom Python MCP servers (uncomment if present)
+# [mcp_servers.kyros_collab]
+# command = "python3"
+# args = ["-m","mcp.kyros_collab_server"]
+
+# [mcp_servers.linear]
+# command = "python3"
+# args = ["-m","mcp.linear_server"]
+
+# [mcp_servers.railway]
+# command = "python3"
+# args = ["-m","mcp.railway_server"]
+
+# [mcp_servers.vercel]
+# command = "python3"
+# args = ["-m","mcp.vercel_server"]
+
+# [mcp_servers.coderabbit]
+# command = "python3"
+# args = ["-m","mcp.coderabbit_server"]
+
+# -------------------- Project MCP servers (use env vars, not literals) --------------------
+[mcp_servers.context7]
+command = "npx"
+args = ["-y","@upstash/context7-mcp"]
+env = { CONTEXT7_API_TOKEN = "${CONTEXT7_API_TOKEN}", DEFAULT_MINIMUM_TOKENS = "256" }
+
+[mcp_servers.github_mcp]
+command = "docker"
+args = [
+  "run","-i","--rm",
+  "-e","GITHUB_PERSONAL_ACCESS_TOKEN",
+  "-e","GITHUB_TOOLSETS",
+  "-e","GITHUB_READ_ONLY",
+  "ghcr.io/github/github-mcp-server"
+]
+env = { GITHUB_PERSONAL_ACCESS_TOKEN = "${GITHUB_PERSONAL_ACCESS_TOKEN}", GITHUB_TOOLSETS = "repos,issues,pull_requests,code_security", GITHUB_READ_ONLY = "" }
+
+[mcp_servers.filesystem]
+command = "npx"
+args = ["-y","@modelcontextprotocol/server-filesystem","/home/thomas/kyros-praxis"]
+
+[mcp_servers.memory]
+command = "npx"
+args = ["-y","@modelcontextprotocol/server-memory"]
+
+[mcp_servers.playwright]
+command = "npx"
+args = ["-y","@playwright/mcp@latest","--browser=chromium","--headless=true","--viewport-size=1280x800"]
+
+[mcp_servers.puppeteer]
+command = "npx"
+args = ["-y","@modelcontextprotocol/server-puppeteer"]
+
+[mcp_servers.notion]
+command = "npx"
+args = ["-y","@notionhq/notion-mcp-server"]
+env = { OPENAPI_MCP_HEADERS = "${NOTION_MCP_OPENAPI_HEADERS_JSON}" }   # e.g. {"Authorization":"Bearer xxx","Notion-Version":"2022-06-28"}
+
+[mcp_servers.sequentialthinking]
+command = "npx"
+args = ["-y","@modelcontextprotocol/server-sequential-thinking"]
+
+[mcp_servers.exasearch]
+command = "npx"
+args = ["-y","exa-mcp-server"]
+env = { EXA_API_KEY = "${EXA_API_KEY}" }
+
+[mcp_servers.kyros]
+command = "docker"
+args = [
+  "run","-i","--rm",
+  "--network","kyros-integrations",
+  "-e","KYROS_API_BASE=http://kyros_orchestrator:8000",
+  "-e","KYROS_REGISTRY_URL=http://kyros_registry:9000",
+  "-e","KYROS_DAEMON_URL=ws://kyros_daemon:8080/ws",
+  "-e","QDRANT_URL=http://qdrant:6333",
+  "local/kyros-mcp:latest"
+]
+
+[mcp_servers.zen]
+command = "bash"
+args = ["-c", "for p in $(which uvx 2>/dev/null) $HOME/.local/bin/uvx /opt/homebrew/bin/uvx /usr/local/bin/uvx uvx; do [ -x \"$p\" ] && exec \"$p\" --from git+https://github.com/BeehiveInnovations/zen-mcp-server.git zen-mcp-server; done; echo 'uvx not found' >&2; exit 1"]
+env = {
+  PATH = "/usr/local/bin:/usr/bin:/bin:/opt/homebrew/bin:$HOME/.local/bin:$HOME/.cargo/bin:$HOME/bin",
+  OPENAI_API_KEY = "${OPENAI_API_KEY}",
+  GEMINI_API_KEY = "${GOOGLE_API_KEY}",
+  OPENROUTER_API_KEY = "${OPENROUTER_API_KEY}",
+  DEFAULT_MODEL = "gpt-5",
+  DEFAULT_THINKING_MODE_THINKDEEP = "high",
+  CONVERSATION_TIMEOUT_HOURS = "3",
+  MAX_CONVERSATION_TURNS = "20",
+  LOG_LEVEL = "DEBUG",
+  DISABLED_TOOLS = "analyze,refactor,testgen,secaudit,docgen,tracer",
+  COMPOSE_PROJECT_NAME = "zen-mcp",
+  TZ = "UTC",
+  LOG_MAX_SIZE = "10MB"
+}
+
+# ============================================================================
+# Providers
+# ============================================================================
+
+[model_providers.openai]
+wire_api = "responses"   # ensures GPT-5 uses Responses API semantics
+
+[model_providers.claude_proxy]
+name = "Anthropic via Proxy"
+base_url = "http://localhost:4000/v1"
+env_key = "ANTHROPIC_API_KEY"
+wire_api = "chat"
+
+[model_providers.gemini_proxy]
+name = "Gemini via Proxy"
+base_url = "http://localhost:4001/v1"
+env_key  = "GOOGLE_API_KEY"
+wire_api = "chat"
+
+# Optional global tools
+[tools]
+web_search = true
