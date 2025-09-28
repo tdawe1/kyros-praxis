@@ -23,7 +23,7 @@ python-json-logger==2.0.7
 # Dev/Test
 pytest==8.4.2
 pytest-asyncio==1.2.0
-httpx==0.27.2
+httpx==0.28.1
 asgi-lifespan==2.1.0
 
 # Rate limiting
