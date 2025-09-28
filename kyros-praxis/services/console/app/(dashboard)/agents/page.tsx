@@ -2,6 +2,7 @@
 
 import { useState, useMemo, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import Link from 'next/link';
 import {
   DataTable,
   DataTableSkeleton,
@@ -48,8 +49,10 @@ import {
   Chemistry,
 } from '@carbon/icons-react';
 import { useAgents, useBulkUpdateAgents, useBulkDeleteAgents, useRunAgent } from '../../hooks/useAgents';
+// Temporarily disabled RBAC imports to avoid test conflicts 
+// import { PermissionGuard } from '../../../components/rbac/PermissionGuards';
+// import { PERMISSIONS } from '../../../lib/rbac';
 import { Agent } from '../../lib/schemas/agent';
-import Link from 'next/link';
 import { formatDistanceToNow } from 'date-fns';
 
 const statusConfig = {
@@ -201,6 +204,7 @@ function AgentsPageContent() {
             <p style={{ marginBottom: '2rem', color: 'var(--cds-text-secondary)' }}>
               Create your first AI agent to get started with automation
             </p>
+            {/* TODO: Add back RBAC when auth context is available */}
             <Button
               as={Link}
               href="/agents/new"

@@ -50,6 +50,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               id: devCredentials.username,
               name: devCredentials.username,
               email: devCredentials.username,
+              role: 'admin', // Dev user gets admin role for testing
               accessToken: data.access_token
             } as any;
           }
@@ -76,13 +77,38 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             return null;
           }
 
-          // Store the token in the session
-          return { 
-            id: credentials.email, 
-            name: credentials.email, 
-            email: credentials.email,
-            accessToken: data.access_token
-          } as any;
+          // Store the token in the session - need to fetch user info to get role
+          try {
+            // Fetch user info to get role
+            const userRes = await fetch(`${authBase}/auth/me`, {
+              headers: {
+                'Authorization': `Bearer ${data.access_token}`
+              }
+            });
+            
+            let userRole = 'viewer'; // Default role
+            if (userRes.ok) {
+              const userData = await userRes.json();
+              userRole = userData.role || 'viewer';
+            }
+            
+            return { 
+              id: credentials.email, 
+              name: credentials.email, 
+              email: credentials.email,
+              role: userRole,
+              accessToken: data.access_token
+            } as any;
+          } catch (roleError) {
+            console.warn('Could not fetch user role, defaulting to viewer:', roleError);
+            return { 
+              id: credentials.email, 
+              name: credentials.email, 
+              email: credentials.email,
+              role: 'viewer',
+              accessToken: data.access_token
+            } as any;
+          }
         } catch (error) {
           console.error("Authentication error:", error);
           return null;
@@ -99,11 +125,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async jwt({ token, user }) {
       if (user) {
         token.accessToken = (user as any).accessToken;
+        token.role = (user as any).role;
       }
       return token;
     },
     async session({ session, token }) {
       session.accessToken = token.accessToken as string;
+      (session.user as any).role = token.role;
       return session;
     },
   },
