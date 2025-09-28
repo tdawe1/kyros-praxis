@@ -96,6 +96,8 @@ class TestRoleBasedDecorators:
         """Create a mock user for testing."""
         user = Mock()
         user.role = Role.USER.value
+        user.id = "user-123"
+        user.username = "testuser"
         return user
     
     @pytest.fixture
@@ -103,6 +105,8 @@ class TestRoleBasedDecorators:
         """Create a mock admin for testing."""
         admin = Mock()
         admin.role = Role.ADMIN.value
+        admin.id = "admin-123"
+        admin.username = "admin"
         return admin
     
     @pytest.mark.asyncio

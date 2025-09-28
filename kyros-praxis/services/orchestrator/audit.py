@@ -260,17 +260,15 @@ class SecurityAuditor:
             event: Audit event to log
         """
         # Convert event to dictionary for logging
-        log_data = event.dict()
+        log_data = event.model_dump()
         
         # Use the centralized logging system
         log_orchestrator_event(
-            event_type="security_audit",
+            event="security_audit",
             user_id=event.user_id,
-            data={
-                "audit_event": log_data,
-                "security_level": "audit",
-                "compliance": True
-            }
+            audit_event=log_data,
+            security_level="audit",
+            compliance=True
         )
 
 

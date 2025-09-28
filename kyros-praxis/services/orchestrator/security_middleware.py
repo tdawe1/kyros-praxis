@@ -214,10 +214,16 @@ class SecurityConfig(BaseModel):
     csrf_cookie_name: str = "csrf_token"
     csrf_header_name: str = "X-CSRF-Token"
     
-    # Rate limiting configuration
+    # Rate limiting configuration  
     rate_limit_enabled: bool = True
-    rate_limit_requests: int = 100
+    rate_limit_requests: int = 100  # requests per window
     rate_limit_window: int = 900  # 15 minutes in seconds
+    rate_limit_burst: int = 20  # burst allowance
+    
+    # Production rate limiting (stricter)
+    production_rate_limit_requests: int = 60  # Lower limit for production
+    production_rate_limit_window: int = 900
+    production_rate_limit_burst: int = 10
     
     # Security settings
     secure_cookies: bool = True
