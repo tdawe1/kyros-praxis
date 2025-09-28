@@ -165,7 +165,7 @@ function AgentsPageContent() {
 
   if (error) {
     return (
-      <div className="cds--content">
+      <div className="cds--content" data-testid="agents-page">
         <InlineNotification
           kind="error"
           title="Error loading agents"
@@ -178,7 +178,7 @@ function AgentsPageContent() {
 
   if (isLoading) {
     return (
-      <div className="cds--content">
+      <div className="cds--content" data-testid="agents-page">
         <DataTableSkeleton
           columnCount={headers.length}
           rowCount={10}
@@ -193,7 +193,7 @@ function AgentsPageContent() {
   // Empty state
   if (!data?.agents.length && !searchTerm) {
     return (
-      <div className="cds--content">
+      <div className="cds--content" data-testid="agents-page">
         <Layer>
           <Tile className="empty-state" style={{ textAlign: 'center', padding: '4rem 2rem' }}>
             <Chemistry size={64} style={{ marginBottom: '1rem' }} />
@@ -206,6 +206,7 @@ function AgentsPageContent() {
               href="/agents/new"
               renderIcon={Add}
               kind="primary"
+              data-testid="add-agent"
             >
               Create Agent
             </Button>
@@ -216,7 +217,7 @@ function AgentsPageContent() {
   }
 
   return (
-    <div className="cds--content">
+    <div className="cds--content" data-testid="agents-page">
       <DataTable
         rows={rows}
         headers={headers}
@@ -241,6 +242,7 @@ function AgentsPageContent() {
               title="Agents"
               description="Manage your AI agents and their configurations"
               {...getTableContainerProps()}
+              data-testid="agents-table"
             >
               <TableToolbar>
                 <TableBatchActions {...batchActionProps}>
@@ -290,6 +292,7 @@ function AgentsPageContent() {
                     href="/agents/new"
                     renderIcon={Add}
                     kind="primary"
+                    data-testid="add-agent"
                   >
                     Create Agent
                   </Button>

@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
-import { devlogsDir } from '@/lib/server/repoRoot';
+import { devlogsDir } from '../../../../lib/server/repoRoot';
 
 export async function POST() {
   const file = path.join(devlogsDir(), 'super-audit.json');

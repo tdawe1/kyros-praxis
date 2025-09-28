@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { repoFile } from '@/lib/server/repoRoot';
+import { repoFile } from '../lib/server/repoRoot';
 
 export default function ReviewPlanPage() {
   let content = 'No review plan found.';

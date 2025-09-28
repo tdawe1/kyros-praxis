@@ -74,7 +74,7 @@ export default function AuthPage() {
 
       // Load session and persist token for API fallback
       const session = await getSession();
-      if (session?.accessToken) {
+      if (session && 'accessToken' in session && session.accessToken) {
         try { localStorage.setItem('token', String(session.accessToken)); } catch {}
       }
 

@@ -163,16 +163,21 @@ export default function InventoryPage() {
             <Table {...getTableProps()}>
               <TableHead>
                 <TableRow>
-                  {headers.map((header) => (
-                    <TableHeader key={header.key} {...getHeaderProps({ header })}>
-                      {header.header}
-                    </TableHeader>
-                  ))}
+                  {headers.map((header) => {
+                    const { key, ...headerProps } = getHeaderProps({ header });
+                    return (
+                      <TableHeader key={header.key} {...headerProps}>
+                        {header.header}
+                      </TableHeader>
+                    );
+                  })}
                 </TableRow>
               </TableHead>
               <TableBody>
-                {rows.map((row) => (
-                  <TableRow key={row.id} {...getRowProps({ row })}>
+                {rows.map((row) => {
+                  const { key, ...rowProps } = getRowProps({ row });
+                  return (
+                    <TableRow key={row.id} {...rowProps}>
                     {row.cells.map((cell) => {
                       if (cell.info.header === 'status') {
                         const status = cell.value as keyof typeof statusConfig;
@@ -202,7 +207,8 @@ export default function InventoryPage() {
                       return <TableCell key={cell.id}>{cell.value}</TableCell>;
                     })}
                   </TableRow>
-                ))}
+                  );
+                })}
               </TableBody>
             </Table>
           </TableContainer>

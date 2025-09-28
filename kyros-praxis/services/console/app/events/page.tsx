@@ -87,17 +87,18 @@ export default function EventsPage() {
   if (error) return <div>Error loading events: {error.message}</div>;
 
   return (
-    <div style={{ padding: '20px' }}>
+    <div style={{ padding: '20px' }} data-testid="events-page">
       <h1>Events</h1>
       <p>SSE Connection Active</p>
       <Button
         onClick={handleGenerateLog}
         disabled={mutation.isPending}
         renderIcon={NotificationFilled}
+        data-testid="add-event"
       >
         Generate Human Log
       </Button>
-      <ul>
+      <ul data-testid="events-table">
         {events.map((event) => (
           <li key={event.id}>
             <strong>{event.timestamp}</strong>: {event.message}
