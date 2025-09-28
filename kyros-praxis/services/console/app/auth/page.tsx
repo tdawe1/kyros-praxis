@@ -3,6 +3,8 @@
 import { FormEvent, useState } from "react";
 import { signIn, getSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { AuthFormSchema } from "@/lib/validation";
+import { sanitizeText } from "@/lib/sanitization";
 
 export default function AuthPage() {
   const router = useRouter();
@@ -15,10 +17,23 @@ export default function AuthPage() {
     e.preventDefault();
     setLoading(true);
     setError(null);
+    
     try {
+      // Validate and sanitize form data
+      const formData = { email, password };
+      const validation = AuthFormSchema.safeParse(formData);
+      
+      if (!validation.success) {
+        const errorMessages = validation.error.errors.map(e => e.message).join(', ');
+        setError(`Input validation failed: ${errorMessages}`);
+        return;
+      }
+
+      const { email: sanitizedEmail, password: validatedPassword } = validation.data;
+      
       const res = await signIn("credentials", {
-        email,
-        password,
+        email: sanitizedEmail,
+        password: validatedPassword,
         redirect: false,
       });
 
@@ -52,10 +67,12 @@ export default function AuthPage() {
               id="email"
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => setEmail(e.target.value)} // Let validation handle sanitization
               className="border rounded px-3 py-2"
               placeholder="you@example.com"
               required
+              autoComplete="email"
+              maxLength={254} // RFC 5321 email length limit
             />
           </div>
           <div className="flex flex-col gap-1">
@@ -64,14 +81,16 @@ export default function AuthPage() {
               id="password"
               type="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => setPassword(e.target.value)} // Don't sanitize passwords
               className="border rounded px-3 py-2"
               placeholder="••••••••"
               required
+              autoComplete="current-password" 
+              maxLength={128} // Reasonable password length limit
             />
           </div>
           {error && (
-            <p className="text-red-600 text-sm" role="alert">{error}</p>
+            <p className="text-red-600 text-sm" role="alert">{sanitizeText(error)}</p>
           )}
           <button
             type="submit"

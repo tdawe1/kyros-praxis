@@ -10,6 +10,8 @@ import {
   InlineNotification,
   Loading,
 } from '@carbon/react';
+import { SuperConsoleFormSchema } from '@/lib/validation';
+import { sanitizeText, sanitizeJson } from '@/lib/sanitization';
 
 type HistoryItem = {
   id: string;
@@ -71,10 +73,25 @@ export default function SuperPage() {
   async function send(escalate = false) {
     setBusy(true); setError(null); setToast(null);
     try {
+      // Validate and sanitize input data
+      const formData = { target, mode, packet };
+      const validation = SuperConsoleFormSchema.safeParse(formData);
+      
+      if (!validation.success) {
+        const errorMessages = validation.error.errors.map(e => e.message).join(', ');
+        throw new Error(`Input validation failed: ${errorMessages}`);
+      }
+
+      const sanitizedData = validation.data;
+      
       const res = await fetch(escalate ? '/api/super/task/escalate' : '/api/super/task', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ target, mode, packet: safeParseJson(packet) }),
+        body: JSON.stringify({ 
+          target: sanitizedData.target, 
+          mode: sanitizedData.mode, 
+          packet: JSON.parse(sanitizedData.packet) 
+        }),
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json?.error || 'Request failed');
@@ -95,9 +112,10 @@ export default function SuperPage() {
   }
 
   function onSelectRecent(item: HistoryItem) {
-    setTarget(item.target);
-    setMode(item.mode);
-    setPacket(JSON.stringify(item.packet, null, 2));
+    // Sanitize data when loading from history
+    setTarget(sanitizeText(String(item.target)));
+    setMode(sanitizeText(String(item.mode)));
+    setPacket(sanitizeJson(JSON.stringify(item.packet, null, 2)));
   }
 
   return (
@@ -133,16 +151,27 @@ export default function SuperPage() {
       <div className="cds--row" style={{ marginTop: 12 }}>
         <div className="cds--col-lg-8">
           <div style={{ display: 'grid', gap: 12 }}>
-            <TextInput id="target" labelText="Target" value={target} onChange={(e) => setTarget(e.target.value)} />
+            <TextInput 
+              id="target" 
+              labelText="Target" 
+              value={target} 
+              onChange={(e) => setTarget(sanitizeText(e.target.value))} 
+            />
             <Dropdown
               id="mode"
               titleText="Mode"
               label="Select mode"
               items={["send", "analyze", "plan", "execute"]}
               selectedItem={mode}
-              onChange={({ selectedItem }) => setMode(String(selectedItem))}
+              onChange={({ selectedItem }) => setMode(sanitizeText(String(selectedItem)))}
             />
-            <TextArea id="packet" labelText="Packet (JSON)" rows={12} value={packet} onChange={(e) => setPacket(e.target.value)} />
+            <TextArea 
+              id="packet" 
+              labelText="Packet (JSON)" 
+              rows={12} 
+              value={packet} 
+              onChange={(e) => setPacket(e.target.value)} // Don't sanitize JSON input here, do it on submit
+            />
             <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
               <Button kind="primary" disabled={!canSend || busy} onClick={() => send(false)}>Send</Button>
               <Button kind="danger" disabled={!canSend || busy} onClick={() => send(true)}>Send + Escalate</Button>
