@@ -14,10 +14,6 @@ import {
   Tab,
   TabPanels,
   TabPanel,
-  StructuredList,
-  StructuredListBody,
-  StructuredListRow,
-  StructuredListCell,
   CodeSnippet,
   Loading,
   Modal,
@@ -221,38 +217,30 @@ export default function JobDetailPage() {
         </TabList>
         <TabPanels>
           <TabPanel>
-            <StructuredList>
-              <StructuredListBody>
-                <StructuredListRow>
-                  <StructuredListCell header>ID</StructuredListCell>
-                  <StructuredListCell>{job.id}</StructuredListCell>
-                </StructuredListRow>
-                <StructuredListRow>
-                  <StructuredListCell header>Name</StructuredListCell>
-                  <StructuredListCell>{job.name}</StructuredListCell>
-                </StructuredListRow>
-                <StructuredListRow>
-                  <StructuredListCell header>Status</StructuredListCell>
-                  <StructuredListCell>
-                    <Tag type={tagType(job.status)}>{job.status}</Tag>
-                  </StructuredListCell>
-                </StructuredListRow>
-                <StructuredListRow>
-                  <StructuredListCell header>Created</StructuredListCell>
-                  <StructuredListCell>
-                    {new Date(job.created_at).toLocaleString()}
-                  </StructuredListCell>
-                </StructuredListRow>
-                {job.updated_at && (
-                  <StructuredListRow>
-                    <StructuredListCell header>Last Updated</StructuredListCell>
-                    <StructuredListCell>
-                      {new Date(job.updated_at).toLocaleString()}
-                    </StructuredListCell>
-                  </StructuredListRow>
-                )}
-              </StructuredListBody>
-            </StructuredList>
+            <div className="job-details" style={{ display: 'grid', gap: '1rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '0.5rem', alignItems: 'center', padding: '0.5rem', borderBottom: '1px solid var(--cds-border-subtle)' }}>
+                <strong>ID:</strong>
+                <span>{job.id}</span>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '0.5rem', alignItems: 'center', padding: '0.5rem', borderBottom: '1px solid var(--cds-border-subtle)' }}>
+                <strong>Name:</strong>
+                <span>{job.name}</span>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '0.5rem', alignItems: 'center', padding: '0.5rem', borderBottom: '1px solid var(--cds-border-subtle)' }}>
+                <strong>Status:</strong>
+                <Tag type={tagType(job.status)}>{job.status}</Tag>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '0.5rem', alignItems: 'center', padding: '0.5rem', borderBottom: '1px solid var(--cds-border-subtle)' }}>
+                <strong>Created:</strong>
+                <span>{new Date(job.created_at).toLocaleString()}</span>
+              </div>
+              {job.updated_at && (
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '0.5rem', alignItems: 'center', padding: '0.5rem', borderBottom: '1px solid var(--cds-border-subtle)' }}>
+                  <strong>Last Updated:</strong>
+                  <span>{new Date(job.updated_at).toLocaleString()}</span>
+                </div>
+              )}
+            </div>
           </TabPanel>
           <TabPanel>
             {job.result ? (

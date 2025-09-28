@@ -11,7 +11,6 @@ export async function POST(req: NextRequest) {
     const saved = appendHistory({ target, mode, packet });
     const payloadHash = hashPayload(packet);
     appendAudit({
-      ts: new Date().toISOString(),
       action: 'escalate',
       targets: [target],
       mode,

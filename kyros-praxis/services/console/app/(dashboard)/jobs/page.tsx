@@ -214,11 +214,14 @@ export default function JobsPage() {
             <Table {...getTableProps()}>
               <TableHead>
                 <TableRow>
-                  {headers.map((header) => (
-                    <TableHeader key={header.key} {...getHeaderProps({ header })}>
-                      {header.header}
-                    </TableHeader>
-                  ))}
+                  {headers.map((header) => {
+                    const { key, ...headerProps } = getHeaderProps({ header });
+                    return (
+                      <TableHeader key={header.key} {...headerProps}>
+                        {header.header}
+                      </TableHeader>
+                    );
+                  })}
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -228,7 +231,7 @@ export default function JobsPage() {
                     <TableRow key={row.id} {...rowProps}>
                       <TableCell>{row.cells[0].value}</TableCell>
                       <TableCell>
-                        <Tag type={row.cells[1].value > 50 ? "red" : row.cells[1].value > 20 ? "yellow" : "green"}>
+                        <Tag type={row.cells[1].value > 50 ? "red" : row.cells[1].value > 20 ? "magenta" : "green"}>
                           {row.cells[1].value}
                         </Tag>
                       </TableCell>

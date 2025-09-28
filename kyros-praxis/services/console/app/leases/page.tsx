@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-hot-toast';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableHeader, TableRow, Button } from '@carbon/react';
-import { Button } from '@carbon/react';
 
 interface Lease {
   id: string;
