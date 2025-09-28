@@ -200,7 +200,7 @@ def call_tool(name: str, args: Dict[str, Any]):
         if not isinstance(locks, list):
             locks = []
         # Clean expired and check existing
-        locks = [l for l in locks if int(l.get("expiresAt", 0)) > now]
+        locks = [lock for lock in locks if int(lock.get("expiresAt", 0)) > now]
         for lock in locks:
             if lock.get("resourceId") == resource_id and int(lock.get("expiresAt", 0)) > now:
                 return {
@@ -233,9 +233,9 @@ def call_tool(name: str, args: Dict[str, Any]):
         if not isinstance(locks, list):
             locks = []
         new_locks = [
-            l
-            for l in locks
-            if not (l.get("resourceId") == resource_id and l.get("agentId") == agent_id)
+            lock
+            for lock in locks
+            if not (lock.get("resourceId") == resource_id and lock.get("agentId") == agent_id)
         ]
         _write_json_atomic(LOCKS_FILE, new_locks)
         _append_event(

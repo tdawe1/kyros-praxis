@@ -5,8 +5,7 @@ Tests for SQL injection prevention, authentication, and security middleware
 
 import pytest
 import bcrypt
-from unittest.mock import Mock, patch, MagicMock
-from datetime import datetime, timedelta
+from unittest.mock import Mock, patch
 import jwt
 
 # Import our security modules
@@ -14,9 +13,8 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from secure_database import SecureDatabase, SecureDatabasePool
+from secure_database import SecureDatabase
 from security_middleware import (
-    SecurityConfig,
     RateLimiter,
     CSRFProtection,
     JWTAuthentication

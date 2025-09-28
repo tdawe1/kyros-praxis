@@ -136,20 +136,16 @@ See Also:
 """
 
 import asyncio
-import json
 import logging
-import time
 from dataclasses import dataclass, asdict
-from datetime import datetime, timedelta
+from datetime import datetime
 from enum import Enum
-from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple, Union, Callable
+from typing import Any, Dict, List, Optional, Callable
 from uuid import uuid4
 
 from .escalation_triggers import (
     EscalationDetector,
     EscalationAssessment,
-    EscalationTrigger,
     should_escalate_task
 )
 from .context_analysis import (

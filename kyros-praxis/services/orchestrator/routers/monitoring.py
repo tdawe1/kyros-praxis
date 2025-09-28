@@ -34,9 +34,9 @@ ENDPOINTS:
 import time
 import psutil
 import logging
-from typing import Dict, Any, List
-from datetime import datetime, timedelta
-from fastapi import APIRouter, Request, HTTPException, status, Depends
+from typing import Dict, Any
+from datetime import datetime
+from fastapi import APIRouter, HTTPException, status, Depends
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 

@@ -11,24 +11,21 @@ import statistics
 import time
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta
+from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple, Union, Callable
+from typing import Any, Dict, List, Optional, Set
 import aiofiles
 import asyncpg
 import httpx
 import redis.asyncio as redis
-from concurrent.futures import ThreadPoolExecutor
 import yaml
-import numpy as np
-from dataclasses import asdict
 
 from .quality_metrics import (
     QualityAssessment, QualityMetricResult, 
     Role, QualityLevel, QualityMetric
 )
-from .automated_testing import QualityValidationEngine, TestResult, TestStatus
+from .automated_testing import QualityValidationEngine
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

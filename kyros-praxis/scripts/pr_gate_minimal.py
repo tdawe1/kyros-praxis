@@ -20,7 +20,7 @@ import re
 import subprocess
 import sys
 from pathlib import Path
-from typing import List, Dict, Any, Optional, Tuple
+from typing import List, Optional, Tuple
 
 # Constants
 MAX_CHANGED_LINES = 200
@@ -318,7 +318,7 @@ def run_security_audit(result: PRGateResult) -> None:
                 
                 # Print summary of findings
                 if findings:
-                    print(f"\n📋 Security Audit Summary:")
+                    print("\n📋 Security Audit Summary:")
                     print(f"  Critical: {critical_count}, High: {high_count}, Medium: {medium_count}")
                     for finding in findings[:3]:  # Show first 3 findings
                         print(f"  - {finding.get('category', 'Unknown')}: {finding.get('vulnerability', 'Unknown')}")

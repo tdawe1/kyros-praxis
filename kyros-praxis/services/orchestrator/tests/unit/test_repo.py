@@ -1,4 +1,4 @@
-from unittest.mock import AsyncMock, Mock, patch
+from unittest.mock import AsyncMock, Mock
 
 import pytest
 from services.orchestrator.repositories.jobs import add_event, create_job, get_jobs

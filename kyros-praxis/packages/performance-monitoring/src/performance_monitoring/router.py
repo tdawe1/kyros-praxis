@@ -9,9 +9,7 @@ from enum import Enum
 from .types import (
     ModelType, 
     ModelPerformanceMetrics, 
-    OptimizationDecision,
-    PerformanceThreshold,
-    PerformanceMetric
+    OptimizationDecision
 )
 
 logger = logging.getLogger(__name__)

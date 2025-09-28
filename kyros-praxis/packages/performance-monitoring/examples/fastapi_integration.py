@@ -20,8 +20,7 @@ from performance_monitoring import (
     ResourceMonitor,
     ModelType,
     OptimizationStrategy,
-    ModelPerformanceMetrics,
-    OptimizationDecision
+    ModelPerformanceMetrics
 )
 
 # Initialize logging

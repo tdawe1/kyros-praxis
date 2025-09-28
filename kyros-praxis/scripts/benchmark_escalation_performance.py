@@ -11,12 +11,10 @@ import json
 import asyncio
 import statistics
 import matplotlib.pyplot as plt
-import pandas as pd
-from typing import Dict, List, Any, Optional, Tuple
+from typing import Dict, List, Any
 from dataclasses import dataclass, asdict
 from pathlib import Path
-from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
-from datetime import datetime, timedelta
+from datetime import datetime
 import numpy as np
 import logging
 
@@ -570,7 +568,7 @@ class PerformanceBenchmark:
             print(f"  💰 Cost/Request: ${stats['cost_analysis']['average_cost_per_request']:.6f}")
             print(f"  🔼 Escalation Rate: {stats['escalation_rate']:.1%}")
         
-        print(f"\n💡 Recommendations:")
+        print("\n💡 Recommendations:")
         for i, rec in enumerate(comparison_report['recommendations'], 1):
             print(f"  {i}. {rec}")
         

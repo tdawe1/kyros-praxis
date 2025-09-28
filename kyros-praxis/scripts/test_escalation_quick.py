@@ -3,7 +3,6 @@
 Quick validation test for escalation functionality
 """
 
-import sys
 import time
 from typing import Dict, Any
 
@@ -157,18 +156,18 @@ def main():
             print(f"     Confidence: {decision['confidence']:.2f}, Time: {decision['execution_time']:.3f}s")
             passed += 1
         else:
-            print(f"  ❌ FAILED")
+            print("  ❌ FAILED")
             print(f"     Expected: escalation={test_case['expected_escalation']}, model={test_case['expected_model']}")
             print(f"     Actual: escalation={decision['should_escalate']}, model={decision['selected_model']}")
             failed += 1
     
-    print(f"\n📊 Test Summary:")
+    print("\n📊 Test Summary:")
     print(f"  ✅ Passed: {passed}")
     print(f"  ❌ Failed: {failed}")
     print(f"  📈 Success Rate: {passed/(passed+failed)*100:.1f}%")
     
     if failed == 0:
-        print(f"\n🎉 All tests passed! Escalation system is working correctly.")
+        print("\n🎉 All tests passed! Escalation system is working correctly.")
         return 0
     else:
         print(f"\n⚠️  {failed} test(s) failed. Please review the escalation logic.")

@@ -7,21 +7,15 @@ criteria framework, including edge cases, integration tests, and performance tes
 """
 
 import unittest
-import json
-import tempfile
-import os
-from unittest.mock import Mock, patch, MagicMock
-from datetime import datetime, timedelta
-from typing import Dict, Any, List
+from unittest.mock import Mock
+from datetime import datetime
 
 from escalation_criteria import (
-    EscalationFramework, DecisionResult, CriteriaScore,
-    ServiceType, ArchitectCriteria, IntegratorCriteria,
+    EscalationFramework, ServiceType, ArchitectCriteria, IntegratorCriteria,
     extract_service_context, extract_security_factors, extract_performance_factors
 )
 from validation_system import (
-    CriteriaValidator, ValidationTestCase, ValidationResults,
-    ScoringCalibrator
+    CriteriaValidator, ValidationResults
 )
 from decision_threshold import (
     AutomatedEscalationSystem, ThresholdConfig, EscalationDecision,

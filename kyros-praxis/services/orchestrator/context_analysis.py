@@ -131,12 +131,9 @@ See Also:
 
 import ast
 import logging
-import re
 from dataclasses import dataclass
 from enum import Enum
-from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple, Union
-from collections import defaultdict, Counter
+from typing import Dict, List, Optional, Tuple
 
 logger = logging.getLogger(__name__)
 

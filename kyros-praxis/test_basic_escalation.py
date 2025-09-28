@@ -9,7 +9,7 @@ from pathlib import Path
 # Add the services directory to the path
 sys.path.insert(0, str(Path(__file__).parent / "services" / "orchestrator"))
 
-from escalation_triggers import should_escalate_task, EscalationReason, EscalationPriority
+from escalation_triggers import should_escalate_task
 from context_analysis import analyze_task_context
 
 

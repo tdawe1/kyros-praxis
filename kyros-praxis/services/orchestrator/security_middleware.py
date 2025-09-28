@@ -154,13 +154,13 @@ import secrets
 import hashlib
 import hmac
 import base64
-from typing import Optional, Dict, Any, Callable
+from typing import Optional, Dict, Any
 from datetime import datetime, timedelta
 from collections import defaultdict
 import logging
 
-from fastapi import Request, Response, HTTPException, status
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi import Request, status
+from fastapi.security import HTTPBearer
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import JSONResponse

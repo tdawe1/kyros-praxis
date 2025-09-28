@@ -10,7 +10,6 @@ import json
 import yaml
 import subprocess
 import time
-import asyncio
 from typing import Dict, List, Any, Optional, Callable
 from pathlib import Path
 from dataclasses import dataclass
@@ -573,19 +572,19 @@ def main():
     validator.save_report(report, report_path)
     
     # Print summary
-    print(f"\n📊 Validation Summary:")
+    print("\n📊 Validation Summary:")
     print(f"  Total Tests: {report['total_tests']}")
     print(f"  ✅ Passed: {report['passed']}")
     print(f"  ❌ Failed: {report['failed']}")
     print(f"  ⚠️  Warnings: {report['warnings']}")
     print(f"  ⏭️  Skipped: {report['skipped']}")
     
-    print(f"\n⏱️  Performance:")
+    print("\n⏱️  Performance:")
     print(f"  Total Time: {report['performance_summary']['total_execution_time']:.1f}s")
     print(f"  Average Test Time: {report['performance_summary']['average_execution_time']:.2f}s")
     
     if report['recommendations']:
-        print(f"\n💡 Recommendations:")
+        print("\n💡 Recommendations:")
         for i, rec in enumerate(report['recommendations'], 1):
             print(f"  {i}. {rec}")
     

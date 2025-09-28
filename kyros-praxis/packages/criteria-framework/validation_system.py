@@ -9,14 +9,11 @@ ensuring the scoring system works correctly and produces reliable results.
 import json
 import logging
 from dataclasses import dataclass, field
-from typing import Dict, List, Tuple, Optional, Callable, Any
-from pathlib import Path
-import unittest.mock as mock
-from decimal import Decimal, getcontext
+from typing import Dict, List, Any
+from decimal import getcontext
 
 from escalation_criteria import (
-    EscalationFramework, DecisionResult, CriteriaScore,
-    ServiceType, RiskLevel
+    EscalationFramework, DecisionResult, ServiceType
 )
 
 # Set decimal precision for financial calculations
