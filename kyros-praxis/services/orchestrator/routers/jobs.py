@@ -57,6 +57,7 @@ from ..models import Job, User
 from ..utils.validation import JobCreate, validate_job_input
 from ..utils import generate_etag
 from ..app.core.logging import log_orchestrator_event
+from ..cache import cache_manager
 
 from jose import jwt
 
@@ -158,6 +159,9 @@ async def _create_job(session: AsyncSession, title: str):
     session.add(job)
     await session.commit()
     await session.refresh(job)
+    
+    # Invalidate job cache since we created a new job
+    cache_manager.invalidate_job_cache(status='pending')
     
     # Log orchestrator event
     log_orchestrator_event(
@@ -325,32 +329,64 @@ async def list_jobs(
             - 401: Authentication failed
             - 500: Internal server error during job listing
     """
-    query = select(Job)
-    if status:
-        query = query.where(Job.status == status)
-    query = query.offset(skip).limit(limit)
-    
-    result = await db.execute(query)
-    jobs = result.scalars().all()
-    
+    # Try to get jobs from cache if filtering by status and no pagination offset
+    if status and skip == 0:
+        cached_jobs = await cache_manager.get_jobs_by_status(db, status.value, limit)
+        if cached_jobs:
+            job_responses = [
+                JobResponse(
+                    id=job['id'],
+                    name=job['name'],
+                    status=JobStatus(job['status']),
+                    created_at=datetime.fromisoformat(job['created_at']) if job['created_at'] else None,
+                    updated_at=datetime.fromisoformat(job['updated_at']) if job['updated_at'] else None,
+                )
+                for job in cached_jobs
+            ]
+        else:
+            # Fallback to database query
+            query = select(Job).where(Job.status == status).offset(skip).limit(limit)
+            result = await db.execute(query)
+            jobs = result.scalars().all()
+            
+            job_responses = [
+                JobResponse(
+                    id=job.id,
+                    name=job.name,
+                    status=JobStatus(job.status),
+                    created_at=job.created_at,
+                    updated_at=job.updated_at,
+                )
+                for job in jobs
+            ]
+    else:
+        # Regular database query for complex queries or with pagination
+        query = select(Job)
+        if status:
+            query = query.where(Job.status == status)
+        query = query.offset(skip).limit(limit)
+        
+        result = await db.execute(query)
+        jobs = result.scalars().all()
+        
+        job_responses = [
+            JobResponse(
+                id=job.id,
+                name=job.name,
+                status=JobStatus(job.status),
+                created_at=job.created_at,
+                updated_at=job.updated_at,
+            )
+            for job in jobs
+        ]
+        
     # Log orchestrator event
     log_orchestrator_event(
         event="jobs_listed",
         user_id=current_user.id,
-        count=len(jobs),
+        count=len(job_responses),
         filter_status=status.value if status else None
     )
-    
-    job_responses = [
-        JobResponse(
-            id=job.id,
-            name=job.name,
-            status=JobStatus(job.status),
-            created_at=job.created_at,
-            updated_at=job.updated_at,
-        )
-        for job in jobs
-    ]
 
     # Generate ETag for the response
     response_data = [job.model_dump() for job in job_responses]

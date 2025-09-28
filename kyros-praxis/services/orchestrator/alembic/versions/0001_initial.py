@@ -2,7 +2,6 @@
 
 import sqlalchemy as sa
 from alembic import op
-from sqlalchemy.dialects.postgresql import JSONB
 
 # revision identifiers, used by Alembic.
 revision = "0001_initial"
@@ -17,7 +16,7 @@ def upgrade():
         "events",
         sa.Column("id", sa.String(), nullable=False),
         sa.Column("type", sa.String(), nullable=False),
-        sa.Column("payload", JSONB(), nullable=True),
+        sa.Column("payload", sa.JSON(), nullable=True),
         sa.Column("timestamp", sa.DateTime(), nullable=True),
         sa.PrimaryKeyConstraint("id"),
     )
