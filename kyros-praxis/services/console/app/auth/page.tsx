@@ -1,8 +1,9 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useState, useEffect } from "react";
 import { signIn, getSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { auditAuth, AuditEventType } from "../lib/audit";
 
 export default function AuthPage() {
   const router = useRouter();
@@ -10,12 +11,42 @@ export default function AuthPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [attemptCount, setAttemptCount] = useState(0);
+
+  // Log page visit
+  useEffect(() => {
+    auditAuth(
+      AuditEventType.PAGE_VIEW,
+      undefined,
+      undefined,
+      true,
+      undefined,
+      { page: 'auth', action: 'view' }
+    );
+  }, []);
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
+    
+    const newAttemptCount = attemptCount + 1;
+    setAttemptCount(newAttemptCount);
+
     try {
+      // Log login attempt
+      await auditAuth(
+        AuditEventType.LOGIN_ATTEMPT,
+        undefined,
+        email,
+        true,
+        undefined,
+        { 
+          attemptNumber: newAttemptCount,
+          timestamp: new Date().toISOString(),
+        }
+      );
+
       const res = await signIn("credentials", {
         email,
         password,
@@ -23,18 +54,63 @@ export default function AuthPage() {
       });
 
       if (!res || res.error) {
+        // Log failed login
+        await auditAuth(
+          AuditEventType.LOGIN_FAILURE,
+          undefined,
+          email,
+          false,
+          "Invalid credentials",
+          { 
+            attemptNumber: newAttemptCount,
+            errorType: 'invalid_credentials',
+            timestamp: new Date().toISOString(),
+          }
+        );
+        
         setError("Invalid email or password");
         return;
       }
+
       // Load session and persist token for API fallback
       const session = await getSession();
       if (session?.accessToken) {
         try { localStorage.setItem('token', String(session.accessToken)); } catch {}
       }
 
+      // Log successful login
+      await auditAuth(
+        AuditEventType.LOGIN_SUCCESS,
+        session?.user?.id || session?.user?.email || undefined,
+        email,
+        true,
+        undefined,
+        { 
+          attemptNumber: newAttemptCount,
+          sessionId: session?.user?.id || session?.user?.email,
+          timestamp: new Date().toISOString(),
+        }
+      );
+
       const target = process.env.NEXT_PUBLIC_POST_LOGIN_ROUTE || "/agents";
       router.replace(target);
     } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Sign in failed";
+      
+      // Log login error
+      await auditAuth(
+        AuditEventType.LOGIN_FAILURE,
+        undefined,
+        email,
+        false,
+        errorMessage,
+        { 
+          attemptNumber: newAttemptCount,
+          errorType: 'system_error',
+          timestamp: new Date().toISOString(),
+        }
+      );
+      
       setError("Sign in failed");
     } finally {
       setLoading(false);
