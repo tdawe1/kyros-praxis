@@ -102,7 +102,7 @@ See Also:
 """
 
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Optional
 
 from fastapi import Depends, HTTPException, status
@@ -112,15 +112,21 @@ from passlib.context import CryptContext
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from sqlalchemy.ext.asyncio import AsyncSession
+from enum import Enum
+from typing import Set
 
 try:
     from .database import get_db
     from .models import User
     from .app.core.config import settings
+    from .audit import audit_permission_check, audit_role_check
 except Exception:  # Fallback when running module directly in container
     from database import get_db  # type: ignore
     from models import User  # type: ignore
     from app.core.config import settings  # type: ignore
+    # Audit import will fail gracefully if not available
+    def audit_permission_check(*args, **kwargs): pass  # type: ignore
+    def audit_role_check(*args, **kwargs): pass  # type: ignore
 
 # Use centralized configuration from settings
 SECRET_KEY = settings.SECRET_KEY
@@ -131,6 +137,168 @@ JWT_AUDIENCE = settings.JWT_AUDIENCE
 
 # Password hashing context using bcrypt
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+class Permission(str, Enum):
+    """
+    Enum defining granular permissions for RBAC system.
+    
+    This enumeration defines all possible permissions that can be granted
+    to users through their roles. It provides fine-grained access control
+    beyond simple user/admin roles.
+    """
+    # Job management permissions
+    READ_JOBS = "jobs:read"
+    CREATE_JOBS = "jobs:create"
+    UPDATE_JOBS = "jobs:update"
+    DELETE_JOBS = "jobs:delete"
+    
+    # Task management permissions
+    READ_TASKS = "tasks:read"
+    CREATE_TASKS = "tasks:create"
+    UPDATE_TASKS = "tasks:update"
+    DELETE_TASKS = "tasks:delete"
+    
+    # User management permissions
+    READ_USERS = "users:read"
+    CREATE_USERS = "users:create"
+    UPDATE_USERS = "users:update"
+    DELETE_USERS = "users:delete"
+    
+    # System administration permissions
+    ADMIN_SYSTEM = "system:admin"
+    READ_LOGS = "logs:read"
+    MANAGE_SETTINGS = "settings:manage"
+
+
+class Role(str, Enum):
+    """
+    Enum defining system roles with associated permissions.
+    
+    Roles group related permissions together to provide
+    coherent access control for different user types.
+    """
+    USER = "user"
+    ADMIN = "admin"
+    MODERATOR = "moderator"
+
+
+# Role-to-permissions mapping
+ROLE_PERMISSIONS: dict[Role, Set[Permission]] = {
+    Role.USER: {
+        Permission.READ_JOBS,
+        Permission.CREATE_JOBS,
+        Permission.READ_TASKS,
+        Permission.CREATE_TASKS,
+    },
+    Role.MODERATOR: {
+        Permission.READ_JOBS,
+        Permission.CREATE_JOBS,
+        Permission.UPDATE_JOBS,
+        Permission.READ_TASKS,
+        Permission.CREATE_TASKS,
+        Permission.UPDATE_TASKS,
+        Permission.READ_USERS,
+        Permission.READ_LOGS,
+    },
+    Role.ADMIN: {
+        # Admins have all permissions
+        Permission.READ_JOBS,
+        Permission.CREATE_JOBS,
+        Permission.UPDATE_JOBS,
+        Permission.DELETE_JOBS,
+        Permission.READ_TASKS,
+        Permission.CREATE_TASKS,
+        Permission.UPDATE_TASKS,
+        Permission.DELETE_TASKS,
+        Permission.READ_USERS,
+        Permission.CREATE_USERS,
+        Permission.UPDATE_USERS,
+        Permission.DELETE_USERS,
+        Permission.ADMIN_SYSTEM,
+        Permission.READ_LOGS,
+        Permission.MANAGE_SETTINGS,
+    },
+}
+
+
+def user_has_permission(user: "User", permission: Permission) -> bool:
+    """
+    Check if a user has a specific permission based on their role.
+    
+    Args:
+        user: User object with a role attribute
+        permission: Permission to check
+        
+    Returns:
+        bool: True if user has the permission, False otherwise
+    """
+    user_role = Role(user.role) if user.role in [r.value for r in Role] else Role.USER
+    return permission in ROLE_PERMISSIONS.get(user_role, set())
+
+
+def require_permission(permission: Permission):
+    """
+    Decorator factory to require specific permissions for route access.
+    
+    Args:
+        permission: Required permission for the route
+        
+    Returns:
+        FastAPI dependency that checks user permissions
+    """
+    async def check_permission(current_user: "User" = Depends(get_current_user)):
+        granted = user_has_permission(current_user, permission)
+        
+        # Audit the permission check
+        audit_permission_check(
+            user=current_user,
+            permission=permission.value,
+            granted=granted,
+            resource="api_endpoint"
+        )
+        
+        if not granted:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"Insufficient permissions. Required: {permission.value}"
+            )
+        return current_user
+    
+    return check_permission
+
+
+def require_role(required_role: Role):
+    """
+    Decorator factory to require specific role for route access.
+    
+    Args:
+        required_role: Required role for the route
+        
+    Returns:
+        FastAPI dependency that checks user role
+    """
+    async def check_role(current_user: "User" = Depends(get_current_user)):
+        user_role = Role(current_user.role) if current_user.role in [r.value for r in Role] else Role.USER
+        
+        # Admin role has access to everything
+        granted = user_role == Role.ADMIN or user_role == required_role
+        
+        # Audit the role check
+        audit_role_check(
+            user=current_user,
+            required_role=required_role.value,
+            granted=granted
+        )
+        
+        if not granted:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"Insufficient role. Required: {required_role.value}, Current: {user_role.value}"
+            )
+        return current_user
+    
+    return check_role
+
 
 # HTTP Bearer token authentication scheme
 oauth2_scheme = HTTPBearer(auto_error=False)
@@ -317,16 +485,17 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
         >>> print(token)  # Encoded JWT token string
     """
     to_encode = data.copy()
+    now = datetime.now(timezone.utc)
     if expires_delta:
-        expire = datetime.utcnow() + expires_delta
+        expire = now + expires_delta
     else:
-        expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+        expire = now + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     # Include standard claims
     to_encode.update({
         "exp": expire,
         "iss": JWT_ISSUER,
         "aud": JWT_AUDIENCE,
-        "iat": datetime.utcnow(),
+        "iat": now,
     })
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt

@@ -19,9 +19,39 @@ This document outlines security best practices and requirements for developing a
 - **Multi-factor**: Consider MFA for production deployments
 
 ### Authorization Requirements
-- **Role-based Access Control (RBAC)**: Implement roles and permissions
+- **Role-based Access Control (RBAC)**: ✅ **IMPLEMENTED** - Granular permissions system with user/moderator/admin roles
 - **Service-to-Service Auth**: Use mutual TLS or API keys for internal communication
 - **Session Management**: Implement secure session handling with timeout
+
+#### RBAC Implementation Details
+
+**User Roles:**
+- **User**: Basic access (jobs:read, jobs:create, tasks:read, tasks:create)
+- **Moderator**: Extended permissions (job updates, user read access, log access)
+- **Admin**: Full system access (all permissions including user management)
+
+**Permission System:**
+```python
+# Route protection with specific permissions
+@router.post("/jobs")
+async def create_job(
+    current_user: User = Depends(require_permission(Permission.CREATE_JOBS))
+):
+    pass
+
+# Role-based protection
+@router.get("/admin/users")
+async def list_users(
+    current_user: User = Depends(require_role(Role.ADMIN))
+):
+    pass
+```
+
+**Available Permissions:**
+- Job Management: `jobs:read`, `jobs:create`, `jobs:update`, `jobs:delete`
+- Task Management: `tasks:read`, `tasks:create`, `tasks:update`, `tasks:delete`
+- User Management: `users:read`, `users:create`, `users:update`, `users:delete`
+- System Administration: `system:admin`, `logs:read`, `settings:manage`
 
 ## 🔒 Secret Management
 

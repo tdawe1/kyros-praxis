@@ -57,6 +57,7 @@ from ..models import Job, User
 from ..utils.validation import JobCreate, validate_job_input
 from ..utils import generate_etag
 from ..app.core.logging import log_orchestrator_event
+from ..auth import Permission, require_permission, get_current_user
 
 from jose import jwt
 
@@ -222,7 +223,7 @@ async def create_job(
     job: JobCreate,
     background_tasks: BackgroundTasks,
     db: AsyncSession = Depends(get_db_session),
-    current_user: User = Depends(get_current_user_async),
+    current_user: User = Depends(require_permission(Permission.CREATE_JOBS)),
     response: Response = None,
 ):
     """
@@ -291,7 +292,7 @@ async def list_jobs(
     limit: int = 100,
     status: Optional[JobStatus] = None,
     db: AsyncSession = Depends(get_db_session),
-    current_user: User = Depends(get_current_user_async),
+    current_user: User = Depends(require_permission(Permission.READ_JOBS)),
     response: Response = None,
     if_none_match: Optional[str] = Header(default=None, alias="If-None-Match"),
 ):

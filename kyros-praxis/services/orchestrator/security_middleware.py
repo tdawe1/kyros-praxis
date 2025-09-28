@@ -155,7 +155,7 @@ import hashlib
 import hmac
 import base64
 from typing import Optional, Dict, Any, Callable
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from collections import defaultdict
 import logging
 
@@ -934,11 +934,12 @@ class JWTAuthentication:
         Returns:
             str: Encoded JWT token
         """
+        now = datetime.now(timezone.utc)
         payload = {
             "sub": user_id,
             "role": role,
-            "exp": datetime.utcnow() + timedelta(hours=self.expiration_hours),
-            "iat": datetime.utcnow(),
+            "exp": now + timedelta(hours=self.expiration_hours),
+            "iat": now,
             "jti": secrets.token_hex(16)  # JWT ID for revocation
         }
         
