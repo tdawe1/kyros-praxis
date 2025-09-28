@@ -106,6 +106,7 @@ def call_tool(name: str, args: dict | None):
                     data = body.decode("utf-8", errors="replace")
                 return True, status, data
         except urllib.error.HTTPError as e:
+            err_body = ""
             try:
                 err_body = e.read().decode("utf-8")
                 err_json = json.loads(err_body)

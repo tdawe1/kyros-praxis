@@ -1,23 +1,24 @@
 {
-  "providers": {
-    "openai": {
-      "apiKey": "$OPENAI_API_KEY"
-    }
-  },
-  "mcpServers": {
+  "$schema": "https://opencode.ai/config.json",
+  "model": "openrouter/anthropic/claude-3.5-sonnet",
+  "small_model": "openrouter/openai/gpt-4o-mini",
+  "mcp": {
     "kyros-mcp": {
-      "command": "python",
-      "args": ["integrations/kyros-mcp/main.py"],
+      "type": "local",
+      "command": ["python", "integrations/kyros-mcp/main.py"],
       "env": {
         "KYROS_API_BASE": "http://localhost:8000"
       }
     },
     "zen-mcp": {
-      "command": "python", 
-      "args": ["integrations/zen-mcp/main.py"]
+      "type": "local",
+      "command": ["python", "integrations/zen-mcp/main.py"]
     }
   },
   "instructions": [
     "AGENTS.md"
-  ]
+  ],
+  "tui": {
+    "scroll_speed": 3
+  }
 }
