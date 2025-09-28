@@ -52,11 +52,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update, delete
 
 # When running as a package
-from ..database import get_db_session
-from ..models import Job, User
-from ..utils.validation import JobCreate, validate_job_input
-from ..utils import generate_etag
-from ..app.core.logging import log_orchestrator_event
+from database import get_db_session  # type: ignore
+from models import Job, User  # type: ignore
+from utils.validation import JobCreate, validate_job_input  # type: ignore
+from utils import generate_etag  # type: ignore
+from app.core.logging import log_orchestrator_event  # type: ignore
 
 from jose import jwt
 
@@ -106,8 +106,8 @@ async def get_current_user_async(
     Raises:
         HTTPException: If token is missing, invalid, or user not found (401 Unauthorized)
     """
-    from ..auth import JWT_ISSUER, JWT_AUDIENCE, SECRET_KEY, ALGORITHM
-    from ..models import User
+    from auth import JWT_ISSUER, JWT_AUDIENCE, SECRET_KEY, ALGORITHM
+    from models import User
     from fastapi import HTTPException, status
     from jose import JWTError
 

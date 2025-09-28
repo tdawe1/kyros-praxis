@@ -47,8 +47,8 @@ except ImportError:
 
 try:
     # When running as a package (e.g., tests in monorepo)
-    from ..auth import get_current_user
-    from ..app.core.logging import stream_orchestrator_events
+    from auth import get_current_user
+    from app.core.logging import stream_orchestrator_events
 except ImportError:
     # Fallback when running module directly
     from services.orchestrator.auth import get_current_user  # type: ignore
@@ -138,7 +138,7 @@ async def get_events(
     Raises:
         HTTPException: If authentication fails or other errors occur
     """
-    from ..app.core.logging import get_orchestrator_events
+    from app.core.logging import get_orchestrator_events
     
     if not task_id and not run_id:
         return {"error": "Either task_id or run_id must be provided"}

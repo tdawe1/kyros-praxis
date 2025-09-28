@@ -184,7 +184,7 @@ async def get_security_config():
         dict: Redacted security configuration information
     """
     try:
-        from ..app.core.config import settings
+        from app.core.config import settings
     except ImportError:
         # Fallback for environments where config is not available
         settings = None

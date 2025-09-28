@@ -135,36 +135,22 @@ from sqlalchemy.ext.asyncio import (
     AsyncSession,  # noqa: F401 (placeholder for future async endpoints)
 )
 
-try:
-    # When running as a package (e.g., tests in monorepo)
-    from .auth import (
-        User,
-        authenticate_user,
-        create_access_token,
-        ACCESS_TOKEN_EXPIRE_MINUTES,
-        get_current_user,
-        Login,
-    )
-    from .database import get_db
-    from .routers import events, jobs, tasks, agents
-    from .app.core.config import settings
-    from .security_middleware import setup_security, SecurityConfig
-except Exception:  # Fallback when running module directly in container (/app)
-    from auth import (  # type: ignore
-        User,
-        authenticate_user,
-        create_access_token,
-        ACCESS_TOKEN_EXPIRE_MINUTES,
-        get_current_user,
-        Login,  # type: ignore
-    )
-    from database import get_db  # type: ignore
-    import routers.events as events  # type: ignore
-    import routers.jobs as jobs  # type: ignore
-    import routers.tasks as tasks  # type: ignore
-    import routers.agents as agents  # type: ignore
-    from app.core.config import settings  # type: ignore
-    from security_middleware import setup_security, SecurityConfig  # type: ignore
+# Import modules directly without relative imports
+from auth import (  # type: ignore
+    User,
+    authenticate_user,
+    create_access_token,
+    ACCESS_TOKEN_EXPIRE_MINUTES,
+    get_current_user,
+    Login,
+)
+from database import get_db  # type: ignore
+import routers.events as events  # type: ignore
+import routers.jobs as jobs  # type: ignore
+import routers.tasks as tasks  # type: ignore
+import routers.agents as agents  # type: ignore
+from app.core.config import settings  # type: ignore
+from security_middleware import setup_security, SecurityConfig  # type: ignore
 
 # Use the API_V1_STR from settings
 API_V1_STR = settings.API_V1_STR

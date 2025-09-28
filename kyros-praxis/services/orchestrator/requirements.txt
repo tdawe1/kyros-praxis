@@ -1,22 +1,14 @@
-eature/todo-completion-and-audit
-fastapi==0.115.0
-uvicorn[standard]==0.32.0
-sqlalchemy[asyncio]==2.0.35
-alembic==1.16.5
-pydantic==2.11.7
-pydantic-settings==2.5.2
-python-jose==3.4.0
 fastapi==0.116.1
 uvicorn[standard]==0.35.0
-sqlalchemy[asyncio]>=2.0.0
+sqlalchemy[asyncio]==2.0.35
 alembic==1.16.5
 pydantic==2.11.9
+pydantic-settings==2.5.2
 python-jose[cryptography]==3.5.0
-main
 passlib[bcrypt]==1.7.4
-bcrypt==4.1.2  # Direct bcrypt for better control
-pyjwt==2.8.0  # JWT handling
-cryptography==43.0.1  # Cryptographic operations
+bcrypt==4.1.2
+pyjwt==2.8.0
+cryptography==43.0.1
 python-dotenv==1.1.1
 python-json-logger==2.0.7
 
@@ -29,8 +21,5 @@ asgi-lifespan==2.1.0
 # Rate limiting
 slowapi==0.1.9
 redis==5.0.8
-eature/todo-completion-and-audit
-aiosqlite==0.20.0
-psutil==6.0.0
 aiosqlite==0.21.0
-main
+psutil==6.0.0

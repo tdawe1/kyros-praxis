@@ -114,7 +114,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.ext.asyncio import AsyncSession
 
 try:
-    from .database import get_db
+    from database import get_db
     from .models import User
     from .app.core.config import settings
 except Exception:  # Fallback when running module directly in container

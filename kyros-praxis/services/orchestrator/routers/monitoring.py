@@ -41,8 +41,8 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 try:
-    from ..database import get_db
-    from ..app.core.config import settings
+    from database import get_db
+    from app.core.config import settings
 except ImportError:
     # Fallback for environments where config is not available
     from database import get_db  # type: ignore

@@ -39,8 +39,8 @@ from starlette.responses import StreamingResponse
 
 try:
     # When running as a package (e.g., tests in monorepo)
-    from ..auth import get_current_user
-    from ..app.core.logging import log_orchestrator_event
+    from auth import get_current_user
+    from app.core.logging import log_orchestrator_event
 except ImportError:
     # Fallbacks when running module directly from the service directory
     try:

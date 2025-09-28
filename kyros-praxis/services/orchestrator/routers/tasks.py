@@ -48,11 +48,11 @@ from sqlalchemy.orm import Session
 
 try:
     # When running as a package (e.g., tests in monorepo)
-    from ..auth import User, get_current_user
-    from ..database import get_db
-    from ..models import Task
-    from ..utils.validation import TaskCreate, validate_task_input
-    from ..app.core.logging import log_orchestrator_event
+    from auth import User, get_current_user
+    from database import get_db
+    from models import Task
+    from utils.validation import TaskCreate, validate_task_input
+    from app.core.logging import log_orchestrator_event
 except ImportError:
     # Fallback when running module directly
     from services.orchestrator.auth import User, get_current_user  # type: ignore

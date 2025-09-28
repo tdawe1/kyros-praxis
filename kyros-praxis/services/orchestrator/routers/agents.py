@@ -13,9 +13,9 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 try:
-    from ..database import get_db_session
-    from ..models import User
-    from ..auth import JWT_ISSUER, JWT_AUDIENCE, SECRET_KEY, ALGORITHM
+    from database import get_db_session
+    from models import User
+    from auth import JWT_ISSUER, JWT_AUDIENCE, SECRET_KEY, ALGORITHM
 except ImportError:  # pragma: no cover
     from services.orchestrator.database import get_db_session  # type: ignore
     from services.orchestrator.models import User  # type: ignore
