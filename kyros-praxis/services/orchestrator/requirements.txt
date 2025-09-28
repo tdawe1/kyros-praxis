@@ -2,7 +2,7 @@ dependabot/pip/kyros-praxis/services/orchestrator/fastapi-0.117.1
 fastapi==0.117.1
 uvicorn[standard]==0.35.0
 
-eature/todo-completion-and-audit
+feature/todo-completion-and-audit
 fastapi==0.115.0
 uvicorn[standard]==0.32.0
 sqlalchemy[asyncio]==2.0.35
@@ -33,9 +33,12 @@ asgi-lifespan==2.1.0
 
 # Rate limiting
 slowapi==0.1.9
+dependabot/pip/kyros-praxis/services/orchestrator/redis-6.4.0
+redis==6.4.0
 redis==5.0.8
 eature/todo-completion-and-audit
 aiosqlite==0.20.0
 psutil==6.0.0
+main
 aiosqlite==0.21.0
 main
