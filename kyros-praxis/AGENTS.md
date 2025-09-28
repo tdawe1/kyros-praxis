@@ -37,3 +37,11 @@
 - Do not commit secrets. Copy `.env.example` to `.env` in each service.
 - Local defaults: Postgres/Redis via `docker-compose.yml`. Key vars: `SECRET_KEY`, `DB_*`, `REDIS_*`.
 
+## OpenCode Terminal Interface (NEW)
+- **Terminal-First Development**: Use `opencode` command in this directory for AI agent interaction
+- **File References**: Use `@filename` to include file content in conversations
+- **Shell Commands**: Use `!command` to run shell commands and include output
+- **Available Commands**: `/models`, `/sessions`, `/init`, `/help` for managing agent workflows
+- **MCP Integration**: kyros-mcp and zen-mcp servers provide agent coordination tools
+- **Configuration**: See `opencode.json` for provider and MCP server settings
+
