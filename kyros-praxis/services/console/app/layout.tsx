@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 // Carbon Design System global styles
 import "@carbon/react/index.scss";
 import Providers from "./providers";
-
-const inter = Inter({ subsets: ["latin"] });
+import { CSPViolationReporter } from "./components/CSPViolationReporter";
+import { CSPTester } from "./components/CSPTester";
+import { getNonce } from "../lib/nonce";
 
 export const metadata: Metadata = {
   title: "Kyros Console",
@@ -17,10 +17,14 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const nonce = getNonce();
+
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <Providers>{children}</Providers>
+      <body className="font-sans">
+        <CSPViolationReporter />
+        <Providers nonce={nonce}>{children}</Providers>
+        <CSPTester />
       </body>
     </html>
   );
