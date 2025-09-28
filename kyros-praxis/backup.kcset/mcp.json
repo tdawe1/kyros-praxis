@@ -1,0 +1,151 @@
+{
+  "mcpServers": {
+    "zen": {
+      "command": "npx",
+      "args": ["-y", "@zen-mcp/server"],
+      "env": {
+        "ZEN_API_KEY": "${ZEN_API_KEY}"
+      },
+      "disabled": false,
+      "alwaysAllow": []
+    },
+    "kyros": {
+      "command": "python",
+      "args": ["integrations/kyros-mcp/main.py"],
+      "env": {
+        "KYROS_CONFIG": "${KYROS_CONFIG}"
+      },
+      "disabled": false,
+      "alwaysAllow": []
+    },
+    "kyros-collab": {
+      "command": "python",
+      "args": ["integrations/kyros-collab-mcp/main.py"],
+      "env": {
+        "COLLAB_CONFIG": "${COLLAB_CONFIG}"
+      },
+      "disabled": true,
+      "alwaysAllow": []
+    },
+    "fireproof": {
+      "command": "docker",
+      "args": ["run", "--rm", "-i", "fireproof-mcp"],
+      "env": {
+        "FIREPROOF_URL": "${FIREPROOF_URL}"
+      },
+      "disabled": true,
+      "alwaysAllow": []
+    },
+    "playwright": {
+      "command": "npx",
+      "args": ["playwright-mcp"],
+      "env": {}
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp", "${DEFAULT_MINIMUM_TOKENS}"]
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/home/thomas/kyros-praxis/"
+      ]
+    },
+    "sequentialthinking": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+    },
+    "git": {
+      "command": "uvx",
+      "args": [
+        "mcp-server-git",
+        "--repository",
+        "/home/thomas/kyros-praxis/kyros-praxis"
+      ]
+    },
+    "puppeteer": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-puppeteer"]
+    },
+    "memory": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"]
+    },
+    "time": {
+      "command": "uvx",
+      "args": ["mcp-server-time"]
+    },
+    "redis": {
+      "command": "uvx",
+      "args": ["mcp-server-redis", "--url", "redis://localhost:6379"],
+      "disabled": false,
+      "alwaysAllow": []
+    },
+    "github": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "GITHUB_PERSONAL_ACCESS_TOKEN=${GITHUB_PERSONAL_ACCESS_TOKEN}",
+        "-e",
+        "GITHUB_TOOLSETS=${GITHUB_TOOLSETS}",
+        "-e",
+        "GITHUB_READ_ONLY=1",
+        "ghcr.io/github/github-mcp-server"
+      ],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_PERSONAL_ACCESS_TOKEN}",
+        "GITHUB_TOOLSETS": "${GITHUB_TOOLSETS}",
+        "GITHUB_READ_ONLY": "1"
+      }
+    },
+    "exa": {
+      "command": "npx",
+      "args": ["-y", "exa-mcp-server"],
+      "env": {
+        "EXA_API_KEY": "${EXA_API_KEY}"
+      }
+    },
+    "notion": {
+      "command": "npx",
+      "args": ["-y", "@notionhq/notion-mcp-server"],
+      "env": {
+        "OPENAPI_MCP_HEADERS": "{\"Authorization\": \"Bearer ${NOTION_TOKEN}\", \"Notion-Version\": \"2022-06-28\"}"
+      }
+    },
+    "qdrant": {
+      "command": "uvx",
+      "args": ["mcp-server-qdrant"],
+      "env": {
+        "QDRANT_URL": "https://efc4845b-720a-442e-981d-dc84bf7c7eb0.eu-west-2-0.aws.cloud.qdrant.io:6333",
+        "QDRANT_API_KEY": "${QDRANT_API_KEY}",
+        "COLLECTION_NAME": "kyros",
+        "EMBEDDING_MODEL": ""
+      }
+    },
+    "needle": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@smithery/cli",
+        "install",
+        "needle-mcp",
+        "--client",
+        "claude"
+      ],
+      "disabled": true,
+      "alwaysAllow": []
+    },
+    "gdrive": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-gdrive"],
+      "env": {
+        "GDRIVE_CREDENTIALS_PATH": "/home/thomas/Documents/Keys/gdrive-server-credentials.json"
+      }
+    }
+  }
+}

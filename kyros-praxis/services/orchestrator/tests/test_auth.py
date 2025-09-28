@@ -1,67 +1,97 @@
+import pytest
+import os
 from fastapi.testclient import TestClient
+from services.orchestrator.auth import pwd_context
+from services.orchestrator.database import get_db
+from services.orchestrator.main import app
+from services.orchestrator.models import Base, User
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
-from services.orchestrator.main import app
-from services.orchestrator.database import get_db
-from services.orchestrator.models import Base, User
-from services.orchestrator.auth import pwd_context
-from services.orchestrator.auth import authenticate_user
 
-engine = create_engine(
-    "sqlite:///./test.db",
-    connect_args={"check_same_thread": False},
-    poolclass=StaticPool,
-)
-TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-Base.metadata.create_all(bind=engine)
+# Set environment variables for testing
+os.environ["SECRET_KEY"] = "test-secret-key-for-testing-purposes-only"
+os.environ["ENVIRONMENT"] = "local"
 
 
-def override_get_db():
-    try:
-        db = TestingSessionLocal()
-        yield db
-    finally:
-        db.close()
+@pytest.fixture(scope="function")
+def test_db():
+    """Create a test database for each test function."""
+    engine = create_engine(
+        "sqlite:///:memory:",
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,
+    )
+    TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+    # Create all tables
+    Base.metadata.create_all(bind=engine)
+
+    def override_get_db():
+        try:
+            db = TestingSessionLocal()
+            yield db
+        finally:
+            db.close()
+
+    # Override the dependency
+    app.dependency_overrides[get_db] = override_get_db
+
+    yield TestingSessionLocal()
+
+    # Clean up
+    Base.metadata.drop_all(bind=engine)
+    app.dependency_overrides.clear()
 
 
-app.dependency_overrides[get_db] = override_get_db
+@pytest.fixture
+def client(test_db):
+    """Create a test client with test database."""
+    return TestClient(app)
 
-client = TestClient(app)
 
-
-def test_unauth_create():
+def test_unauth_create(client):
     response = client.post(
-        "/collab/tasks",
-        json={"title": "Test Task", "description": "Test Description", "version": 1}
+        "/api/v1/collab/tasks",
+        json={"title": "Test Task", "description": "Test Description"},
     )
     assert response.status_code == 401
-    assert response.json() == {"type": "unauthorized", "message": "Could not validate credentials"}
+    data = response.json()
+    assert "error" in data
+    assert data["error"]["type"] == "http_exception"
+    assert data["error"]["code"] == 401
+    assert "Could not validate credentials" in data["error"]["message"]
 
 
-def test_login_invalid():
+def test_login_invalid(client):
     response = client.post(
-        "/auth/login",
-        json={"email": "test@example.com", "password": "wrong"}
+        "/auth/login", json={"username": "testuser", "password": "wrong"}
     )
     assert response.status_code == 401
-    assert response.json() == {"type": "unauthorized", "message": "Incorrect email or password"}
+    data = response.json()
+    assert "error" in data
+    assert data["error"]["type"] == "http_exception"
+    assert data["error"]["code"] == 401
+    assert "Incorrect username or password" in data["error"]["message"]
 
 
-def test_login_and_create():
+def test_login_and_create(client, test_db):
     # First create a user
-    db = TestingSessionLocal()
-    user = User(email="test@example.com", password_hash=pwd_context.hash("password"))
-    db.add(user)
-    db.commit()
-    db.refresh(user)
+    # Delete any existing user with the same username to avoid IntegrityError
+    existing_user = test_db.query(User).filter(User.username == "testuser").first()
+    if existing_user:
+        test_db.delete(existing_user)
+        test_db.commit()
+
+    user = User(username="testuser", email="test@example.com", password_hash=pwd_context.hash("password"))
+    test_db.add(user)
+    test_db.commit()
+    test_db.refresh(user)
 
     # Login
     response = client.post(
-        "/auth/login",
-        json={"email": "test@example.com", "password": "password"}
+        "/auth/login", json={"username": "testuser", "password": "password"}
     )
     assert response.status_code == 200
     tokens = response.json()
@@ -69,18 +99,17 @@ def test_login_and_create():
 
     # Use token to create task
     response = client.post(
-        "/collab/tasks",
-        json={"title": "Test Task", "description": "Test Description", "version": 1},
-        headers={"Authorization": f"Bearer {access_token}"}
+        "/api/v1/collab/tasks",
+        json={"title": "Test Task", "description": "Test Description"},
+        headers={"Authorization": f"Bearer {access_token}"},
     )
-    assert response.status_code == 200
+    assert response.status_code == 201
     assert "id" in response.json()
 
     # Invalid payload
     response = client.post(
-        "/collab/tasks",
-        json={"title": "", "description": "Test Description", "version": 1},
-        headers={"Authorization": f"Bearer {access_token}"}
+        "/api/v1/collab/tasks",
+        json={"title": "", "description": "Test Description"},
+        headers={"Authorization": f"Bearer {access_token}"},
     )
     assert response.status_code == 422
-    assert "type" in response.json()

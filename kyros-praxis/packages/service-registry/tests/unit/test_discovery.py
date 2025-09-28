@@ -1,6 +1,6 @@
 import pytest
 
-from packages.service_registry.main import register_service, get_service
+from packages.service_registry.main import get_service, register_service
 
 
 def test_service_registration():

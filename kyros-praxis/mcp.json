@@ -1,5 +1,75 @@
 {
   "mcpServers": {
+    "zen": {
+      "command": "/home/thomas/zen-mcp-server/.zen_venv/bin/python",
+      "args": [
+        "/home/thomas/zen-mcp-server/server.py"
+      ],
+      "env": {
+        "GEMINI_API_KEY": "",
+        "OPENAI_API_KEY": "",
+        "ANTHROPIC_API_KEY": "",
+        "OPENROUTER_API_KEY": "",
+        "DISABLED_TOOLS": "",
+        "DEFAULT_MODEL": "auto",
+        "WORKSPACE_ROOT": "/home/thomas/kyros-praxis/kyros-praxis",
+        "REDIS_URL": "redis://localhost:6379",
+        "QDRANT_URL": "https://efc4845b-720a-442e-981d-dc84bf7c7eb0.eu-west-2-0.aws.cloud.qdrant.io:6333",
+        "QDRANT_API_KEY": "${QDRANT_API_KEY}",
+        "QDRANT_COLLECTION": "kyros",
+        "GITHUB_TOKEN": "${GITHUB_TOKEN}",
+        "TAVILY_API_KEY": "${TAVILY_API_KEY}",
+        "EXA_API_KEY": "${EXA_API_KEY}",
+        "GDRIVE_CREDENTIALS_PATH": "/home/thomas/Documents/Keys/gdrive-server-credentials.json",
+        "NOTION_API_KEY": "${NOTION_API_KEY}",
+        "KYROS_CONFIG": "${KYROS_CONFIG}",
+        "COLLAB_CONFIG": "${COLLAB_CONFIG}",
+        "FIREPROOF_URL": "${FIREPROOF_URL}",
+        "LOG_LEVEL": "INFO",
+        "CONVERSATION_TIMEOUT_HOURS": "3",
+        "MAX_CONVERSATION_TURNS": "20"
+      }
+    },
+    "playwright": {
+      "command": "bash",
+      "args": ["scripts/mcp-run.sh", "mcp_playwright"]
+    },
+    "kyros": {
+      "command": "python",
+      "args": [
+        "integrations/kyros-mcp/main.py"
+      ],
+      "env": {
+        "KYROS_CONFIG": "${KYROS_CONFIG}"
+      },
+      "disabled": false,
+      "alwaysAllow": []
+    },
+    "kyros-collab": {
+      "command": "python",
+      "args": [
+        "integrations/kyros-collab-mcp/main.py"
+      ],
+      "env": {
+        "COLLAB_CONFIG": "${COLLAB_CONFIG}"
+      },
+      "disabled": true,
+      "alwaysAllow": []
+    },
+    "fireproof": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "fireproof-mcp"
+      ],
+      "env": {
+        "FIREPROOF_URL": "${FIREPROOF_URL}"
+      },
+      "disabled": true,
+      "alwaysAllow": []
+    },
     "filesystem": {
       "command": "npx",
       "args": [
@@ -21,109 +91,6 @@
         "read_graph"
       ]
     },
-    "playwright": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@playwright/mcp@latest",
-        "--browser=",
-        "--headless=",
-        "--viewport-size="
-      ],
-      "disabled": true,
-      "alwaysAllow": []
-    },
-    "composer-trade": {
-      "command": "uvx",
-      "args": [
-        "composer-trade-mcp==0.1.4",
-        "--hash",
-        "sha256:37d8fcfd6ddc9c8155633f755159f3fcb1a63e7acc2a32513613341a851c84e2"
-      ],
-      "env": {
-        "COMPOSER_API_KEY": "",
-        "COMPOSER_SECRET_KEY": ""
-      }
-    },
-    "notion": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@notionhq/notion-mcp-server"
-      ],
-      "env": {
-        "OPENAPI_MCP_HEADERS": ""
-      }
-    },
-    "puppeteer": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-puppeteer"
-      ]
-    },
-    "sequentialthinking": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-sequential-thinking"
-      ]
-    },
-    "time": {
-      "command": "uvx",
-      "args": [
-        "mcp-server-time"
-      ]
-    },
-    "redis": {
-      "command": "uvx",
-      "args": [
-        "mcp-server-redis",
-        "--url",
-        "redis://localhost:6379"
-      ]
-    },
-    "fireproof": {
-      "command": "node",
-      "args": [
-        "/build/index.js"
-      ]
-    },
-    "exa": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "exa-mcp-server"
-      ],
-      "env": {
-        "EXA_API_KEY": ""
-      }
-    },
-    "context7": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@upstash/context7-mcp"
-      ],
-      "env": {
-        "DEFAULT_MINIMUM_TOKENS": ""
-      }
-    },
-    "zen": {
-      "command": "bash",
-      "args": [
-        "-c",
-        "for p in $(which uvx 2>/dev/null) $HOME/.local/bin/uvx /opt/homebrew/bin/uvx /usr/local/bin/uvx uvx; do [ -x \"$p\" ] && exec \"$p\" --from git+https://github.com/BeehiveInnovations/zen-mcp-server.git zen-mcp-server; done; echo 'uvx not found' >&2; exit 1"
-      ],
-      "env": {
-        "GEMINI_API_KEY": "",
-        "OPENAI_API_KEY": "",
-        "ANTHROPIC_API_KEY": "",
-        "OPENROUTER_API_KEY": "",
-        "DISABLED_TOOLS": "analyze,refactor,testgen,secaudit,docgen,tracer",
-        "DEFAULT_MODEL": "auto"
-      }
-    },
     "github": {
       "command": "docker",
       "args": [
@@ -139,14 +106,128 @@
         "ghcr.io/github/github-mcp-server"
       ],
       "env": {
-        "GITHUB_PERSONAL_ACCESS_TOKEN": "",
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_PERSONAL_ACCESS_TOKEN}",
         "GITHUB_TOOLSETS": "",
         "GITHUB_READ_ONLY": ""
-      },
-      "alwaysAllow": [
-        "list_workflows",
-        "list_workflow_runs"
+      }
+    },
+    "exa": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "exa-mcp-server"
+      ],
+      "env": {
+        "EXA_API_KEY": "${EXA_API_KEY}"
+      }
+    },
+    "time": {
+      "command": "uvx",
+      "args": [
+        "mcp-server-time"
       ]
+    },
+    "puppeteer": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-puppeteer"
+      ]
+    },
+    "sequentialthinking": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-sequential-thinking"
+      ]
+    },
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@playwright/mcp@latest",
+        "--browser=",
+        "--headless=",
+        "--viewport-size="
+      ]
+    },
+    "context7": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@upstash/context7-mcp"
+      ],
+      "env": {
+        "DEFAULT_MINIMUM_TOKENS": ""
+      }
+    },
+    "git": {
+      "command": "uvx",
+      "args": [
+        "mcp-server-git",
+        "--repository",
+        "/home/thomas/kyros-praxis/kyros-praxis"
+      ]
+    },
+    "tavily": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "tavily-mcp@0.2.3"
+      ],
+      "env": {
+        "TAVILY_API_KEY": "${TAVILY_API_KEY}"
+      }
+    },
+    "codegen": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/codegen-sh/codegen-sdk.git#egg=codegen-mcp-server&subdirectory=codegen-examples/examples/codegen-mcp-server",
+        "codegen-mcp-server"
+      ]
+    },
+    "notion": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@notionhq/notion-mcp-server"
+      ],
+      "env": {
+        "OPENAPI_MCP_HEADERS": "${OPENAPI_MCP_HEADERS}"
+      }
+    },
+    "redis": {
+      "command": "uvx",
+      "args": [
+        "mcp-server-redis",
+        "--url",
+        "redis://localhost:6379"
+      ],
+      "disabled": false,
+      "alwaysAllow": []
+    },
+    "qdrant": {
+      "command": "uvx",
+      "args": [
+        "mcp-server-qdrant"
+      ],
+      "env": {
+        "QDRANT_URL": "https://efc4845b-720a-442e-981d-dc84bf7c7eb0.eu-west-2-0.aws.cloud.qdrant.io:6333",
+        "QDRANT_API_KEY": "${QDRANT_API_KEY}",
+        "COLLECTION_NAME": "kyros",
+        "EMBEDDING_MODEL": ""
+      }
+    },
+    "gdrive": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-gdrive"
+      ],
+      "env": {
+        "GDRIVE_CREDENTIALS_PATH": "/home/thomas/Documents/Keys/gdrive-server-credentials.json"
+      }
     }
   }
 }

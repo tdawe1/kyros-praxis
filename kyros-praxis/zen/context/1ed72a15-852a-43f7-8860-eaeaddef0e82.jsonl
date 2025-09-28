@@ -1,0 +1,2 @@
+{"ts": 1757713802048, "role": "user", "provider": "codex-cli", "content": "Hello from probe. Please reply: ACK OK"}
+{"ts": 1757714585751, "role": "assistant", "provider": "claude-code-agent", "content": "ACK OK - Message received and processed"}
