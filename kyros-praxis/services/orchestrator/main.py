@@ -108,7 +108,6 @@ from fastapi import (
     FastAPI,
     HTTPException,
     Request,
-    Response,
     WebSocket,
     status,
     WebSocketDisconnect,
@@ -129,7 +128,6 @@ except ImportError:
     RateLimitExceeded = Exception
     SlowAPIMiddleware = None
     HAVE_SLOWAPI = False
-from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import (
     AsyncSession,  # noqa: F401 (placeholder for future async endpoints)
@@ -138,11 +136,9 @@ from sqlalchemy.ext.asyncio import (
 try:
     # When running as a package (e.g., tests in monorepo)
     from .auth import (
-        User,
         authenticate_user,
         create_access_token,
         ACCESS_TOKEN_EXPIRE_MINUTES,
-        get_current_user,
         Login,
         RefreshTokenResponse,
     )
@@ -153,11 +149,9 @@ try:
     from .security_middleware import setup_security, SecurityConfig
 except Exception:  # Fallback when running module directly in container (/app)
     from auth import (  # type: ignore
-        User,
         authenticate_user,
         create_access_token,
         ACCESS_TOKEN_EXPIRE_MINUTES,
-        get_current_user,
         Login,  # type: ignore
         RefreshTokenResponse,
     )

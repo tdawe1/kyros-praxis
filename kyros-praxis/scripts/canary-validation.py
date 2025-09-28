@@ -8,7 +8,6 @@ import json
 import subprocess
 import sys
 from pathlib import Path
-from typing import Dict, List, Any
 import yaml
 
 class CanaryValidator:
@@ -185,22 +184,22 @@ class CanaryValidator:
             if not check_func():
                 all_passed = False
         
-        print(f"\n📊 Validation Summary:")
+        print("\n📊 Validation Summary:")
         print(f"✅ Passed: {self.passed}")
         print(f"❌ Failed: {self.failed}")
         print(f"Total Checks: {self.passed + self.failed}")
         
         if self.issues:
-            print(f"\n🚨 Issues Found:")
+            print("\n🚨 Issues Found:")
             for issue in self.issues:
                 print(f"  • {issue}")
         
         if all_passed:
-            print(f"\n🎉 Canary deployment validation PASSED!")
+            print("\n🎉 Canary deployment validation PASSED!")
             print("✅ Hybrid model strategy is ready for production")
             return True
         else:
-            print(f"\n⚠️  Canary deployment validation FAILED")
+            print("\n⚠️  Canary deployment validation FAILED")
             print("❌ Issues must be resolved before proceeding")
             return False
 

@@ -81,7 +81,7 @@ def check_handoff_sessions():
         # If there are user messages but no assistant responses, it's a new task
         if user_messages and not assistant_responses:
             task_content = user_messages[0]['content']
-            print(f"\n🎯 NEW HANDOFF TASK DETECTED!")
+            print("\n🎯 NEW HANDOFF TASK DETECTED!")
             print(f"Session ID: {session_id}")
             print(f"Content:\n{task_content}")
             print("-" * 50)

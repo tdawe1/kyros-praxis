@@ -101,7 +101,6 @@ See Also:
 - main.py: Main application that implements authentication endpoints
 """
 
-import os
 from datetime import datetime, timedelta
 from typing import Optional
 

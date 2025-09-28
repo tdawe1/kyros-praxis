@@ -4,7 +4,6 @@ Simple test script for Jobs API endpoints with direct user creation
 """
 import asyncio
 import httpx
-import json
 import uuid
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
@@ -43,7 +42,7 @@ def create_test_user():
         )
 
         db.commit()
-        print(f"✅ Created test user: testuser")
+        print("✅ Created test user: testuser")
         return True
     except Exception as e:
         print(f"❌ Failed to create test user: {e}")

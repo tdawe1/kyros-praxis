@@ -6,10 +6,7 @@ This script demonstrates how to use the criteria framework for making
 escalation decisions in real-world scenarios.
 """
 
-import json
 import logging
-from datetime import datetime
-from pathlib import Path
 
 from criteria_framework import (
     AutomatedEscalationSystem, ThresholdConfig, ServiceType,
@@ -64,18 +61,18 @@ def example_1_architect_security_critical():
     )
     
     # Display results
-    print(f"Task: AUTH-SYSTEM-DESIGN-001")
+    print("Task: AUTH-SYSTEM-DESIGN-001")
     print(f"Decision: {'ESCALATE' if decision.should_escalate else 'NO ESCALATION'}")
     print(f"Type: {decision.escalation_type.value}")
     print(f"Confidence: {decision.confidence.name}")
     print(f"Score: {decision.certainty_score:.3f}")
     print(f"Cost Estimate: ${decision.cost_estimate:.4f}")
-    print(f"Reasoning:")
+    print("Reasoning:")
     for reason in decision.reasoning:
         print(f"  - {reason}")
     
     if decision.alternatives:
-        print(f"Alternatives:")
+        print("Alternatives:")
         for alt in decision.alternatives:
             print(f"  - {alt}")
 
@@ -127,12 +124,12 @@ def example_2_integrator_major_merge_conflict():
     )
     
     # Display results
-    print(f"Task: MERGE-CONFLICT-RESOLUTION-001")
+    print("Task: MERGE-CONFLICT-RESOLUTION-001")
     print(f"Decision: {'ESCALATE' if decision.should_escalate else 'NO ESCALATION'}")
     print(f"Type: {decision.escalation_type.value}")
     print(f"Risk Score: {decision.risk_score:.3f}")
     print(f"Uncertainty: {decision.uncertainty_score:.3f}")
-    print(f"Reasoning:")
+    print("Reasoning:")
     for reason in decision.reasoning:
         print(f"  - {reason}")
 
@@ -181,11 +178,11 @@ def example_3_performance_critical_optimization():
     )
     
     # Display results
-    print(f"Task: PERFORMANCE-OPTIMIZATION-001")
+    print("Task: PERFORMANCE-OPTIMIZATION-001")
     print(f"Decision: {'ESCALATE' if decision.should_escalate else 'NO ESCALATION'}")
     print(f"Type: {decision.escalation_type.value}")
     print(f"Score: {decision.certainty_score:.3f}")
-    print(f"Reasoning:")
+    print("Reasoning:")
     for reason in decision.reasoning:
         print(f"  - {reason}")
 
@@ -232,11 +229,11 @@ def example_4_simple_feature_implementation():
     )
     
     # Display results
-    print(f"Task: SIMPLE-FEATURE-001")
+    print("Task: SIMPLE-FEATURE-001")
     print(f"Decision: {'ESCALATE' if decision.should_escalate else 'NO ESCALATION'}")
     print(f"Type: {decision.escalation_type.value}")
     print(f"Score: {decision.certainty_score:.3f}")
-    print(f"Reasoning:")
+    print("Reasoning:")
     for reason in decision.reasoning:
         print(f"  - {reason}")
 
@@ -297,7 +294,7 @@ def example_5_custom_threshold_configuration():
         context=context
     )
     
-    print(f"Custom Configuration Results:")
+    print("Custom Configuration Results:")
     print(f"Architect Threshold: {config.architect_threshold}")
     print(f"Decision: {'ESCALATE' if decision.should_escalate else 'NO ESCALATION'}")
     print(f"Score: {decision.certainty_score:.3f} vs Threshold: {config.architect_threshold}")
@@ -369,14 +366,14 @@ def example_6_batch_processing():
         if decision.should_escalate:
             escalations += 1
     
-    print(f"\nSummary:")
+    print("\nSummary:")
     print(f"Total Tasks: {len(tasks)}")
     print(f"Escalations: {escalations}")
     print(f"Escalation Rate: {escalations/len(tasks)*100:.1f}%")
     
     # Show analytics
     analytics = system.get_decision_analytics()
-    print(f"\nAnalytics:")
+    print("\nAnalytics:")
     print(f"Total Estimated Cost: ${analytics['costs']['total_estimated_cost']:.4f}")
 
 

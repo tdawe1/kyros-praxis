@@ -13,8 +13,7 @@ import time
 import argparse
 from pathlib import Path
 from datetime import datetime
-from typing import Dict, Any, List, Optional, Set
-from subprocess import Popen, PIPE, STDOUT
+from typing import Dict, Any
 
 # Add the integrations path to import from the local zen-mcp
 sys.path.insert(0, str(Path(__file__).parent.parent / "integrations" / "zen-mcp"))

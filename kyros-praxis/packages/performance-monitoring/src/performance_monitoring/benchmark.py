@@ -3,18 +3,14 @@ import time
 import statistics
 import numpy as np
 from datetime import datetime, timedelta
-from typing import Dict, List, Optional, Any, Tuple
+from typing import Dict, List, Optional, Any
 import json
 import logging
 from dataclasses import dataclass
-import matplotlib.pyplot as plt
-import pandas as pd
 
 from .types import (
     ModelType, 
-    ModelPerformanceMetrics, 
-    SystemResourceMetrics,
-    PerformanceThreshold
+    ModelPerformanceMetrics
 )
 
 logger = logging.getLogger(__name__)

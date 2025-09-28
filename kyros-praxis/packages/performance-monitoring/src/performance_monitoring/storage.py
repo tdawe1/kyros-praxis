@@ -1,8 +1,6 @@
-import asyncio
 import sqlite3
 from datetime import datetime, timedelta
-from typing import List, Optional
-import json
+from typing import List
 import logging
 
 from .types import ModelPerformanceMetrics, SystemResourceMetrics, ModelType

@@ -1,0 +1,6 @@
+{"timestamp": "2025-09-28T08:57:38.399967", "level": "INFO", "logger": "app.core.logging", "message": "Logging configured", "service": "Kyros Praxis", "environment": "local", "version": "0.1.0"}
+{"timestamp": "2025-09-28T08:57:38.400218", "level": "INFO", "logger": "app.core.logging", "message": "Orchestrator event logging configured for o-glm -> .devlogs/orch-o-glm.log", "service": "Kyros Praxis", "environment": "local", "version": "0.1.0"}
+{"timestamp": "2025-09-28T08:57:38.400312", "level": "INFO", "logger": "main", "message": "Orchestrator starting with ORCH_ID: o-glm", "service": "Kyros Praxis", "environment": "local", "version": "0.1.0"}
+{"timestamp": "2025-09-28T08:57:50.690241", "level": "INFO", "logger": "app.core.logging", "message": "Logging configured", "service": "Kyros Praxis", "environment": "local", "version": "0.1.0"}
+{"timestamp": "2025-09-28T08:57:50.690498", "level": "INFO", "logger": "app.core.logging", "message": "Orchestrator event logging configured for o-glm -> .devlogs/orch-o-glm.log", "service": "Kyros Praxis", "environment": "local", "version": "0.1.0"}
+{"timestamp": "2025-09-28T08:57:50.690590", "level": "INFO", "logger": "main", "message": "Orchestrator starting with ORCH_ID: o-glm", "service": "Kyros Praxis", "environment": "local", "version": "0.1.0"}

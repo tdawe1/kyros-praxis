@@ -4,7 +4,6 @@ Debug JWT token
 """
 import asyncio
 import httpx
-import json
 from jose import jwt
 
 BASE_URL = "http://localhost:8000"
@@ -60,7 +59,7 @@ async def debug_token():
             user = result.fetchone()
 
             if user:
-                print(f"\nUser in database:")
+                print("\nUser in database:")
                 print(f"  ID: {user[0]}")
                 print(f"  Username: {user[1]}")
                 print(f"  Email: {user[2]}")

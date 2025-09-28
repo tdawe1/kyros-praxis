@@ -1,14 +1,12 @@
 import pytest
-import json
 import os
-from datetime import datetime
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
 from services.orchestrator.main import app
-from services.orchestrator.models import Base, Task, User
+from services.orchestrator.models import Base, User
 from services.orchestrator.auth import pwd_context
 from services.orchestrator.database import get_db
 

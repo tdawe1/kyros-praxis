@@ -14,9 +14,7 @@ Usage:
 """
 
 import argparse
-import hashlib
 import json
-import os
 import re
 import subprocess
 import sys
@@ -578,7 +576,7 @@ Examples:
     print(f"Summary: {result.summary}")
     
     if result.security_findings:
-        print(f"\n📋 Security Findings Summary:")
+        print("\n📋 Security Findings Summary:")
         critical_count = sum(1 for f in result.security_findings if f.get("severity") == "Critical")
         high_count = sum(1 for f in result.security_findings if f.get("severity") == "High")
         medium_count = sum(1 for f in result.security_findings if f.get("severity") == "Medium")
@@ -589,7 +587,7 @@ Examples:
         print(f"  Medium: {medium_count}")
         print(f"  Low: {low_count}")
         
-        print(f"\n🚨 Top Issues:")
+        print("\n🚨 Top Issues:")
         for i, finding in enumerate(result.security_findings[:3]):
             print(f"  {i+1}. {finding.get('vulnerability', 'Unknown')} ({finding.get('severity', 'Unknown')})")
             print(f"     File: {finding.get('file_references', ['Unknown'])[0]}")

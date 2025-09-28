@@ -5,9 +5,6 @@ This script validates that all required components are implemented and working.
 """
 
 import sys
-import os
-import json
-import sqlite3
 from pathlib import Path
 
 # Add the project root to Python path
@@ -18,7 +15,7 @@ def validate_models():
     """Validate that Task model is properly implemented."""
     print("🔍 Validating Task model...")
     try:
-        from services.orchestrator.models import Task, Base
+        from services.orchestrator.models import Task
         from sqlalchemy import inspect
 
         # Check Task model has required fields

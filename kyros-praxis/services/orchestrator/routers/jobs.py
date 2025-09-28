@@ -38,18 +38,15 @@ ENDPOINTS:
 5. DELETE /jobs/{job_id} - Delete a job
 """
 
-import hashlib
-import json
 from datetime import datetime
 from enum import Enum
 from typing import List, Optional
-from uuid import uuid4
 
-from fastapi import APIRouter, Body, Depends, HTTPException, Query, Response, BackgroundTasks, Header
+from fastapi import APIRouter, Depends, HTTPException, Response, BackgroundTasks, Header
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import BaseModel, Field
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, update, delete
+from sqlalchemy import select, delete
 
 # When running as a package
 from ..database import get_db_session
@@ -107,7 +104,6 @@ async def get_current_user_async(
         HTTPException: If token is missing, invalid, or user not found (401 Unauthorized)
     """
     from ..auth import JWT_ISSUER, JWT_AUDIENCE, SECRET_KEY, ALGORITHM
-    from ..models import User
     from fastapi import HTTPException, status
     from jose import JWTError
 

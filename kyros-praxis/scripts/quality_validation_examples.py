@@ -14,7 +14,7 @@ from datetime import datetime, timedelta
 # Add the packages directory to the path
 sys.path.insert(0, str(Path(__file__).parent.parent / "packages"))
 
-from packages.quality_validation.quality_metrics import Role, QualityLevel, QualityMetric
+from packages.quality_validation.quality_metrics import Role
 from packages.quality_validation.role_protocols import ProtocolPhase
 from packages.quality_validation import QualityValidationSystem
 
@@ -118,7 +118,7 @@ async def example_benchmarking():
         )
         
         if "error" not in trend_analysis:
-            print(f"📉 Trend Analysis for Implementer Code Quality:")
+            print("📉 Trend Analysis for Implementer Code Quality:")
             print(f"   Trend Direction: {trend_analysis['trend_direction']}")
             print(f"   Current Value: {trend_analysis['current_value']:.1f}")
             print(f"   Average Value: {trend_analysis['average_value']:.1f}")

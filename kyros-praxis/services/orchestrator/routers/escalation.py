@@ -28,31 +28,24 @@ ENDPOINTS:
 import logging
 from datetime import datetime
 from typing import Any, Dict, List, Optional
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
 from .escalation_triggers import (
-    EscalationDetector,
-    EscalationAssessment,
     should_escalate_task
 )
 from .context_analysis import (
-    ContextAnalyzer,
-    ContextAnalysisResult,
     analyze_task_context
 )
 from .escalation_workflow import (
-    EscalationEngine,
     submit_escalation,
     get_escalation_status,
     get_escalation_stats
 )
 from .trigger_validation import (
-    TriggerValidator,
     validate_escalation_trigger,
     get_validation_statistics
 )
-from .database import get_db
 
 logger = logging.getLogger(__name__)
 
@@ -180,7 +173,7 @@ async def submit_escalation_request(request: EscalationRequest):
             confidence=workflow.assessment.confidence if workflow.assessment else 0.0,
             recommended_model=workflow.assessment.recommended_model if workflow.assessment else "glm-4.5",
             fallback_model=workflow.assessment.fallback_model if workflow.assessment else "glm-4.5",
-            message=f"Escalation request submitted successfully"
+            message="Escalation request submitted successfully"
         )
     
     except Exception as e:

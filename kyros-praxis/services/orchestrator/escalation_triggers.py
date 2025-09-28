@@ -149,12 +149,10 @@ See Also:
 """
 
 import logging
-import re
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple
-from datetime import datetime
+from typing import List, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -419,7 +417,7 @@ class EscalationDetector:
                     triggers.append(EscalationTrigger(
                         reason=EscalationReason.PERFORMANCE_CRITICAL,
                         priority=EscalationPriority.MEDIUM,
-                        description=f"Performance optimization task",
+                        description="Performance optimization task",
                         evidence=[f"Performance keywords: {', '.join(matches)}"],
                         confidence=0.6,
                         code_indicators=keywords
@@ -428,7 +426,7 @@ class EscalationDetector:
                     triggers.append(EscalationTrigger(
                         reason=EscalationReason.DATABASE_SCHEMA_CHANGES,
                         priority=EscalationPriority.HIGH,
-                        description=f"Database-related changes",
+                        description="Database-related changes",
                         evidence=[f"Database keywords: {', '.join(matches)}"],
                         confidence=0.7,
                         code_indicators=keywords

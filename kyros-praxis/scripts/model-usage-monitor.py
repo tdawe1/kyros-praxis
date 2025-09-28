@@ -5,11 +5,9 @@ Tracks GLM-4.5 and Claude 4.1 Opus usage patterns, costs, and performance metric
 """
 
 import json
-import time
 import datetime
 from pathlib import Path
-from typing import Dict, List, Any
-import subprocess
+from typing import Dict, Any
 import sys
 from zoneinfo import ZoneInfo
 
@@ -120,18 +118,18 @@ class ModelUsageMonitor:
         savings_analysis = self.get_cost_savings_analysis()
         summary = self.get_usage_summary(1)
         
-        print(f"\n📊 Daily Model Usage Report")
-        print(f"=" * 50)
+        print("\n📊 Daily Model Usage Report")
+        print("=" * 50)
         print(f"Date: {datetime.datetime.now(ZoneInfo('UTC')).strftime('%Y-%m-%d')}")
         print(f"Total Cost Today: ${summary['total_cost_usd']:.4f}")
         print(f"Total Tokens: {summary['total_tokens']:,}")
         
-        print(f"\n📈 Model Distribution:")
+        print("\n📈 Model Distribution:")
         for model, cost in summary["model_usage"].items():
             percentage = (cost / summary["total_cost_usd"] * 100) if summary["total_cost_usd"] > 0 else 0
             print(f"  {model}: ${cost:.4f} ({percentage:.1f}%)")
         
-        print(f"\n💰 Cost Savings Analysis (30-day):")
+        print("\n💰 Cost Savings Analysis (30-day):")
         print(f"  Actual Cost: ${savings_analysis['actual_cost_usd']:.2f}")
         print(f"  All-Claude Cost: ${savings_analysis['all_claude_cost_usd']:.2f}")
         print(f"  Savings: ${savings_analysis['savings_usd']:.2f} ({savings_analysis['savings_percentage']:.1f}%)")
@@ -140,9 +138,9 @@ class ModelUsageMonitor:
         
         # Check if meeting targets
         if savings_analysis['savings_percentage'] >= savings_analysis['target_savings_percentage']:
-            print(f"  ✅ Meeting savings target!")
+            print("  ✅ Meeting savings target!")
         else:
-            print(f"  ⚠️  Below savings target")
+            print("  ⚠️  Below savings target")
 
 def main():
     """Main execution function."""

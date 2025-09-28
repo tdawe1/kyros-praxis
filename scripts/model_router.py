@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import json, time
+import json
 from datetime import datetime, timedelta
 from pathlib import Path
 

@@ -4,9 +4,6 @@ Test script for Jobs API endpoints
 """
 import asyncio
 import httpx
-import json
-import time
-from datetime import datetime, timedelta
 
 BASE_URL = "http://localhost:8000"
 
@@ -160,7 +157,7 @@ async def test_job_metrics():
         response = await client.get("/api/v1/jobs/metrics", headers=headers)
         if response.status_code == 200:
             metrics = response.json()
-            print(f"✅ Job Metrics:")
+            print("✅ Job Metrics:")
             print(f"   Total Jobs: {metrics['total_jobs']}")
             print(f"   Pending: {metrics['pending_jobs']}")
             print(f"   Running: {metrics['running_jobs']}")

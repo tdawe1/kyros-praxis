@@ -14,13 +14,13 @@ import time
 import asyncio
 import subprocess
 from pathlib import Path
-from typing import Dict, List, Any, Optional
+from typing import Dict, List, Any
 from datetime import datetime
 import logging
 
 # Import test modules
 from test_escalation_scenarios import EscalationTestScenarios, Role, EscalationModel
-from test_escalation_integration import IntegrationTestSuite, EscalationEngine
+from test_escalation_integration import IntegrationTestSuite
 from scripts.validate_escalation_workflows import EscalationWorkflowValidator
 from scripts.benchmark_escalation_performance import PerformanceBenchmark
 
@@ -83,10 +83,10 @@ class ComprehensiveTestRunner:
                     for trigger in scenario.triggers:
                         if trigger.should_escalate:
                             assert trigger.expected_model == EscalationModel.CLAUDE_41_OPUS, \
-                                f"Escalation scenario should use Claude 4.1 Opus"
+                                "Escalation scenario should use Claude 4.1 Opus"
                         else:
                             assert trigger.expected_model == EscalationModel.GLM_45, \
-                                f"Non-escalation scenario should use GLM-4.5"
+                                "Non-escalation scenario should use GLM-4.5"
                     
                     results['scenarios_validated'] += 1
                     
@@ -443,14 +443,14 @@ class ComprehensiveTestRunner:
         
         # Summary statistics
         summary = report['summary']
-        print(f"\n📊 Test Statistics:")
+        print("\n📊 Test Statistics:")
         print(f"  Total Tests: {summary['total_tests']}")
         print(f"  ✅ Passed: {summary['passed_tests']}")
         print(f"  ❌ Failed: {summary['failed_tests']}")
         print(f"  ⚠️  Warnings: {summary['warning_tests']}")
         
         # Phase summaries
-        print(f"\n📋 Phase Results:")
+        print("\n📋 Phase Results:")
         phases = {
             'scenarios': 'Scenario Tests',
             'validation': 'Validation Tests',
@@ -473,7 +473,7 @@ class ComprehensiveTestRunner:
         
         # Recommendations
         if report['recommendations']:
-            print(f"\n💡 Recommendations:")
+            print("\n💡 Recommendations:")
             for i, rec in enumerate(report['recommendations'], 1):
                 print(f"  {i}. {rec}")
         
