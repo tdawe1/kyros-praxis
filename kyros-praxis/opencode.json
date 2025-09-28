@@ -1,0 +1,23 @@
+{
+  "providers": {
+    "openai": {
+      "apiKey": "$OPENAI_API_KEY"
+    }
+  },
+  "mcpServers": {
+    "kyros-mcp": {
+      "command": "python",
+      "args": ["integrations/kyros-mcp/main.py"],
+      "env": {
+        "KYROS_API_BASE": "http://localhost:8000"
+      }
+    },
+    "zen-mcp": {
+      "command": "python", 
+      "args": ["integrations/zen-mcp/main.py"]
+    }
+  },
+  "instructions": [
+    "AGENTS.md"
+  ]
+}
