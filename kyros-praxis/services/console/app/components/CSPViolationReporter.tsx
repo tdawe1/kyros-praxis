@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { initCSPViolationReporting } from '@/lib/csp-violation-report';
+import { initCSPViolationReporting } from '../../lib/csp-violation-report';
 
 /**
  * CSP Violation Reporter Component

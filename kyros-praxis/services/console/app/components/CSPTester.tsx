@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@carbon/react';
-import { testCSPViolation } from '@/lib/csp-violation-report';
+import { testCSPViolation } from '../../lib/csp-violation-report';
 
 /**
  * CSP Testing Component (Development Only)

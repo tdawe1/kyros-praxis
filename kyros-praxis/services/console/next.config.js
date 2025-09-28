@@ -14,10 +14,10 @@ const nextConfig = {
               ? [
                   "default-src 'self'",
                   "script-src 'self' 'unsafe-eval' 'unsafe-inline'", // Required for Next.js dev and Sentry
-                  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com", // Required for Carbon and Google Fonts
+                  "style-src 'self' 'unsafe-inline'", // Required for Carbon
                   "img-src 'self' data: blob: https:",
-                  "font-src 'self' data: https://fonts.gstatic.com",
-                  "connect-src 'self' http://localhost:* ws://localhost:* https://o4506912905486336.ingest.us.sentry.io https://fonts.googleapis.com https://fonts.gstatic.com",
+                  "font-src 'self' data:",
+                  "connect-src 'self' http://localhost:* ws://localhost:* https://o4506912905486336.ingest.us.sentry.io",
                   "frame-ancestors 'none'",
                   "base-uri 'self'",
                   "form-action 'self'",
@@ -26,9 +26,9 @@ const nextConfig = {
               : [
                   "default-src 'self'",
                   "script-src 'self'",
-                  "style-src 'self' https://fonts.googleapis.com",
+                  "style-src 'self'",
                   "img-src 'self' data: https:",
-                  "font-src 'self' data: https://fonts.gstatic.com",
+                  "font-src 'self' data:",
                   "connect-src 'self' https://*.kyros-praxis.com wss://*.kyros-praxis.com https://o4506912905486336.ingest.us.sentry.io",
                   "frame-ancestors 'none'",
                   "base-uri 'self'",
