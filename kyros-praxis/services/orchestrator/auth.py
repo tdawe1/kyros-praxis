@@ -167,6 +167,25 @@ class Login(BaseModel):
     password: str
 
 
+class RefreshTokenResponse(BaseModel):
+    """
+    Refresh token response model for token refresh endpoint.
+    
+    This model represents the structure of responses from the token refresh
+    endpoint, containing new access and refresh tokens.
+    
+    Attributes:
+        access_token (str): New JWT access token string
+        token_type (str): Type of token (typically "bearer")
+        expires_in (int): Token expiration time in seconds
+        refresh_token (str): New refresh token for future refreshes
+    """
+    access_token: str
+    token_type: str = "bearer"
+    expires_in: int
+    refresh_token: str
+
+
 class TokenData(BaseModel):
     """
     Token data model for decoding JWT payload.

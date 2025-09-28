@@ -2,8 +2,7 @@ import os
 from logging.config import fileConfig
 
 from alembic import context
-from alembic.configuration import async_engine_from_config
-from sqlalchemy import pool
+from sqlalchemy import engine_from_config, pool
 from sqlalchemy.engine import Connection
 
 # this is the Alembic Config object, which provides
