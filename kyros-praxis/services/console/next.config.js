@@ -13,26 +13,28 @@ const nextConfig = {
             value: isDevelopment
               ? [
                   "default-src 'self'",
-                  "script-src 'self' 'unsafe-eval'", // Required for Next.js dev
-                  "style-src 'self' 'unsafe-inline'", // Required for Carbon
+                  "script-src 'self' 'unsafe-eval' 'unsafe-inline'", // Required for Next.js dev and Sentry
+                  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com", // Required for Carbon and Google Fonts
                   "img-src 'self' data: blob: https:",
-                  "font-src 'self' data:",
-                  "connect-src 'self' http://localhost:* ws://localhost:*",
+                  "font-src 'self' data: https://fonts.gstatic.com",
+                  "connect-src 'self' http://localhost:* ws://localhost:* https://o4506912905486336.ingest.us.sentry.io https://fonts.googleapis.com https://fonts.gstatic.com",
                   "frame-ancestors 'none'",
                   "base-uri 'self'",
                   "form-action 'self'",
+                  "report-uri /api/v1/security/csp-report",
                 ].join('; ')
               : [
                   "default-src 'self'",
                   "script-src 'self'",
-                  "style-src 'self'",
+                  "style-src 'self' https://fonts.googleapis.com",
                   "img-src 'self' data: https:",
-                  "font-src 'self' data:",
-                  "connect-src 'self' https://*.kyros-praxis.com wss://*.kyros-praxis.com",
+                  "font-src 'self' data: https://fonts.gstatic.com",
+                  "connect-src 'self' https://*.kyros-praxis.com wss://*.kyros-praxis.com https://o4506912905486336.ingest.us.sentry.io",
                   "frame-ancestors 'none'",
                   "base-uri 'self'",
                   "form-action 'self'",
                   "upgrade-insecure-requests",
+                  "report-uri /api/v1/security/csp-report",
                 ].join('; '),
           },
           {

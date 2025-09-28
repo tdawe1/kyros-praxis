@@ -260,7 +260,7 @@ export default function JobDetailPage() {
                 {JSON.stringify(job.result, null, 2)}
               </CodeSnippet>
             ) : (
-              <p>No result available. Job may still be running or hasn't produced output yet.</p>
+              <p>No result available. Job may still be running or hasn&apos;t produced output yet.</p>
             )}
           </TabPanel>
           {job.error && (
