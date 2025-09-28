@@ -17,6 +17,7 @@ const nextConfig = {
                   "style-src 'self' 'unsafe-inline'", // Required for Carbon
                   "img-src 'self' data: blob: https:",
                   "font-src 'self' data:",
+                  "object-src 'none'",
                   "connect-src 'self' http://localhost:* ws://localhost:*",
                   "frame-ancestors 'none'",
                   "base-uri 'self'",
@@ -28,6 +29,7 @@ const nextConfig = {
                   "style-src 'self'",
                   "img-src 'self' data: https:",
                   "font-src 'self' data:",
+                  "object-src 'none'",
                   "connect-src 'self' https://*.kyros-praxis.com wss://*.kyros-praxis.com",
                   "frame-ancestors 'none'",
                   "base-uri 'self'",
@@ -61,7 +63,7 @@ const nextConfig = {
           },
           {
             key: 'Permissions-Policy',
-            value: 'camera=(), microphone=(), geolocation=()',
+            value: 'camera=(), microphone=(), geolocation=(), accelerometer=(), autoplay=(), encrypted-media=(), fullscreen=(), gyroscope=(), magnetometer=(), payment=(), usb=()',
           },
         ],
       },
