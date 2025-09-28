@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-hot-toast';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableHeader, TableRow } from '@carbon/react';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableHeader, TableRow, Button } from '@carbon/react';
 import { Button } from '@carbon/react';
 
 interface Lease {
@@ -99,10 +99,13 @@ export default function LeasesPage() {
   };
 
   return (
-    <div>
-      <h1>Leases</h1>
+    <div data-testid="leases-page">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+        <h1>Leases</h1>
+        <Button data-testid="add-lease">Add Lease</Button>
+      </div>
       <p>Connection Status: {connected ? 'Connected' : 'Disconnected'}</p>
-      <TableContainer>
+      <TableContainer data-testid="leases-table">
         <Table>
           <TableHead>
             <TableRow>

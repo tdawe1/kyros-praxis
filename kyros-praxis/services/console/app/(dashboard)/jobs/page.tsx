@@ -100,14 +100,14 @@ export default function JobsPage() {
 
   if (authStatus === "loading") {
     return (
-      <div className="cds--content">
+      <div className="cds--content" data-testid="jobs-page">
         <DataTableSkeleton columnCount={headers.length} rowCount={8} showHeader showToolbar />
       </div>
     );
   }
 
   return (
-    <div className="cds--content">
+    <div className="cds--content" data-testid="jobs-page">
       {jobsQuery.isError && (
         <InlineNotification
           kind="error"
@@ -120,7 +120,7 @@ export default function JobsPage() {
         rows={rows}
         headers={headers}
         render={({ rows, headers, getHeaderProps, getRowProps, getTableProps }) => (
-          <TableContainer title="Jobs" description="Manage orchestrator jobs">
+          <TableContainer title="Jobs" description="Manage orchestrator jobs" data-testid="jobs-table">
             <TableToolbar>
               <TableToolbarContent>
                 <TableToolbarSearch
@@ -130,7 +130,7 @@ export default function JobsPage() {
                 />
                 <div style={{ display: "flex", gap: 8 }}>
                   {!creating ? (
-                    <Button renderIcon={Add} kind="primary" onClick={() => setCreating(true)}>
+                    <Button renderIcon={Add} kind="primary" onClick={() => setCreating(true)} data-testid="add-job">
                       New Job
                     </Button>
                   ) : (

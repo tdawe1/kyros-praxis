@@ -81,9 +81,12 @@ export default function TasksPage() {
 
   if (tasks.length > 0) {
     return (
-      <div className="kanban">
-        <h1>Tasks</h1>
-        <div className="kanban-board">
+      <div className="kanban" data-testid="tasks-page">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+          <h1>Tasks</h1>
+          <button data-testid="add-task">Add Task</button>
+        </div>
+        <div className="kanban-board" data-testid="tasks-table">
           <div className="kanban-column">
             <h2>Pending</h2>
             {tasks.filter((task: Task) => task.status === 'pending').map((task: Task) => (
