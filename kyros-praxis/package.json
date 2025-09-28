@@ -26,6 +26,6 @@
   "author": "Kyros Team",
   "license": "MIT",
   "dependencies": {
-    "@sentry/nextjs": "^10.11.0"
+    "@sentry/nextjs": "^10.12.0"
   }
 }
