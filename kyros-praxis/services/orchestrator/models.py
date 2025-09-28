@@ -3,7 +3,8 @@ Database models for the Kyros Orchestrator service.
 
 This module defines the SQLAlchemy ORM models used by the orchestrator service
 to store and retrieve data from the database. Models include Job, Event, Task,
-and User entities with appropriate relationships and constraints.
+User entities with appropriate relationships and constraints, plus advanced
+agentic workflow models for sophisticated agent coordination.
 
 The orchestrator system uses these models to:
 - Track work units (Jobs) through their lifecycle
@@ -118,6 +119,8 @@ from uuid import uuid4
 
 from sqlalchemy import JSON, Column, DateTime, Index, Integer, String, func
 from sqlalchemy.ext.asyncio import AsyncAttrs
+
+# Agentic models will be imported later to avoid circular imports
 from sqlalchemy.orm import DeclarativeBase
 
 

@@ -8,6 +8,10 @@ import uuid
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
+# Import MCP security module
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from mcp_security import create_mcp_security, MCPSecurity
+
 
 def now_ms() -> int:
     return int(time.time() * 1000)
@@ -20,6 +24,23 @@ CONTEXT_DIR = ZEN_ROOT / "context"
 
 AGENTS_FILE = STATE_DIR / "agents.json"
 SESSIONS_FILE = STATE_DIR / "sessions.json"
+
+# Initialize MCP Security
+MCP_SECURITY = create_mcp_security(
+    server_name="zen-mcp",
+    jwt_secret=os.getenv("MCP_JWT_SECRET"),
+    api_keys=os.getenv("ZEN_API_KEYS", "").split(",") if os.getenv("ZEN_API_KEYS") else [],
+    allowed_roots=[
+        str(ZEN_ROOT),
+        str(STATE_DIR),
+        str(CONTEXT_DIR),
+        "/tmp/zen"  # Allow temporary files
+    ],
+    authorization_servers=[
+        os.getenv("ZEN_AUTH_SERVER", "http://kyros_orchestrator:8000/auth")
+    ],
+    resource_uri="urn:kyros:mcp:zen"
+)
 
 
 def ensure_dirs() -> None:
@@ -53,12 +74,42 @@ def write_json_atomic(path: Path, data: Any) -> None:
 
 
 def context_file(session_id: str) -> Path:
-    return CONTEXT_DIR / f"{session_id}.jsonl"
+    # Validate path to prevent directory traversal
+    safe_session_id = "".join(c for c in session_id if c.isalnum() or c in "-_")
+    if safe_session_id != session_id:
+        raise ValueError(f"Invalid session ID: {session_id}")
+    
+    file_path = CONTEXT_DIR / f"{safe_session_id}.jsonl"
+    
+    # Validate against filesystem boundaries
+    is_allowed, resolved_path = MCP_SECURITY.validate_filesystem_path(str(file_path))
+    if not is_allowed:
+        raise PermissionError(f"Access denied to path: {file_path}")
+    
+    return resolved_path
 
 
 def send(obj: Dict[str, Any]) -> None:
     sys.stdout.write(json.dumps(obj) + "\n")
     sys.stdout.flush()
+
+def send_error(req_id, code: int, message: str, details: dict = None):
+    """Send standardized error response."""
+    error_response = MCP_SECURITY.create_error_response(code, message, details)
+    if req_id:
+        error_response["id"] = req_id
+    send(error_response)
+
+def validate_request_auth(headers: dict, method: str = "GET") -> tuple[bool, dict]:
+    """Validate request authentication and return auth context."""
+    is_authorized, auth_context = MCP_SECURITY.validate_request(headers, method)
+    
+    if is_authorized:
+        MCP_SECURITY.audit_log("auth_success", auth_context)
+    else:
+        MCP_SECURITY.audit_log("auth_failure", auth_context)
+    
+    return is_authorized, auth_context
 
 
 def respond(req_id, result=None, error=None):
@@ -75,19 +126,29 @@ def respond(req_id, result=None, error=None):
 
 
 def initialize_result():
+    base_capabilities = {
+        "tools": {},
+        "resources": {},
+        "prompts": {},
+        "logging": {},
+        "sampling": {},
+    }
+    
+    # Enhance with security information
+    capabilities = MCP_SECURITY.create_capabilities_response(base_capabilities)
+    
     return {
         "serverInfo": {
             "name": "zen-mcp",
             "version": os.getenv("ZEN_MCP_VERSION", "0.1.0"),
+            "security": {
+                "oauth_resource_server": True,
+                "resource_uri": MCP_SECURITY.config.resource_uri,
+                "authentication_required": True
+            }
         },
-        "protocolVersion": os.getenv("MCP_PROTOCOL_VERSION", "1.0"),
-        "capabilities": {
-            "tools": {},
-            "resources": {},
-            "prompts": {},
-            "logging": {},
-            "sampling": {},
-        },
+        "protocolVersion": os.getenv("MCP_PROTOCOL_VERSION", "2025-06-01"),
+        "capabilities": capabilities,
     }
 
 
@@ -339,8 +400,19 @@ def close_session(sid: str) -> Dict[str, Any]:
     return {"ok": True}
 
 
-def call_tool(name: str, args: Dict[str, Any]):
+def call_tool(name: str, args: Dict[str, Any], auth_context: Dict[str, Any] = None):
     ensure_dirs()
+    # Authorization checks for different operations
+    write_operations = {"zen/register_agent", "zen/create_session", "zen/add_context", "zen/set_kv", "zen/close_session"}
+    if name in write_operations:
+        if not auth_context or "write" not in auth_context.get("scopes", []):
+            return {
+                "ok": False,
+                "error": "insufficient_privileges",
+                "message": "Write operations require 'write' scope",
+                "required_scopes": ["write"]
+            }
+    
     if name == "zen/register_agent":
         aid = args.get("id") or str(uuid.uuid4())
         agent = {"id": aid}
@@ -350,6 +422,10 @@ def call_tool(name: str, args: Dict[str, Any]):
             agent["capabilities"] = args["capabilities"]
         if isinstance(args.get("metadata"), dict):
             agent["metadata"] = args["metadata"]
+        
+        # Add audit trail
+        agent["created_by"] = auth_context.get("user_id") if auth_context else "unknown"
+        
         upsert_agent(agent)
         return {"ok": True, "agent": agent}
 
@@ -368,12 +444,23 @@ def call_tool(name: str, args: Dict[str, Any]):
         return {"ok": True, "session": session}
 
     if name == "zen/add_context":
+        # Validate session access
+        session_id = args.get("sessionId")
+        if not session_id:
+            return {"ok": False, "error": "session_id_required"}
+        
+        # Add user context to metadata
+        metadata = args.get("metadata", {})
+        if auth_context:
+            metadata["added_by"] = auth_context.get("user_id")
+            metadata["auth_type"] = auth_context.get("auth_type")
+        
         return append_context(
-            sid=args.get("sessionId"),
+            sid=session_id,
             role=args.get("role"),
             provider=args.get("provider"),
             content=args.get("content"),
-            metadata=args.get("metadata"),
+            metadata=metadata,
         )
 
     if name == "zen/get_context":
@@ -411,21 +498,57 @@ def main():
                 }
             )
             continue
+        
         method = req.get("method")
         req_id = req.get("id")
+        headers = req.get("headers", {})
+
+        # Special handling for initialize - no auth required for handshake
         if method == "initialize":
             respond(req_id, initialize_result())
             send({"jsonrpc": "2.0", "method": "notifications/tools/list_changed"})
             continue
+
+        # OAuth protected resource metadata endpoint
+        if method == "resources/oauth-protected-resource":
+            respond(req_id, {"metadata": MCP_SECURITY.get_protected_resource_metadata()})
+            continue
+
+        # Authenticate all other requests
+        is_authorized, auth_context = validate_request_auth(headers, method)
+        if not is_authorized:
+            send_error(req_id, 401, "Authentication required", {
+                "www_authenticate": f'Bearer realm="zen-mcp"',
+                "supported_methods": ["bearer", "api_key"]
+            })
+            continue
+
+        # Authorized requests
         if method == "tools/list":
             respond(req_id, tools_list())
             continue
+            
         if method == "tools/call":
             params = req.get("params") or {}
             name = params.get("name")
             args = params.get("arguments") or {}
-            respond(req_id, call_tool(name, args))
+            
+            try:
+                result = call_tool(name, args, auth_context)
+                respond(req_id, result)
+                
+                # Audit log the tool call
+                MCP_SECURITY.audit_log("tool_call", auth_context, {
+                    "tool_name": name,
+                    "arguments": {k: "<redacted>" if k in ["password", "token", "secret"] else v 
+                                for k, v in args.items()}
+                })
+            except (ValueError, PermissionError) as e:
+                send_error(req_id, 403, f"Access denied: {str(e)}")
+            except Exception as e:
+                send_error(req_id, 500, f"Internal error: {str(e)}")
             continue
+            
         respond(
             req_id, error={"code": -32601, "message": f"Method not found: {method}"}
         )

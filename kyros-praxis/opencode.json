@@ -5,10 +5,7 @@
   "mcp": {
     "kyros-mcp": {
       "type": "local",
-      "command": ["python", "integrations/kyros-mcp/main.py"],
-      "env": {
-        "KYROS_API_BASE": "http://localhost:8000"
-      }
+      "command": ["python", "integrations/kyros-mcp/main.py"]
     },
     "zen-mcp": {
       "type": "local",
