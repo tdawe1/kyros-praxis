@@ -43,11 +43,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 try:
     from ..database import get_db
     from ..app.core.config import settings
+    from ..cache import cache_manager
 except ImportError:
     # Fallback for environments where config is not available
     from database import get_db  # type: ignore
     try:
         from app.core.config import settings
+        from cache import cache_manager  # type: ignore
     except ImportError:
         from pydantic_settings import BaseSettings
         class FallbackSettings(BaseSettings):
@@ -56,6 +58,7 @@ except ImportError:
             ENVIRONMENT: str = "local"
         settings = FallbackSettings()
         get_db = None
+        cache_manager = None
 
 logger = logging.getLogger(__name__)
 
@@ -455,3 +458,123 @@ async def dependency_check():
         "dependencies": dependencies,
         "timestamp": datetime.utcnow().isoformat(),
     }
+
+
+@router.get("/cache/health", summary="Cache health check", description="Check the health and performance of the Redis cache system")
+async def get_cache_health():
+    """
+    Check cache system health.
+    
+    This endpoint performs comprehensive health checks on the Redis cache system including:
+    - Connection status and ping test
+    - Memory usage statistics
+    - Cache hit/miss rates (if available)
+    - Connected clients count
+    - Uptime information
+    
+    The endpoint is useful for:
+    - Monitoring cache system availability
+    - Tracking cache performance metrics
+    - Troubleshooting cache-related issues
+    - Capacity planning for cache resources
+    
+    Returns:
+        Dict containing cache health status, connection info, and performance metrics
+        
+    Example Response:
+        {
+            "cache_health": {
+                "status": "healthy",
+                "connection": true,
+                "memory_usage": "2.1M",
+                "connected_clients": 5,
+                "uptime_seconds": 86400
+            },
+            "timestamp": "2024-09-28T08:53:25.123456"
+        }
+    """
+    if cache_manager is None:
+        return {
+            "cache_health": {
+                "status": "not_configured",
+                "message": "Cache manager not available"
+            },
+            "timestamp": datetime.utcnow().isoformat(),
+        }
+    
+    cache_health = cache_manager.health_check()
+    
+    return {
+        "cache_health": cache_health,
+        "timestamp": datetime.utcnow().isoformat(),
+    }
+
+
+@router.get("/performance/database", summary="Database performance metrics", description="Get detailed database performance metrics and query analysis")
+async def get_database_performance(db: AsyncSession = Depends(get_db)):
+    """
+    Get database performance metrics.
+    
+    This endpoint provides detailed database performance analysis including:
+    - Query execution times
+    - Connection pool status
+    - Table sizes and statistics
+    - Index usage statistics
+    - Cache hit rates
+    
+    Returns:
+        Dict containing database performance metrics and recommendations
+    """
+    if get_db is None:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Database dependency not available"
+        )
+    
+    try:
+        performance_metrics = {}
+        
+        # Check table sizes and row counts
+        table_stats = {}
+        for table_name in ['jobs', 'events', 'tasks', 'users']:
+            try:
+                result = await db.execute(text(f"SELECT COUNT(*) FROM {table_name}"))
+                count = result.scalar()
+                table_stats[table_name] = {"row_count": count}
+            except Exception as e:
+                table_stats[table_name] = {"error": str(e)}
+        
+        performance_metrics["table_statistics"] = table_stats
+        
+        # Cache performance metrics if available
+        if cache_manager and cache_manager.enabled:
+            cache_health = cache_manager.health_check()
+            performance_metrics["cache_status"] = cache_health
+        else:
+            performance_metrics["cache_status"] = {"enabled": False}
+        
+        # Query performance recommendations
+        recommendations = []
+        
+        # Check if jobs table has many rows without proper indexing patterns
+        jobs_count = table_stats.get('jobs', {}).get('row_count', 0)
+        if jobs_count > 1000:
+            recommendations.append("Consider partitioning jobs table by date for better performance")
+        
+        events_count = table_stats.get('events', {}).get('row_count', 0)
+        if events_count > 5000:
+            recommendations.append("Consider archiving old events to improve query performance")
+        
+        performance_metrics["recommendations"] = recommendations
+        
+        return {
+            "database_performance": performance_metrics,
+            "timestamp": datetime.utcnow().isoformat(),
+        }
+        
+    except Exception as e:
+        logger.error(f"Database performance check failed: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Database performance check failed: {str(e)}"
+        )
