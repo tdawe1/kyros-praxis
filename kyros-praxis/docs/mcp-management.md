@@ -2,7 +2,7 @@
 
 This document provides clear instructions for managing the MCP (Model Context Protocol) servers in the Kyros Praxis project. The MCP servers are local Node.js processes that provide specialized tools for agentic workflows, such as filesystem access, sequential thinking, Puppeteer integration, and more. They are not managed by Docker (only Qdrant is dockerized in `docker-compose.integrations.yml`), so management involves local scripts, monitoring, and troubleshooting.
 
-The servers are defined in `.kilocode/mcp.json` and started via npm exec or uvx commands. To ensure stability and proper stdin/TTY support (as discussed in the previous diagnosis), we recommend dockerizing them for production-like environments. This guide covers both local and dockerized management.
+The servers are defined in `mcp.json` (repo root) and started via npm exec or uvx commands. To ensure stability and proper stdin/TTY support (as discussed in the previous diagnosis), we recommend dockerizing them for production-like environments. This guide covers both local and dockerized management.
 
 ## Prerequisites
 
@@ -10,7 +10,7 @@ The servers are defined in `.kilocode/mcp.json` and started via npm exec or uvx 
 - **npm or uv**: For running the servers locally.
 - **Docker**: For dockerized setup (install via your package manager or Docker Desktop).
 - **Git**: To manage branches and stage changes.
-- **mcp.json**: Ensure it's configured correctly in `.kilocode/mcp.json` (see [Configuration](#configuration) below).
+- **mcp.json**: Ensure it's configured correctly at the repo root (see [Configuration](#configuration) below). For attaching your MCP client to dockerized services, prefer the wrapper in `scripts/mcp-run.sh`.
 
 ## Step 1: Checkout to a New Branch
 
@@ -24,28 +24,10 @@ This isolates your changes from the main branch. Commit the updated files (e.g.,
 
 ## Step 2: Configuration
 
-The MCP servers are configured in `.kilocode/mcp.json`. This file lists all servers (e.g., `mcp_zen`, `mcp_coderabbit`, `mcp_composer_trade`, `mcp_exasearch`, `mcp_filesystem`, `mcp_github`, `mcp_notion`, `mcp_puppeteer`, `mcp_railway`, `mcp_vercel`, `mcp_zen_tools`, `mcp_kyros_collab`, `mcp_fireproof`) with their commands, env vars, and dependencies.
+The MCP servers are configured in `mcp.json` (repo root). This file lists servers (e.g., `zen`, `filesystem`, `github`, `notion`, `sequentialthinking`, `composer-trade`, `exa`, `context7`, `redis`, `fireproof`) with their commands, env vars, and dependencies. For dockerized runs, see `docker-compose.integrations.yml` and use `scripts/mcp-run.sh` to spawn a single service with stdio attached from your MCP client.
 
 Example snippet from mcp.json:
-```json
-{
-  "mcp_servers": {
-    "mcp_filesystem": {
-      "command": "mcp-server-filesystem",
-      "env": {
-        "MCP_CONFIG_PATH": "/home/thomas/kyros-praxis/mcp.json"
-      }
-    },
-    "mcp_puppeteer": {
-      "command": "mcp-server-puppeteer",
-      "env": {
-        "BROWSER_TYPE": "chromium"
-      }
-    }
-    // ... other servers
-  }
-}
-```
+See `mcp-servers.local.json.example` for examples of wiring your client to compose services via `scripts/mcp-run.sh`.
 
 - **Update Config**: Edit `.kilocode/mcp.json` to add or modify servers. Ensure paths (e.g., for data volumes) are absolute for dockerized runs.
 - **Secrets**: Never commit sensitive keys (e.g., API tokens). Use `.env` files and reference them (e.g., `MCP_GITHUB_TOKEN=${GITHUB_TOKEN}`).
@@ -57,14 +39,24 @@ Local runs use npm exec or uvx for quick development. These processes run in the
 ### Starting Servers
 Run each server individually or use a script to start all:
 
-1. **Single Server**:
-   ```bash
-   # Example for mcp_filesystem
-   cd /home/thomas/kyros-praxis/kyros-praxis
-   npm exec mcp-server-filesystem -- --config .kilocode/mcp.json
+1. **Single Server (dockerized via stdio wrapper)**:
+   Point your MCP client to use:
+   ```json
+   {
+     "mcpServers": {
+       "zen": { "command": "bash", "args": ["kyros-praxis/scripts/mcp-run.sh", "mcp_zen"] }
+     }
+   }
    ```
 
-2. **All Servers (Recommended Script)**:
+2. **Local (non-Docker) MCP servers**:
+   We provide helper scripts now:
+   - `scripts/start-mcp-servers.sh` starts selected local MCP servers in the background with logs under `logs/`.
+     - Configure with `MCP_LOCAL_SERVERS` (space-separated). Defaults to `filesystem sequentialthinking`.
+     - Example: `MCP_LOCAL_SERVERS="filesystem memory puppeteer time" bash scripts/start-mcp-servers.sh`
+   - `scripts/stop-mcp-servers.sh` stops those processes using pidfiles (falls back to `pkill` if needed).
+
+3. **All Services (docker-compose)**:
    Create or update `scripts/start-mcp-servers.sh`:
    ```bash
    #!/bin/bash

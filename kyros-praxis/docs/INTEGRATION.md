@@ -26,3 +26,7 @@ Environment:
 
 ## Workflow
 - Propose tasks → create GitHub issues → update tasks.json → implement → PR references issue → merge → close issue.
+
+## Quick Start Reference
+- Backend: `docs/QUICK_START.md` — run orchestrator locally, use ETags, and tail events via SSE.
+- Frontend: `docs/QUICK_START_FRONTEND.md` — run the console, connect to orchestrator, and run FE tests.

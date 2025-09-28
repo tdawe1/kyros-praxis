@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: kyros-postgres-local
+    environment:
+      POSTGRES_DB: kyros
+      POSTGRES_USER: kyros_user
+      POSTGRES_PASSWORD: localpass123
+    volumes:
+      - postgres_local_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kyros_user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: kyros-redis-local
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_local_data:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_local_data:
+  redis_local_data:

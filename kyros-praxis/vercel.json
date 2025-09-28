@@ -1,0 +1,49 @@
+{
+  "version": 2,
+  "framework": "nextjs",
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/next"
+    }
+  ],
+  "env": {
+    "NEXT_PUBLIC_API_BASE_URL": "https://api.kyros-praxis.com",
+    "NEXT_PUBLIC_SENTRY_DSN": "@sentry_dsn",
+    "NEXT_PUBLIC_APP_ENV": "production"
+  },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https: wss:; font-src 'self' data:; frame-ancestors 'none';"
+        }
+      ]
+    }
+  ],
+  "images": {
+    "domains": [
+      "kyros-praxis.com",
+      "api.kyros-praxis.com"
+    ]
+  },
+  "github": {
+    "silent": true
+  },
+  "buildCommand": "cd services/console && npm run build",
+  "outputDirectory": "services/console/.next"
+}

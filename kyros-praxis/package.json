@@ -15,7 +15,7 @@
   "devDependencies": {
     "child_process": "^1.0.2",
     "commander": "^14.0.1",
-    "fs-extra": "^11.2.0",
+    "fs-extra": "^11.3.2",
     "js-yaml": "^4.1.0"
   },
   "keywords": [
@@ -26,6 +26,6 @@
   "author": "Kyros Team",
   "license": "MIT",
   "dependencies": {
-    "@sentry/nextjs": "^10.11.0"
+    "@sentry/nextjs": "^10.12.0"
   }
 }
