@@ -144,7 +144,9 @@ try:
         ACCESS_TOKEN_EXPIRE_MINUTES,
         get_current_user,
         Login,
+        RefreshTokenResponse,
     )
+    from .oauth2 import OAuth2Manager, RefreshTokenRequest, initialize_default_providers
     from .database import get_db
     from .routers import events, jobs, tasks, agents
     from .app.core.config import settings
@@ -157,7 +159,9 @@ except Exception:  # Fallback when running module directly in container (/app)
         ACCESS_TOKEN_EXPIRE_MINUTES,
         get_current_user,
         Login,  # type: ignore
+        RefreshTokenResponse,
     )
+    from oauth2 import OAuth2Manager, RefreshTokenRequest, initialize_default_providers  # type: ignore
     from database import get_db  # type: ignore
     import routers.events as events  # type: ignore
     import routers.jobs as jobs  # type: ignore
@@ -196,6 +200,22 @@ app = FastAPI(
         "url": "https://kyros-praxis.com/license",
     },
 )
+
+
+@app.on_event("startup")
+async def startup_event():
+    """Initialize OAuth2 providers on startup."""
+    try:
+        from .database import SessionLocal
+        db = SessionLocal()
+        try:
+            await initialize_default_providers(db)
+        finally:
+            db.close()
+    except Exception as e:
+        # Log error but don't fail startup
+        logger.error(f"Failed to initialize OAuth2 providers: {e}")
+
 
 # Setup rate limiting with SlowAPI
 if HAVE_SLOWAPI:
@@ -446,6 +466,252 @@ async def login(payload: Login, db=Depends(get_db)) -> dict:
         data={"sub": user.username}, expires_delta=access_token_expires
     )
     return {"access_token": access_token, "token_type": "bearer"}
+
+
+@app.post("/auth/refresh", response_model=RefreshTokenResponse, summary="Refresh access token", description="Refresh an access token using a refresh token")
+async def refresh_token(payload: RefreshTokenRequest, db=Depends(get_db)) -> RefreshTokenResponse:
+    """
+    Token refresh endpoint.
+    
+    Exchanges a valid refresh token for a new access token and refresh token.
+    Implements token rotation for enhanced security.
+    
+    Args:
+        payload (RefreshTokenRequest): Refresh token request containing the refresh token
+        db: Database session dependency
+        
+    Returns:
+        RefreshTokenResponse: New access and refresh tokens
+        
+    Raises:
+        HTTPException: If refresh token is invalid or expired (status code 401)
+    """
+    oauth2_manager = OAuth2Manager()
+    try:
+        tokens = await oauth2_manager.refresh_access_token(db, payload.refresh_token)
+        return RefreshTokenResponse(
+            access_token=tokens["access_token"],
+            token_type=tokens["token_type"],
+            expires_in=tokens["expires_in"],
+            refresh_token=tokens["refresh_token"]
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Token refresh failed: {str(e)}"
+        )
+
+
+@app.get("/auth/oauth2/{provider}", summary="OAuth2 authorization", description="Initiate OAuth2 authorization flow")
+async def oauth2_authorize(provider: str, redirect_uri: str, db=Depends(get_db)) -> dict:
+    """
+    OAuth2 authorization endpoint.
+    
+    Initiates the OAuth2 authorization flow by redirecting the user to the
+    provider's authorization server.
+    
+    Args:
+        provider (str): OAuth2 provider name (google, github, microsoft)
+        redirect_uri (str): URI to redirect to after authorization
+        db: Database session dependency
+        
+    Returns:
+        dict: Authorization URL and state parameter
+        
+    Raises:
+        HTTPException: If provider is not found or inactive (status code 404)
+    """
+    oauth2_manager = OAuth2Manager()
+    try:
+        auth_url, state = await oauth2_manager.get_authorization_url(db, provider, redirect_uri)
+        return {
+            "authorization_url": auth_url,
+            "state": state
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"OAuth2 authorization failed: {str(e)}"
+        )
+
+
+@app.post("/auth/oauth2/{provider}/callback", summary="OAuth2 callback", description="Handle OAuth2 authorization callback")
+async def oauth2_callback(
+    provider: str,
+    code: str,
+    state: str,
+    redirect_uri: str,
+    db=Depends(get_db)
+) -> dict:
+    """
+    OAuth2 callback endpoint.
+    
+    Handles the OAuth2 authorization callback by exchanging the authorization
+    code for access tokens and linking the OAuth2 account to a user.
+    
+    Args:
+        provider (str): OAuth2 provider name
+        code (str): Authorization code from the provider
+        state (str): State parameter for security validation
+        redirect_uri (str): Redirect URI used in authorization
+        db: Database session dependency
+        
+    Returns:
+        dict: Access token, refresh token, and user information
+        
+    Raises:
+        HTTPException: If callback processing fails (status codes 400/401/500)
+    """
+    oauth2_manager = OAuth2Manager()
+    try:
+        # Exchange code for tokens
+        token_response = await oauth2_manager.exchange_code_for_tokens(
+            db, provider, code, redirect_uri, state
+        )
+        
+        # Get user info from provider
+        user_info = await oauth2_manager.get_user_info(
+            db, provider, token_response["access_token"]
+        )
+        
+        # Extract user email
+        user_email = None
+        if provider == "google":
+            user_email = user_info.get("email")
+        elif provider == "github":
+            user_email = user_info.get("email")
+        elif provider == "microsoft":
+            user_email = user_info.get("mail") or user_info.get("userPrincipalName")
+        
+        if not user_email:
+            raise HTTPException(
+                status_code=400,
+                detail="Unable to retrieve email from OAuth2 provider"
+            )
+        
+        # Find or create user
+        from .models import User
+        user = db.query(User).filter(User.email == user_email).first()
+        
+        if not user:
+            # Create new user
+            from .auth import pwd_context
+            import secrets
+            
+            # Generate a random password for OAuth2 users
+            random_password = secrets.token_urlsafe(32)
+            user = User(
+                username=user_email,
+                email=user_email,
+                password_hash=pwd_context.hash(random_password),
+                role="user",
+                active=1
+            )
+            db.add(user)
+            db.commit()
+            db.refresh(user)
+        
+        # Link OAuth2 account
+        await oauth2_manager.link_oauth_account(
+            db,
+            user.id,
+            provider,
+            user_info,
+            token_response["access_token"],
+            token_response.get("refresh_token"),
+            token_response.get("expires_in")
+        )
+        
+        # Create JWT access token
+        access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+        access_token = create_access_token(
+            data={"sub": user.username, "user_id": user.id},
+            expires_delta=access_token_expires
+        )
+        
+        # Create refresh token
+        refresh_token = await oauth2_manager.create_refresh_token(db, user.id)
+        
+        return {
+            "access_token": access_token,
+            "token_type": "bearer",
+            "expires_in": ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+            "refresh_token": refresh_token.raw_token,
+            "user": {
+                "id": user.id,
+                "username": user.username,
+                "email": user.email,
+                "role": user.role
+            }
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"OAuth2 callback failed: {str(e)}"
+        )
+
+
+@app.get("/auth/user", summary="Get current user profile", description="Get current authenticated user profile")
+async def get_user_profile(current_user: User = Depends(get_current_user)) -> dict:
+    """
+    User profile endpoint.
+    
+    Returns the current authenticated user's profile information.
+    
+    Args:
+        current_user (User): Current authenticated user from JWT token
+        
+    Returns:
+        dict: User profile information
+    """
+    return {
+        "id": current_user.id,
+        "username": current_user.username,
+        "email": current_user.email,
+        "role": current_user.role,
+        "active": bool(current_user.active),
+        "created_at": current_user.created_at.isoformat() if current_user.created_at else None
+    }
+
+
+@app.post("/auth/logout", summary="Logout user", description="Revoke refresh tokens and logout user")
+async def logout(
+    payload: RefreshTokenRequest,
+    current_user: User = Depends(get_current_user),
+    db=Depends(get_db)
+) -> dict:
+    """
+    Logout endpoint.
+    
+    Revokes the user's refresh token to prevent further token refreshes.
+    
+    Args:
+        payload (RefreshTokenRequest): Refresh token to revoke
+        current_user (User): Current authenticated user
+        db: Database session dependency
+        
+    Returns:
+        dict: Logout confirmation
+    """
+    oauth2_manager = OAuth2Manager()
+    try:
+        success = await oauth2_manager.revoke_refresh_token(db, payload.refresh_token)
+        return {
+            "message": "Logged out successfully",
+            "token_revoked": success
+        }
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Logout failed: {str(e)}"
+        )
 
 
 @app.websocket("/ws")
