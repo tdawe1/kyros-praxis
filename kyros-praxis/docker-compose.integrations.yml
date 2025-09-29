@@ -104,7 +104,7 @@ services:
     working_dir: /app
     command: ["sh", "-lc", "npx -y @modelcontextprotocol/server-redis"]
     environment:
-      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
+      REDIS_URL: ${REDIS_URL:-redis://:${REDIS_PASSWORD:-your_secure_redis_password}@redis:6379}
     depends_on:
       - redis
 
