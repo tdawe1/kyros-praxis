@@ -10,7 +10,7 @@ import asyncio
 import logging
 import time
 from datetime import datetime, timedelta
-from typing import Dict, Any, List
+from typing import Dict, Any
 import random
 
 # Import the performance monitoring components
@@ -25,8 +25,7 @@ from performance_monitoring import (
     OptimizationStrategy,
     BenchmarkConfig,
     TuningConfiguration,
-    ModelPerformanceMetrics,
-    SystemResourceMetrics
+    ModelPerformanceMetrics
 )
 
 # Set up logging

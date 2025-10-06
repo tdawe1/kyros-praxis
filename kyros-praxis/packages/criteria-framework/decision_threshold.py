@@ -8,16 +8,14 @@ including dynamic thresholds, confidence scoring, and automated escalation workf
 
 import json
 import logging
-import asyncio
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import Enum
-from typing import Dict, List, Optional, Tuple, Callable, Any, Union
+from typing import Dict, List, Optional, Tuple
 from datetime import datetime, timedelta
-from pathlib import Path
 import statistics
 
 from escalation_criteria import (
-    EscalationFramework, DecisionResult, ServiceType
+    EscalationFramework, DecisionResult
 )
 from validation_system import ScoringCalibrator
 

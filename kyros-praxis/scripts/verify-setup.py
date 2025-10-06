@@ -6,12 +6,11 @@ Verifies that all components of the development environment are properly configu
 
 import asyncio
 import json
-import os
 import subprocess
 import sys
 import time
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Dict
 
 import httpx
 import psutil

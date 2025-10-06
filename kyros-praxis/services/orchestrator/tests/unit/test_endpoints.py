@@ -1,7 +1,6 @@
 import os
 os.environ.setdefault("SECRET_KEY", "test-secret")
 
-import pytest
 from fastapi.testclient import TestClient
 from services.orchestrator.auth import pwd_context
 from services.orchestrator.database import SessionLocal, engine

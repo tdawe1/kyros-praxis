@@ -11,7 +11,7 @@ from enum import Enum
 import statistics
 import numpy as np
 
-from .types import SystemResourceMetrics, ModelPerformanceMetrics, ModelType
+from .types import SystemResourceMetrics
 
 logger = logging.getLogger(__name__)
 

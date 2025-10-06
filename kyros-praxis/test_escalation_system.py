@@ -8,10 +8,8 @@ and validation mechanisms.
 """
 
 import asyncio
-import json
 import logging
 import sys
-from datetime import datetime
 from pathlib import Path
 
 # Add the services directory to the path
@@ -19,16 +17,11 @@ sys.path.insert(0, str(Path(__file__).parent / "services" / "orchestrator"))
 
 from escalation_triggers import (
     EscalationDetector,
-    should_escalate_task,
-    EscalationReason,
-    EscalationPriority
+    should_escalate_task
 )
 from context_analysis import (
     ContextAnalyzer,
-    analyze_task_context,
-    ComplexityLevel,
-    BusinessImpact,
-    RiskLevel
+    analyze_task_context
 )
 from escalation_workflow import (
     submit_escalation,
@@ -167,7 +160,7 @@ class EscalationSystemDemo:
         print(f"Recommendation: {context_analysis.escalation_recommendation}")
         
         if context_analysis.key_factors:
-            print(f"\nKey factors:")
+            print("\nKey factors:")
             for factor in context_analysis.key_factors:
                 print(f"  - {factor}")
         
@@ -229,7 +222,7 @@ class EscalationSystemDemo:
                     for check in invalid_checks[:2]:  # Show first 2 invalid checks
                         print(f"    - {check.rule_name}: {check.message}")
         
-        print(f"\nScenario Summary:")
+        print("\nScenario Summary:")
         print(f"  Expected escalation: {scenario['expected_escalation']}")
         print(f"  Detected escalation: {assessment.should_escalate}")
         print(f"  Match: {'✓' if assessment.should_escalate == scenario['expected_escalation'] else '✗'}")
@@ -243,7 +236,7 @@ class EscalationSystemDemo:
         escalation_stats = get_escalation_stats()
         validation_stats = get_validation_statistics()
         
-        print(f"\nEscalation Statistics:")
+        print("\nEscalation Statistics:")
         print(f"  Total requests: {escalation_stats.get('total_requests', 0)}")
         print(f"  Tasks escalated: {escalation_stats.get('escalated', 0)}")
         print(f"  Tasks completed: {escalation_stats.get('completed', 0)}")
@@ -253,14 +246,14 @@ class EscalationSystemDemo:
             success_rate = (escalation_stats.get('completed', 0) / escalation_stats.get('total_requests', 1)) * 100
             print(f"  Success rate: {success_rate:.1f}%")
         
-        print(f"\nValidation Statistics:")
+        print("\nValidation Statistics:")
         print(f"  Total validations: {validation_stats.get('total_validations', 0)}")
         print(f"  Valid triggers: {validation_stats.get('valid_triggers', 0)}")
         print(f"  Invalid triggers: {validation_stats.get('invalid_triggers', 0)}")
         print(f"  Average confidence: {validation_stats.get('average_confidence', 0):.2f}")
         
         if validation_stats.get('recent_validations'):
-            print(f"\nRecent validations:")
+            print("\nRecent validations:")
             for validation in validation_stats['recent_validations'][-5:]:
                 print(f"  - {validation['trigger_type']}: {validation['result']} ({validation['confidence']:.2f})")
 

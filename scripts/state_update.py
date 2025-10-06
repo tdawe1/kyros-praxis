@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-import subprocess, sys
+import subprocess
+import sys
 
 def check_tests() -> bool:
     r = subprocess.run(["pytest", "-q"])
@@ -18,7 +19,7 @@ def warn_large_staged_diff() -> None:
 
 if __name__ == "__main__":
     if not check_tests():
-        print("❌ Tests failed"); sys.exit(1)
+        print("❌ Tests failed")
+        sys.exit(1)
     warn_large_staged_diff()
     print("✅ Ready for commit")
-```

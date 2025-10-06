@@ -5,12 +5,7 @@ Security validation script for CSRF, JWT, and Rate Limiting fixes
 
 import sys
 import os
-import time
-import base64
-import json
 import jwt
-import hashlib
-import hmac
 import secrets
 from datetime import datetime, timedelta
 

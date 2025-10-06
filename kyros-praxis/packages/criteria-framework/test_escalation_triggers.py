@@ -7,7 +7,6 @@ import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from escalation_criteria import ArchitectCriteria, IntegratorCriteria
 from decision_threshold import AutomatedEscalationSystem, ThresholdConfig
 
 def test_escalation_scenarios():

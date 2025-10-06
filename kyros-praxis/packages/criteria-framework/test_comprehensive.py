@@ -7,7 +7,6 @@ import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from escalation_criteria import ArchitectCriteria, IntegratorCriteria
 from decision_threshold import AutomatedEscalationSystem, ThresholdConfig
 
 def test_comprehensive_framework():
@@ -62,7 +61,7 @@ def test_comprehensive_framework():
         context=context
     )
     
-    print(f"📊 Score: 0.675 (threshold: 0.60)")
+    print("📊 Score: 0.675 (threshold: 0.60)")
     print(f"🚀 Decision: {'ESCALATE to Claude 4.1 Opus' if decision.should_escalate else 'Use GLM-4.5'}")
     print(f"🎯 Confidence: {decision.confidence.value}")
     print(f"💰 Cost Estimate: ${decision.cost_estimate:.4f}")
@@ -117,7 +116,7 @@ def test_comprehensive_framework():
         context=context
     )
     
-    print(f"📊 Score: 0.500 (threshold: 0.65)")
+    print("📊 Score: 0.500 (threshold: 0.65)")
     print(f"🚀 Decision: {'ESCALATE to Claude 4.1 Opus' if decision.should_escalate else 'Use GLM-4.5'}")
     print(f"🎯 Confidence: {decision.confidence.value}")
     print(f"💰 Cost Estimate: ${decision.cost_estimate:.4f}")
@@ -145,7 +144,7 @@ def test_comprehensive_framework():
         context=context
     )
     
-    print(f"📊 Score: 0.050 (threshold: 0.60)")
+    print("📊 Score: 0.050 (threshold: 0.60)")
     print(f"🚀 Decision: {'ESCALATE to Claude 4.1 Opus' if decision.should_escalate else 'Use GLM-4.5'}")
     print(f"🎯 Confidence: {decision.confidence.value}")
     print(f"💰 Cost Estimate: ${decision.cost_estimate:.4f}")
@@ -188,7 +187,7 @@ def test_comprehensive_framework():
         context=context
     )
     
-    print(f"📊 Score: 0.395 (threshold: 0.60)")
+    print("📊 Score: 0.395 (threshold: 0.60)")
     print(f"🚀 Decision: {'ESCALATE to Claude 4.1 Opus' if decision.should_escalate else 'Use GLM-4.5'}")
     print(f"🎯 Confidence: {decision.confidence.value}")
     print(f"💰 Cost Estimate: ${decision.cost_estimate:.4f}")
@@ -234,7 +233,7 @@ def test_comprehensive_framework():
     print("  • Comprehensive validation and testing")
     print("  • Configurable thresholds and rules")
     
-    print(f"\n🎉 CRITERIA FRAMEWORK TEST COMPLETED SUCCESSFULLY!")
+    print("\n🎉 CRITERIA FRAMEWORK TEST COMPLETED SUCCESSFULLY!")
     print("   The framework is ready for production use.")
     
     return True

@@ -1,10 +1,5 @@
 """Unit tests for the Orchestrator service."""
-import pytest
-from unittest.mock import Mock, patch, MagicMock
-import httpx
-from httpx import AsyncClient
-from sqlalchemy import text
-import json
+from unittest.mock import Mock, patch
 
 
 class TestHealthEndpoints:

@@ -7,13 +7,10 @@ should escalate to Claude 4.1 Opus based on task complexity, security implicatio
 and system impact.
 """
 
-import json
 import logging
 from dataclasses import dataclass, field
 from enum import Enum
-from pathlib import Path
-from typing import Dict, List, Set, Optional, Tuple
-import re
+from typing import Dict, List, Set, Optional
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

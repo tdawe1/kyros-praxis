@@ -10,14 +10,10 @@ import pytest
 import asyncio
 import json
 import time
-from unittest.mock import Mock, patch, AsyncMock
-from typing import Dict, List, Any, Optional
-from pathlib import Path
-from dataclasses import dataclass
-from enum import Enum
+from typing import Dict, Any
 
 # Import the test scenarios
-from test_escalation_scenarios import EscalationTestScenarios, Role, EscalationModel
+from test_escalation_scenarios import EscalationTestScenarios, Role
 
 class EscalationDecision:
     """Represents an escalation decision made by the system."""
@@ -338,10 +334,10 @@ async def test_architect_escalation_scenarios(integration_suite):
         for trigger_result in result['results']:
             if trigger_result['expected_escalation']:
                 assert trigger_result['actual_escalation'], f"Expected escalation for {trigger_result['trigger_description']}"
-                assert trigger_result['actual_model'] == 'claude-4.1-opus', f"Expected Claude 4.1 Opus for escalation"
+                assert trigger_result['actual_model'] == 'claude-4.1-opus', "Expected Claude 4.1 Opus for escalation"
             else:
                 assert not trigger_result['actual_escalation'], f"Expected no escalation for {trigger_result['trigger_description']}"
-                assert trigger_result['actual_model'] == 'glm-4.5', f"Expected GLM-4.5 for non-escalation"
+                assert trigger_result['actual_model'] == 'glm-4.5', "Expected GLM-4.5 for non-escalation"
 
 @pytest.mark.asyncio
 async def test_integrator_escalation_scenarios(integration_suite):

@@ -1,4 +1,3 @@
-import asyncio
 import json
 import redis.asyncio as redis
 from datetime import datetime, timedelta

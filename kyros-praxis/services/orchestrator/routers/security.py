@@ -34,7 +34,6 @@ ENDPOINTS:
 """
 
 import logging
-from typing import Dict, Any
 from fastapi import APIRouter, Request, HTTPException, status
 from pydantic import BaseModel
 
