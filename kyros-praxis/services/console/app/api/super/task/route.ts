@@ -11,7 +11,6 @@ async function handleSend(req: NextRequest, action: 'send' | 'escalate') {
     const saved = appendHistory({ target, mode, packet });
     const payloadHash = hashPayload(packet);
     appendAudit({
-      ts: new Date().toISOString(),
       action,
       targets: [target],
       mode,
