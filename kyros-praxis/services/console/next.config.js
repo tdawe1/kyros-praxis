@@ -13,11 +13,12 @@ const nextConfig = {
             value: isDevelopment
               ? [
                   "default-src 'self'",
-                  "script-src 'self' 'unsafe-eval'", // Required for Next.js dev
+                  "script-src 'self' 'unsafe-eval' 'unsafe-inline'", // Required for Next.js dev
                   "style-src 'self' 'unsafe-inline'", // Required for Carbon
                   "img-src 'self' data: blob: https:",
                   "font-src 'self' data:",
                   "connect-src 'self' http://localhost:* ws://localhost:*",
+                  "worker-src 'self' blob:", // Required for Next.js workers
                   "frame-ancestors 'none'",
                   "base-uri 'self'",
                   "form-action 'self'",
