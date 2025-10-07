@@ -1,5 +1,0 @@
-{
-  "rules": [
-    { "pattern": "(?i)api[_-]?key[=:]\s*\w+", "action": "mask" }
-  ]
-}
