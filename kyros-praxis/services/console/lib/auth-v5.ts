@@ -1,5 +1,13 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
+import * as jwt from "jsonwebtoken";
+
+// Extend NextAuth types
+declare module "next-auth" {
+  interface Session {
+    accessToken?: string;
+  }
+}
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -16,6 +24,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
 
         try {
+          const rawApi = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
+          const authBase = process.env.NEXT_PUBLIC_AUTH_URL || rawApi.replace(/\/api\/v1\/?$/, '');
+
           // Dev bypass: authenticate with orchestrator in dev mode
           if (
             process.env.NEXT_PUBLIC_ALLOW_DEV_LOGIN === 'true' ||
@@ -54,8 +65,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             } as any;
           }
 
-          const rawApi = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
-          const authBase = process.env.NEXT_PUBLIC_AUTH_URL || rawApi.replace(/\/api\/v1\/?$/, '');
           const res = await fetch(`${authBase}/auth/login`, {
             method: "POST",
             headers: {
@@ -92,6 +101,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   ],
   session: { strategy: "jwt" },
   secret: process.env.NEXTAUTH_SECRET,
+  jwt: {
+    encode: async ({ secret, token }) => {
+      return jwt.sign(token!, secret as string, { algorithm: 'HS512' });
+    },
+    decode: async ({ secret, token }) => {
+      return jwt.verify(token!, secret as string, { algorithms: ['HS512'] }) as any;
+    },
+  },
   pages: {
     signIn: "/auth/login",
   },
