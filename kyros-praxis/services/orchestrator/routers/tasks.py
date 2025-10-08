@@ -4,10 +4,10 @@ import json
 from fastapi import APIRouter, Depends, Response
 from sqlalchemy.orm import Session
 
-from auth import User, get_current_user
-from database import get_db
-from models import Task
-from utils.validation import TaskCreate, validate_task_input
+from services.orchestrator.auth import get_current_user
+from services.orchestrator.database import get_db
+from services.orchestrator.models import Task, User
+from services.orchestrator.utils.validation import TaskCreate, validate_task_input
 
 router = APIRouter()
 
