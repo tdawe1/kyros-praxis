@@ -35,7 +35,7 @@ try:
     from ..database import get_db
     from ..app.core.config import settings
 except ImportError:
-    from database import get_db  # type: ignore
+    from ..database import get_db  # type: ignore
     from app.core.config import settings  # type: ignore
 
 # Create the API router for utility endpoints with prefix and tags

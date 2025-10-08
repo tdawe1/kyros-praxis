@@ -45,7 +45,7 @@ try:
     from ..app.core.config import settings
 except ImportError:
     # Fallback for environments where config is not available
-    from database import get_db  # type: ignore
+    from ..database import get_db  # type: ignore
     try:
         from app.core.config import settings
     except ImportError:

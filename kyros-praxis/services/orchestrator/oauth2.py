@@ -70,9 +70,9 @@ try:
     from .auth import create_access_token, SECRET_KEY
     from .app.core.config import settings
 except ImportError:  # Fallback when running module directly
-    from models import User, RefreshToken, OAuthProvider, UserOAuth  # type: ignore
-    from database import get_db  # type: ignore
-    from auth import create_access_token, SECRET_KEY  # type: ignore
+    from .models import User, RefreshToken, OAuthProvider, UserOAuth  # type: ignore
+    from .database import get_db  # type: ignore
+    from .auth import create_access_token, SECRET_KEY  # type: ignore
     from app.core.config import settings  # type: ignore
 
 
