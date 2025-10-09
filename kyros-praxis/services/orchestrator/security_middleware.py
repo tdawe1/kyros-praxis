@@ -818,8 +818,9 @@ class SecurityMiddleware(BaseHTTPMiddleware):
         Returns:
             str: Content Security Policy header value
         """
-        # Check environment for CSP strictness
-        is_production = getattr(self.config, 'environment', 'local') == 'production'
+        # Check environment for CSP strictness - use safer default of strict CSP
+        environment = getattr(self.config, 'environment', 'local').lower()
+        is_production = environment in ['production', 'prod', 'staging']
 
         directives = [
             "default-src 'self'",
@@ -832,7 +833,8 @@ class SecurityMiddleware(BaseHTTPMiddleware):
         ]
 
         if is_production:
-            # Strict CSP for production
+            # Strict CSP for production environments (production, prod, staging)
+            # This prevents XSS attacks by disallowing unsafe inline scripts and eval
             directives.extend([
                 "script-src 'self'",  # No unsafe-inline or unsafe-eval
                 "style-src 'self'",   # No unsafe-inline
@@ -841,7 +843,8 @@ class SecurityMiddleware(BaseHTTPMiddleware):
                 "upgrade-insecure-requests",
             ])
         else:
-            # More permissive CSP for development
+            # More permissive CSP for development environments (local, dev, test)
+            # Allows unsafe directives required for development tools and hot reload
             directives.extend([
                 "script-src 'self' 'unsafe-inline' 'unsafe-eval'",  # Allow for development tools
                 "style-src 'self' 'unsafe-inline'",
