@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { sanitizeAndJoinPaths } from './pathSecurity';
 
 /**
  * Resolve the repository root by walking upward until a marker is found.
@@ -32,6 +33,6 @@ export function devlogsDir(): string {
 
 export function repoFile(...segments: string[]): string {
   const root = resolveRepoRoot();
-  return path.join(root, ...segments);
+  return sanitizeAndJoinPaths(root, ...segments);
 }
 
