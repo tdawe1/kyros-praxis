@@ -18,7 +18,7 @@ async def test_get_jobs_empty():
 @pytest.mark.asyncio
 async def test_create_job_invalid_name():
     mock_session = AsyncMock()
-    with patch.object(mock_session, "commit", side_effect=ValueError("Invalid name")):
+    with patch.object(mock_session, "commit", new=AsyncMock(side_effect=ValueError("Invalid name"))):
         with pytest.raises(ValueError):
             await create_job(mock_session, "")
 
