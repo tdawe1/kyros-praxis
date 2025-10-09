@@ -22,8 +22,8 @@ from sqlalchemy.ext.asyncio import (
 from dotenv import load_dotenv
 load_dotenv()
 
-import auth
-from auth import (
+from . import auth
+from .auth import (
     User,
     authenticate_user,
     create_access_token,
@@ -34,11 +34,10 @@ from auth import (
     ALGORITHM,
     get_user,
 )
-import database
-from database import get_db
+from . import database
+from .database import get_db
 from sqlalchemy import text
-import routers.jobs as jobs
-import routers.tasks as tasks
+from .routers import jobs, tasks
 
 app = FastAPI(title="Orchestrator API", version="0.1.0")
 
