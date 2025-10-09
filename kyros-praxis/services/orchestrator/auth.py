@@ -232,39 +232,14 @@ def user_has_permission(user: "User", permission: Permission) -> bool:
     Returns:
         bool: True if user has the permission, False otherwise
     """
-    user_role = Role(user.role) if user.role in [r.value for r in Role] else Role.USER
+    if isinstance(user.role, Role):
+        user_role = user.role
+    else:
+        try:
+            user_role = Role(str(user.role))
+        except ValueError:
+            user_role = Role.USER
     return permission in ROLE_PERMISSIONS.get(user_role, set())
-
-
-def require_permission(permission: Permission):
-    """
-    Decorator factory to require specific permissions for route access.
-    
-    Args:
-        permission: Required permission for the route
-        
-    Returns:
-        FastAPI dependency that checks user permissions
-    """
-    async def check_permission(current_user: "User" = Depends(get_current_user)):
-        granted = user_has_permission(current_user, permission)
-        
-        # Audit the permission check
-        audit_permission_check(
-            user=current_user,
-            permission=permission.value,
-            granted=granted,
-            resource="api_endpoint"
-        )
-        
-        if not granted:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail=f"Insufficient permissions. Required: {permission.value}"
-            )
-        return current_user
-    
-    return check_permission
 
 
 def require_role(required_role: Role):
@@ -278,11 +253,17 @@ def require_role(required_role: Role):
         FastAPI dependency that checks user role
     """
     async def check_role(current_user: "User" = Depends(get_current_user)):
-        user_role = Role(current_user.role) if current_user.role in [r.value for r in Role] else Role.USER
-        
+        if isinstance(current_user.role, Role):
+            user_role = current_user.role
+        else:
+            try:
+                user_role = Role(str(current_user.role))
+            except ValueError:
+                user_role = Role.USER
+
         # Admin role has access to everything
         granted = user_role == Role.ADMIN or user_role == required_role
-        
+        # …
         # Audit the role check
         audit_role_check(
             user=current_user,
