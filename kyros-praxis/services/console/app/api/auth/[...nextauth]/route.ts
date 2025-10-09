@@ -30,7 +30,11 @@ const handler = NextAuth({
           const token = data.access_token;
 
           // Decode token to get user info
-          const decoded = JSON.parse(atob(token.split('.')[1]));
+// Add at top of file:
+import jwt from 'jsonwebtoken';
+
+// Verify and decode token properly
+const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as any;
           return {
             id: decoded.sub,
             name: decoded.name || decoded.email,
