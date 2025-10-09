@@ -61,7 +61,7 @@ from ..app.core.logging import log_orchestrator_event
 from jose import jwt
 
 # Create the API router for job endpoints
-router = APIRouter()
+router = APIRouter(prefix="/jobs", tags=["jobs"])
 
 # HTTP Bearer authentication scheme for JWT tokens
 oauth2_scheme = HTTPBearer(auto_error=False)
@@ -217,7 +217,7 @@ class JobResponse(BaseModel):
     updated_at: Optional[datetime] = None
 
 
-@router.post("/jobs", response_model=JobResponse, status_code=201, summary="Create a new job", description="Create a new job with the specified parameters and return the created job details")
+@router.post("/", response_model=JobResponse, status_code=201, summary="Create a new job", description="Create a new job with the specified parameters and return the created job details")
 async def create_job(
     job: JobCreate,
     background_tasks: BackgroundTasks,
@@ -285,7 +285,7 @@ async def create_job(
     return job_response
 
 
-@router.get("/jobs", response_model=List[JobResponse], summary="List jobs", description="List jobs with optional filtering by status and pagination support")
+@router.get("/", response_model=List[JobResponse], summary="List jobs", description="List jobs with optional filtering by status and pagination support")
 async def list_jobs(
     skip: int = 0,
     limit: int = 100,
@@ -371,7 +371,7 @@ async def list_jobs(
     return job_responses
 
 
-@router.get("/jobs/{job_id}", response_model=JobResponse, summary="Get job by ID", description="Retrieve a specific job by its unique identifier")
+@router.get("/{job_id}", response_model=JobResponse, summary="Get job by ID", description="Retrieve a specific job by its unique identifier")
 async def get_job(
     job_id: str,
     db: AsyncSession = Depends(get_db_session),
@@ -427,7 +427,7 @@ async def get_job(
     )
 
 
-@router.put("/jobs/{job_id}/status", response_model=JobResponse, summary="Update job status", description="Update the status of a specific job by its unique identifier")
+@router.put("/{job_id}/status", response_model=JobResponse, summary="Update job status", description="Update the status of a specific job by its unique identifier")
 async def update_job_status(
     job_id: str,
     status: JobStatus,
@@ -494,7 +494,7 @@ async def update_job_status(
     )
 
 
-@router.delete("/jobs/{job_id}", summary="Delete a job", description="Delete a specific job by its unique identifier")
+@router.delete("/{job_id}", summary="Delete a job", description="Delete a specific job by its unique identifier")
 async def delete_job(
     job_id: str,
     db: AsyncSession = Depends(get_db_session),
