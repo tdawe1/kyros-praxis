@@ -24,7 +24,7 @@ except ImportError:  # pragma: no cover
 from jose import jwt, JWTError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-router = APIRouter()
+router = APIRouter(prefix="/agents", tags=["agents"])
 oauth2_scheme = HTTPBearer(auto_error=False)
 
 
@@ -85,7 +85,7 @@ class AgentListResponse(BaseModel):
     pageSize: int
 
 
-@router.get("/agents", response_model=AgentListResponse, summary="List agents (stub)")
+@router.get("/", response_model=AgentListResponse, summary="List agents (stub)")
 async def list_agents(
     page: int = 1,
     pageSize: int = 20,

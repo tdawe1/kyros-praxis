@@ -196,6 +196,10 @@ class SecurityConfig(BaseModel):
         rate_limit_enabled (bool): Whether rate limiting is enabled (default: True)
         rate_limit_requests (int): Max requests per window (default: 100)
         rate_limit_window (int): Rate limit window in seconds (default: 900)
+        rate_limit_burst (int): Additional burst capacity (default: 0)
+        production_rate_limit_requests (int): Production max requests per window (default: 1000)
+        production_rate_limit_window (int): Production rate limit window in seconds (default: 3600)
+        production_rate_limit_burst (int): Production burst capacity (default: 50)
         secure_cookies (bool): Whether to mark cookies as secure (default: True)
         force_https (bool): Whether to enforce HTTPS (default: True)
         backend_cors_origins (list[str]): Allowed CORS origins
@@ -218,6 +222,12 @@ class SecurityConfig(BaseModel):
     rate_limit_enabled: bool = True
     rate_limit_requests: int = 100
     rate_limit_window: int = 900  # 15 minutes in seconds
+    rate_limit_burst: int = 0  # Additional burst capacity (0 = no burst)
+    
+    # Production-specific rate limiting
+    production_rate_limit_requests: int = 1000
+    production_rate_limit_window: int = 3600  # 1 hour in seconds  
+    production_rate_limit_burst: int = 50
     
     # Security settings
     secure_cookies: bool = True
@@ -226,6 +236,21 @@ class SecurityConfig(BaseModel):
     environment: str = "local"
     csp_report_uri: Optional[str] = None
     redis_url: Optional[str] = None
+
+    @property
+    def effective_rate_limit_requests(self) -> int:
+        """Get the effective rate limit requests based on environment."""
+        return self.production_rate_limit_requests if self.environment == "production" else self.rate_limit_requests
+    
+    @property 
+    def effective_rate_limit_window(self) -> int:
+        """Get the effective rate limit window based on environment."""
+        return self.production_rate_limit_window if self.environment == "production" else self.rate_limit_window
+        
+    @property
+    def effective_rate_limit_burst(self) -> int:
+        """Get the effective rate limit burst based on environment."""
+        return self.production_rate_limit_burst if self.environment == "production" else self.rate_limit_burst
 
 
 class RateLimiter:
@@ -248,7 +273,7 @@ class RateLimiter:
     authenticated user ID or IP address.
     """
 
-    def __init__(self, requests: int = 100, window: int = 900, redis_url: Optional[str] = None):
+    def __init__(self, requests: int = 100, window: int = 900, burst: int = 0, redis_url: Optional[str] = None):
         """
         Initialize the rate limiter.
         
@@ -258,10 +283,12 @@ class RateLimiter:
         Args:
             requests (int): Maximum number of requests allowed in the window
             window (int): Time window in seconds
+            burst (int): Additional burst capacity above the base rate (0 = no burst)
             redis_url (Optional[str]): Redis connection URL, if available
         """
         self.requests = requests
         self.window = window
+        self.burst = burst
         self.redis_url = redis_url
         self.redis_client = None
         self.fallback_clients: Dict[str, list] = defaultdict(list)
@@ -331,8 +358,9 @@ class RateLimiter:
                     pipe.execute()
                     return True
 
-                # Check if limit exceeded
-                if current_count >= self.requests:
+                # Check if limit exceeded (including burst capacity)
+                total_allowance = self.requests + self.burst
+                if current_count >= total_allowance:
                     return False
 
                 # Increment count
@@ -371,8 +399,9 @@ class RateLimiter:
             if now - timestamp < self.window
         ]
 
-        # Check limit
-        if len(self.fallback_clients[client_id]) >= self.requests:
+        # Check limit (including burst capacity)
+        total_allowance = self.requests + self.burst
+        if len(self.fallback_clients[client_id]) >= total_allowance:
             return False
 
         # Add current request
@@ -600,8 +629,9 @@ class SecurityMiddleware(BaseHTTPMiddleware):
         super().__init__(app)
         self.config = config
         self.rate_limiter = RateLimiter(
-            requests=config.rate_limit_requests,
-            window=config.rate_limit_window,
+            requests=config.effective_rate_limit_requests,
+            window=config.effective_rate_limit_window,
+            burst=config.effective_rate_limit_burst,
             redis_url=config.redis_url
         )
         self.csrf = CSRFProtection(config.csrf_secret)
@@ -646,7 +676,7 @@ class SecurityMiddleware(BaseHTTPMiddleware):
                     status_code=status.HTTP_429_TOO_MANY_REQUESTS,
                     content={"detail": "Rate limit exceeded"},
                     headers={
-                        "X-RateLimit-Limit": str(self.config.rate_limit_requests),
+                        "X-RateLimit-Limit": str(self.config.effective_rate_limit_requests + self.config.effective_rate_limit_burst),
                         "X-RateLimit-Remaining": "0",
                         "X-RateLimit-Reset": str(reset_time)
                     }
@@ -818,8 +848,9 @@ class SecurityMiddleware(BaseHTTPMiddleware):
         Returns:
             str: Content Security Policy header value
         """
-        # Check environment for CSP strictness
-        is_production = getattr(self.config, 'environment', 'local') == 'production'
+        # Check environment for CSP strictness - use safer default of strict CSP
+        environment = getattr(self.config, 'environment', 'local').lower()
+        is_production = environment in ['production', 'prod', 'staging']
 
         directives = [
             "default-src 'self'",
@@ -832,7 +863,8 @@ class SecurityMiddleware(BaseHTTPMiddleware):
         ]
 
         if is_production:
-            # Strict CSP for production
+            # Strict CSP for production environments (production, prod, staging)
+            # This prevents XSS attacks by disallowing unsafe inline scripts and eval
             directives.extend([
                 "script-src 'self'",  # No unsafe-inline or unsafe-eval
                 "style-src 'self'",   # No unsafe-inline
@@ -841,7 +873,8 @@ class SecurityMiddleware(BaseHTTPMiddleware):
                 "upgrade-insecure-requests",
             ])
         else:
-            # More permissive CSP for development
+            # More permissive CSP for development environments (local, dev, test)
+            # Allows unsafe directives required for development tools and hot reload
             directives.extend([
                 "script-src 'self' 'unsafe-inline' 'unsafe-eval'",  # Allow for development tools
                 "style-src 'self' 'unsafe-inline'",

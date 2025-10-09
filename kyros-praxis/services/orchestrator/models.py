@@ -116,9 +116,9 @@ See Also:
 
 from uuid import uuid4
 
-from sqlalchemy import JSON, Column, DateTime, Index, Integer, String, func
+from sqlalchemy import JSON, Column, DateTime, Index, Integer, String, func, ForeignKey
 from sqlalchemy.ext.asyncio import AsyncAttrs
-from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.orm import DeclarativeBase, relationship
 
 
 class Base(AsyncAttrs, DeclarativeBase):
@@ -369,3 +369,192 @@ class User(Base):
     
     # Timestamp when the user account was created
     created_at = Column(DateTime, server_default=func.now())
+    
+    # Relationships
+    refresh_tokens = relationship("RefreshToken", back_populates="user", cascade="all, delete-orphan")
+    oauth_accounts = relationship("UserOAuth", back_populates="user", cascade="all, delete-orphan")
+
+
+class RefreshToken(Base):
+    """
+    Refresh token model for JWT token refresh functionality.
+    
+    Refresh tokens are long-lived tokens used to obtain new access tokens
+    without requiring the user to re-authenticate. They implement token
+    rotation for enhanced security.
+    
+    Security Considerations:
+        - Refresh tokens are stored hashed for security
+        - Token families prevent token replay attacks
+        - Automatic expiration and cleanup of old tokens
+        - Single-use tokens with rotation mechanism
+    
+    Attributes:
+        id (str): Unique identifier for the refresh token (UUID)
+        user_id (str): Foreign key reference to the user
+        token_hash (str): Hashed refresh token for secure storage
+        token_family (str): Token family ID for rotation tracking
+        expires_at (datetime): When the refresh token expires
+        used_at (datetime): When the token was used (for rotation)
+        revoked_at (datetime): When the token was revoked
+        created_at (datetime): When the token was created
+    """
+    __tablename__ = "refresh_tokens"
+
+    # Unique identifier for the refresh token (UUID)
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid4()))
+    
+    # Foreign key reference to the user
+    user_id = Column(String(36), ForeignKey("users.id"), nullable=False)
+    
+    # Hashed refresh token for secure storage
+    token_hash = Column(String(255), nullable=False, unique=True)
+    
+    # Token family ID for rotation tracking
+    token_family = Column(String(36), nullable=False)
+    
+    # When the refresh token expires
+    expires_at = Column(DateTime, nullable=False)
+    
+    # When the token was used (for rotation tracking)
+    used_at = Column(DateTime, nullable=True)
+    
+    # When the token was revoked
+    revoked_at = Column(DateTime, nullable=True)
+    
+    # When the token was created
+    created_at = Column(DateTime, server_default=func.now())
+    
+    # Relationship to user
+    user = relationship("User", back_populates="refresh_tokens")
+    
+    # Database indexes for improved query performance
+    __table_args__ = (
+        Index("ix_refresh_tokens_user_id", "user_id"),
+        Index("ix_refresh_tokens_token_hash", "token_hash"),
+        Index("ix_refresh_tokens_expires_at", "expires_at"),
+        Index("ix_refresh_tokens_token_family", "token_family"),
+    )
+
+
+class OAuthProvider(Base):
+    """
+    OAuth2 provider configuration model.
+    
+    Stores configuration for different OAuth2 providers (Google, GitHub, Microsoft, etc.)
+    including client credentials and provider-specific settings.
+    
+    Attributes:
+        id (str): Unique identifier for the provider (UUID)
+        name (str): Provider name (google, github, microsoft, etc.)
+        client_id (str): OAuth2 client ID
+        client_secret (str): OAuth2 client secret (encrypted)
+        authorization_url (str): OAuth2 authorization endpoint
+        token_url (str): OAuth2 token endpoint
+        user_info_url (str): Provider user info endpoint
+        scopes (str): Default scopes to request (JSON array)
+        active (bool): Whether this provider is active
+        created_at (datetime): When the provider was added
+    """
+    __tablename__ = "oauth_providers"
+
+    # Unique identifier for the provider (UUID)
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid4()))
+    
+    # Provider name (google, github, microsoft, etc.)
+    name = Column(String(50), unique=True, nullable=False)
+    
+    # OAuth2 client ID
+    client_id = Column(String(255), nullable=False)
+    
+    # OAuth2 client secret (should be encrypted in production)
+    client_secret = Column(String(255), nullable=False)
+    
+    # OAuth2 authorization endpoint
+    authorization_url = Column(String(500), nullable=False)
+    
+    # OAuth2 token endpoint
+    token_url = Column(String(500), nullable=False)
+    
+    # Provider user info endpoint
+    user_info_url = Column(String(500), nullable=False)
+    
+    # Default scopes to request (JSON array)
+    scopes = Column(JSON, nullable=False)
+    
+    # Whether this provider is active
+    active = Column(Integer, server_default="1")
+    
+    # When the provider was added
+    created_at = Column(DateTime, server_default=func.now())
+    
+    # Database indexes for improved query performance
+    __table_args__ = (
+        Index("ix_oauth_providers_name", "name"),
+    )
+
+
+class UserOAuth(Base):
+    """
+    User OAuth2 account linking model.
+    
+    Links users to their OAuth2 accounts from various providers.
+    Allows users to authenticate via multiple OAuth2 providers.
+    
+    Attributes:
+        id (str): Unique identifier for the OAuth link (UUID)
+        user_id (str): Foreign key reference to the user
+        provider_name (str): OAuth2 provider name
+        provider_user_id (str): User ID from the OAuth2 provider
+        provider_username (str): Username from the OAuth2 provider
+        provider_email (str): Email from the OAuth2 provider
+        access_token_hash (str): Hashed OAuth2 access token
+        refresh_token_hash (str): Hashed OAuth2 refresh token
+        token_expires_at (datetime): When the OAuth2 token expires
+        created_at (datetime): When the link was created
+        updated_at (datetime): When the link was last updated
+    """
+    __tablename__ = "user_oauth"
+
+    # Unique identifier for the OAuth link (UUID)
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid4()))
+    
+    # Foreign key reference to the user
+    user_id = Column(String(36), ForeignKey("users.id"), nullable=False)
+    
+    # OAuth2 provider name
+    provider_name = Column(String(50), nullable=False)
+    
+    # User ID from the OAuth2 provider
+    provider_user_id = Column(String(255), nullable=False)
+    
+    # Username from the OAuth2 provider
+    provider_username = Column(String(255), nullable=True)
+    
+    # Email from the OAuth2 provider
+    provider_email = Column(String(255), nullable=True)
+    
+    # Hashed OAuth2 access token
+    access_token_hash = Column(String(255), nullable=True)
+    
+    # Hashed OAuth2 refresh token
+    refresh_token_hash = Column(String(255), nullable=True)
+    
+    # When the OAuth2 token expires
+    token_expires_at = Column(DateTime, nullable=True)
+    
+    # When the link was created
+    created_at = Column(DateTime, server_default=func.now())
+    
+    # When the link was last updated
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+    
+    # Relationship to user
+    user = relationship("User", back_populates="oauth_accounts")
+    
+    # Unique constraint on user_id + provider_name + provider_user_id
+    __table_args__ = (
+        Index("ix_user_oauth_user_id", "user_id"),
+        Index("ix_user_oauth_provider", "provider_name", "provider_user_id"),
+        Index("ix_user_oauth_user_provider", "user_id", "provider_name"),
+    )

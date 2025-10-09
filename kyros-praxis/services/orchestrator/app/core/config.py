@@ -315,6 +315,18 @@ class Settings(BaseSettings):
     # Unique identifier for this orchestrator instance
     ORCH_ID: str = "o-glm"
     
+    # Rate Limiting Configuration
+    # Rate limiting settings for security and performance
+    RATE_LIMIT_ENABLED: bool = True
+    RATE_LIMIT_REQUESTS: int = 100
+    RATE_LIMIT_WINDOW: int = 900  # 15 minutes
+    RATE_LIMIT_BURST: int = 0
+    
+    # Production-specific rate limiting
+    PRODUCTION_RATE_LIMIT_REQUESTS: int = 1000
+    PRODUCTION_RATE_LIMIT_WINDOW: int = 3600  # 1 hour
+    PRODUCTION_RATE_LIMIT_BURST: int = 50
+    
     def _check_default_secret(self, var_name: str, value: Optional[str]) -> None:
         """
         Check for default secrets and warn/error.

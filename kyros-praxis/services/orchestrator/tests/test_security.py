@@ -19,7 +19,8 @@ from security_middleware import (
     SecurityConfig,
     RateLimiter,
     CSRFProtection,
-    JWTAuthentication
+    JWTAuthentication,
+    SecurityMiddleware
 )
 
 
@@ -152,7 +153,7 @@ class TestRateLimiter:
         
         # 4th request should be blocked
         assert limiter.is_allowed(client_id) is False
-        
+    
     def test_rate_limit_window_reset(self):
         """Test that rate limit resets after window"""
         limiter = RateLimiter(requests=2, window=0.1)  # 100ms window
@@ -169,7 +170,7 @@ class TestRateLimiter:
         
         # Should be allowed again
         assert limiter.is_allowed(client_id) is True
-        
+    
     def test_multiple_clients(self):
         """Test that rate limits are per-client"""
         limiter = RateLimiter(requests=2, window=10)
@@ -183,6 +184,89 @@ class TestRateLimiter:
         assert limiter.is_allowed("client2") is True
         assert limiter.is_allowed("client2") is True
         assert limiter.is_allowed("client2") is False
+
+    def test_burst_limiting(self):
+        """Test that burst limits work correctly"""
+        limiter = RateLimiter(requests=3, window=10, burst=2)  # 3 base + 2 burst = 5 total
+        client_id = "test_burst_client"
+        
+        # Should allow 5 requests (3 base + 2 burst)
+        assert limiter.is_allowed(client_id) is True
+        assert limiter.is_allowed(client_id) is True
+        assert limiter.is_allowed(client_id) is True
+        assert limiter.is_allowed(client_id) is True
+        assert limiter.is_allowed(client_id) is True
+        
+        # 6th request should be blocked
+        assert limiter.is_allowed(client_id) is False
+
+    def test_no_burst_when_zero(self):
+        """Test that zero burst doesn't add any capacity"""
+        limiter = RateLimiter(requests=2, window=10, burst=0)
+        client_id = "test_no_burst_client"
+        
+        # Should allow only 2 requests
+        assert limiter.is_allowed(client_id) is True
+        assert limiter.is_allowed(client_id) is True
+        assert limiter.is_allowed(client_id) is False
+
+
+class TestSecurityConfig:
+    """Test security configuration"""
+
+    def test_effective_rate_limits_local_environment(self):
+        """Test that local environment uses standard rate limits"""
+        config = SecurityConfig(
+            jwt_secret="test_secret",
+            csrf_secret="csrf_secret",
+            environment="local",
+            rate_limit_requests=100,
+            rate_limit_window=900,
+            rate_limit_burst=0,
+            production_rate_limit_requests=1000,
+            production_rate_limit_window=3600,
+            production_rate_limit_burst=50
+        )
+        
+        assert config.effective_rate_limit_requests == 100
+        assert config.effective_rate_limit_window == 900
+        assert config.effective_rate_limit_burst == 0
+
+    def test_effective_rate_limits_production_environment(self):
+        """Test that production environment uses production rate limits"""
+        config = SecurityConfig(
+            jwt_secret="test_secret",
+            csrf_secret="csrf_secret",
+            environment="production",
+            rate_limit_requests=100,
+            rate_limit_window=900,
+            rate_limit_burst=0,
+            production_rate_limit_requests=1000,
+            production_rate_limit_window=3600,
+            production_rate_limit_burst=50
+        )
+        
+        assert config.effective_rate_limit_requests == 1000
+        assert config.effective_rate_limit_window == 3600
+        assert config.effective_rate_limit_burst == 50
+
+    def test_effective_rate_limits_staging_environment(self):
+        """Test that staging environment uses standard rate limits"""
+        config = SecurityConfig(
+            jwt_secret="test_secret",
+            csrf_secret="csrf_secret",
+            environment="staging",
+            rate_limit_requests=100,
+            rate_limit_window=900,
+            rate_limit_burst=0,
+            production_rate_limit_requests=1000,
+            production_rate_limit_window=3600,
+            production_rate_limit_burst=50
+        )
+        
+        assert config.effective_rate_limit_requests == 100
+        assert config.effective_rate_limit_window == 900
+        assert config.effective_rate_limit_burst == 0
 
 
 class TestCSRFProtection:
@@ -276,6 +360,97 @@ class TestJWTAuthentication:
         assert auth.verify_token("invalid.token.here") is None
         assert auth.verify_token("") is None
         assert auth.verify_token("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.invalid") is None
+
+
+class TestSecurityMiddleware:
+    """Test security middleware functionality"""
+    
+    def test_csp_production_detection(self):
+        """Test that CSP correctly detects production environments"""
+        class MockApp:
+            pass
+        
+        # Test cases: (environment, should_be_hardened)
+        test_cases = [
+            ('local', False),
+            ('development', False), 
+            ('dev', False),
+            ('test', False),
+            ('', False),  # Empty string
+            ('staging', True),
+            ('STAGING', True),  # Case insensitive
+            ('Staging', True),
+            ('production', True),
+            ('PRODUCTION', True),  # Case insensitive
+            ('Production', True),
+            ('prod', True),
+            ('PROD', True),  # Case insensitive
+            ('Prod', True),
+        ]
+        
+        for environment, should_be_hardened in test_cases:
+            config = SecurityConfig(
+                jwt_secret="test-secret",
+                csrf_secret="test-csrf",
+                environment=environment
+            )
+            
+            middleware = SecurityMiddleware(MockApp(), config)
+            csp_header = middleware.get_csp_header()
+            
+            has_unsafe_inline = "'unsafe-inline'" in csp_header
+            has_unsafe_eval = "'unsafe-eval'" in csp_header
+            is_hardened = not (has_unsafe_inline or has_unsafe_eval)
+            
+            assert is_hardened == should_be_hardened, (
+                f"Environment '{environment}' should {'have hardened' if should_be_hardened else 'allow unsafe'} "
+                f"CSP, but got: {csp_header}"
+            )
+    
+    def test_csp_production_content(self):
+        """Test that production CSP contains correct directives"""
+        class MockApp:
+            pass
+        
+        config = SecurityConfig(
+            jwt_secret="test-secret",
+            csrf_secret="test-csrf", 
+            environment="production"
+        )
+        
+        middleware = SecurityMiddleware(MockApp(), config)
+        csp_header = middleware.get_csp_header()
+        
+        # Should contain hardened directives
+        assert "script-src 'self'" in csp_header
+        assert "style-src 'self'" in csp_header
+        assert "object-src 'none'" in csp_header
+        assert "upgrade-insecure-requests" in csp_header
+        
+        # Should NOT contain unsafe directives
+        assert "'unsafe-inline'" not in csp_header
+        assert "'unsafe-eval'" not in csp_header
+    
+    def test_csp_development_content(self):
+        """Test that development CSP allows unsafe directives for dev tools"""
+        class MockApp:
+            pass
+        
+        config = SecurityConfig(
+            jwt_secret="test-secret",
+            csrf_secret="test-csrf",
+            environment="local"
+        )
+        
+        middleware = SecurityMiddleware(MockApp(), config)
+        csp_header = middleware.get_csp_header()
+        
+        # Should contain unsafe directives for development
+        assert "'unsafe-inline'" in csp_header
+        assert "'unsafe-eval'" in csp_header
+        
+        # Should NOT contain production-only directives
+        assert "upgrade-insecure-requests" not in csp_header
 
 
 class TestSecurityIntegration:

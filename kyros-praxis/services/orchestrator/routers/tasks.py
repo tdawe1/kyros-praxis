@@ -40,7 +40,6 @@ ENDPOINTS:
 
 import hashlib
 import json
-from datetime import datetime
 from typing import Optional
 
 from fastapi import APIRouter, Depends, Header, Response
@@ -62,10 +61,10 @@ except ImportError:
     from services.orchestrator.app.core.logging import log_orchestrator_event  # type: ignore
 
 # Create the API router for task endpoints
-router = APIRouter()
+router = APIRouter(prefix="/collab", tags=["collab"])
 
 
-@router.post("/collab/tasks", summary="Create a new collaborative task", description="Create a new collaborative task with the specified parameters and return the created task details")
+@router.post("/tasks", summary="Create a new collaborative task", description="Create a new collaborative task with the specified parameters and return the created task details")
 def create_task(
     task: TaskCreate,
     db: Session = Depends(get_db),
@@ -124,7 +123,7 @@ def create_task(
     return task_dict
 
 
-@router.get("/collab/state/tasks", summary="List all collaborative tasks", description="List all collaborative tasks with support for conditional requests and ETag-based caching")
+@router.get("/state/tasks", summary="List all collaborative tasks", description="List all collaborative tasks with support for conditional requests and ETag-based caching")
 def list_tasks(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
@@ -187,7 +186,7 @@ def list_tasks(
     return {"kind": "tasks", "items": items}
 
 
-@router.get("/collab/tasks/{task_id}", summary="Get a specific task by ID", description="Retrieve a specific collaborative task by its unique identifier with ETag-based caching support")
+@router.get("/tasks/{task_id}", summary="Get a specific task by ID", description="Retrieve a specific collaborative task by its unique identifier with ETag-based caching support")
 def get_task(
     task_id: int,
     db: Session = Depends(get_db),
@@ -261,7 +260,7 @@ def get_task(
     return task_dict
 
 
-@router.put("/collab/tasks/{task_id}", summary="Update a specific task by ID", description="Update a specific collaborative task by its unique identifier and return the updated task details")
+@router.put("/tasks/{task_id}", summary="Update a specific task by ID", description="Update a specific collaborative task by its unique identifier and return the updated task details")
 def update_task(
     task_id: int,
     task: TaskCreate,
@@ -341,7 +340,7 @@ def update_task(
     return task_dict
 
 
-@router.delete("/collab/tasks/{task_id}", summary="Delete a specific task by ID", description="Delete a specific collaborative task by its unique identifier")
+@router.delete("/tasks/{task_id}", summary="Delete a specific task by ID", description="Delete a specific collaborative task by its unique identifier")
 def delete_task(
     task_id: int,
     db: Session = Depends(get_db),

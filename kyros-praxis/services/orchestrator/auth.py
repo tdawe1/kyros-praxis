@@ -118,9 +118,9 @@ try:
     from .models import User
     from .app.core.config import settings
 except Exception:  # Fallback when running module directly in container
-    from database import get_db  # type: ignore
-    from models import User  # type: ignore
-    from app.core.config import settings  # type: ignore
+    from .database import get_db  # type: ignore
+    from .models import User  # type: ignore
+    from .app.core.config import settings  # type: ignore
 
 # Use centralized configuration from settings
 SECRET_KEY = settings.SECRET_KEY
@@ -165,6 +165,25 @@ class Login(BaseModel):
     """
     username: str
     password: str
+
+
+class RefreshTokenResponse(BaseModel):
+    """
+    Refresh token response model for token refresh endpoint.
+    
+    This model represents the structure of responses from the token refresh
+    endpoint, containing new access and refresh tokens.
+    
+    Attributes:
+        access_token (str): New JWT access token string
+        token_type (str): Type of token (typically "bearer")
+        expires_in (int): Token expiration time in seconds
+        refresh_token (str): New refresh token for future refreshes
+    """
+    access_token: str
+    token_type: str = "bearer"
+    expires_in: int
+    refresh_token: str
 
 
 class TokenData(BaseModel):
