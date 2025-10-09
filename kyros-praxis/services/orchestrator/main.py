@@ -386,6 +386,13 @@ except Exception:  # Fallback when running module directly
     from .routers import orchestrator_events  # type: ignore
 app.include_router(orchestrator_events.router, prefix=f"{API_V1_STR}", tags=["orchestrator-events"])
 
+# Include role examples router for demonstrating role-based access control
+try:
+    from .routers import role_examples
+except Exception:  # Fallback when running module directly
+    from .routers import role_examples  # type: ignore
+app.include_router(role_examples.router, prefix=f"{API_V1_STR}", tags=["role-examples"])
+
 # events router included above
 
 
