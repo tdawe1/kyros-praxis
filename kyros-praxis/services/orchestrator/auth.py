@@ -18,9 +18,9 @@ from sqlalchemy.orm import Session
 from database import get_db
 from models import User
 
-SECRET_KEY = os.getenv("SECRET_KEY")
-if SECRET_KEY is None:
-    raise ValueError("SECRET_KEY environment variable not set")
+SECRET_KEY = os.getenv("SECRET_KEY", "")
+if not SECRET_KEY or len(SECRET_KEY) < 32:
+    raise ValueError("SECRET_KEY must be set and at least 32 characters for HS256")
 ALGORITHM = "HS512"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
