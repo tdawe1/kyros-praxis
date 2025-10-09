@@ -26,7 +26,7 @@ This guide outlines the security configurations and procedures for deploying Kyr
 - [ ] Enable X-Frame-Options and X-Content-Type-Options headers
 
 ### Rate Limiting
-- [ ] Configure production rate limits (default: 100 req/15min)
+- [ ] Configure production rate limits (default: 60 req/15min)
 - [ ] Set up Redis backend for distributed rate limiting
 - [ ] Test rate limiting with load testing tools
 - [ ] Configure burst protection for API endpoints
@@ -34,36 +34,6 @@ This guide outlines the security configurations and procedures for deploying Kyr
 ## 🛡️ Security Configuration
 
 ### Environment Variables (Production)
-
-```bash
-# Core Security
-ENVIRONMENT=production
-SECRET_KEY=your_very_secure_secret_minimum_32_chars_with_special_chars
-JWT_SECRET=your_jwt_secret_minimum_32_chars_with_special_chars
-CSRF_SECRET=your_csrf_secret_minimum_32_chars_with_special_chars
-
-# JWT Configuration  
-JWT_ALGORITHM=RS256  # More secure for production
-ACCESS_TOKEN_EXPIRE_MINUTES=30  # Shorter lifetime for production
-JWT_ISSUER=kyros-praxis-prod
-JWT_AUDIENCE=kyros-api
-
-# Database Security
-DATABASE_URL=postgresql://user:password@host:5432/db?sslmode=require
-DATABASE_PASSWORD=secure_database_password
-
-# Redis (for rate limiting)
-REDIS_URL=redis://localhost:6379/0
-
-# TLS/HTTPS
-FORCE_HTTPS=true
-HSTS_ENABLED=true
-SECURE_COOKIES=true
-
-# Rate Limiting (Production)
-RATE_LIMIT_REQUESTS=100
-RATE_LIMIT_WINDOW=900
-RATE_LIMIT_BURST=20
 
 # Security Features
 CSRF_ENABLED=true
