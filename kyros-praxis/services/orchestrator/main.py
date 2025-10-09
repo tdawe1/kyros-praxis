@@ -108,7 +108,6 @@ from fastapi import (
     FastAPI,
     HTTPException,
     Request,
-    Response,
     WebSocket,
     status,
     WebSocketDisconnect,
@@ -129,7 +128,6 @@ except ImportError:
     RateLimitExceeded = Exception
     SlowAPIMiddleware = None
     HAVE_SLOWAPI = False
-from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import (
     AsyncSession,  # noqa: F401 (placeholder for future async endpoints)
@@ -152,7 +150,7 @@ try:
     from .app.core.config import settings
     from .security_middleware import setup_security, SecurityConfig
 except Exception:  # Fallback when running module directly in container (/app)
-    from auth import (  # type: ignore
+    from .auth import (  # type: ignore
         User,
         authenticate_user,
         create_access_token,
@@ -161,14 +159,11 @@ except Exception:  # Fallback when running module directly in container (/app)
         Login,  # type: ignore
         RefreshTokenResponse,
     )
-    from oauth2 import OAuth2Manager, RefreshTokenRequest, initialize_default_providers  # type: ignore
-    from database import get_db  # type: ignore
-    import routers.events as events  # type: ignore
-    import routers.jobs as jobs  # type: ignore
-    import routers.tasks as tasks  # type: ignore
-    import routers.agents as agents  # type: ignore
-    from app.core.config import settings  # type: ignore
-    from security_middleware import setup_security, SecurityConfig  # type: ignore
+    from .oauth2 import OAuth2Manager, RefreshTokenRequest, initialize_default_providers  # type: ignore
+    from .database import get_db  # type: ignore
+    from .routers import events, jobs, tasks, agents  # type: ignore
+    from .app.core.config import settings  # type: ignore
+    from .security_middleware import setup_security, SecurityConfig  # type: ignore
 
 # Use the API_V1_STR from settings
 API_V1_STR = settings.API_V1_STR
@@ -347,7 +342,7 @@ try:
     app.add_middleware(logging_middleware.RequestLoggingMiddleware)
 except Exception:  # Fallback when running module directly
     try:
-        import middleware.logging as logging_middleware  # type: ignore
+        from .middleware import logging as logging_middleware  # type: ignore
         app.add_middleware(logging_middleware.RequestLoggingMiddleware)
     except ImportError:
         # If middleware directory doesn't exist, skip logging middleware
@@ -355,24 +350,23 @@ except Exception:  # Fallback when running module directly
 
 # API v1 routers (mount once at /api/v1; routers define their own paths)
 # Mount all API routers with appropriate tags for OpenAPI documentation
-app.include_router(jobs.router, prefix=f"{API_V1_STR}", tags=["jobs"])
-app.include_router(tasks.router, prefix=f"{API_V1_STR}", tags=["collab"])
-app.include_router(events.router, prefix=f"{API_V1_STR}", tags=["events"])
-app.include_router(agents.router, prefix=f"{API_V1_STR}", tags=["agents"])
+app.include_router(jobs.router, prefix=f"{API_V1_STR}")
+app.include_router(tasks.router, prefix=f"{API_V1_STR}")
+app.include_router(events.router, prefix=f"{API_V1_STR}")
+app.include_router(agents.router, prefix=f"{API_V1_STR}")
 
 # Include utils router for utility functions
 try:
     from .routers import utils as _utils
 except Exception:  # Fallback when running module directly
-    import routers.utils as _utils  # type: ignore
-app.include_router(_utils.router, prefix=f"{API_V1_STR}", tags=["utils"])
+    from .routers import utils as _utils  # type: ignore
+app.include_router(_utils.router, prefix=f"{API_V1_STR}")
 
 # Include security and monitoring routers
 try:
     from .routers import security, monitoring
 except Exception:  # Fallback when running module directly
-    import routers.security as security  # type: ignore
-    import routers.monitoring as monitoring  # type: ignore
+    from .routers import security, monitoring  # type: ignore
 app.include_router(security.router, prefix=f"{API_V1_STR}", tags=["security"])
 app.include_router(monitoring.router, prefix=f"{API_V1_STR}", tags=["monitoring"])
 
@@ -380,7 +374,7 @@ app.include_router(monitoring.router, prefix=f"{API_V1_STR}", tags=["monitoring"
 try:
     from .routers import orchestrator_events
 except Exception:  # Fallback when running module directly
-    import routers.orchestrator_events as orchestrator_events  # type: ignore
+    from .routers import orchestrator_events  # type: ignore
 app.include_router(orchestrator_events.router, prefix=f"{API_V1_STR}", tags=["orchestrator-events"])
 
 # events router included above

@@ -1,5 +1,5 @@
-fastapi==0.116.1
-uvicorn[standard]==0.37.0
+fastapi==0.118.0
+uvicorn[standard]==0.36.0
 sqlalchemy[asyncio]>=2.0.0
 alembic==1.16.5
 pydantic==2.11.9
@@ -7,7 +7,7 @@ pydantic-settings==2.11.0
 python-jose[cryptography]==3.5.0
 passlib[bcrypt]==1.7.4
 bcrypt==5.0.0
-pyjwt==2.8.0
+pyjwt==2.10.1
 cryptography==43.0.1
 python-dotenv==1.1.1
 python-json-logger==3.3.0

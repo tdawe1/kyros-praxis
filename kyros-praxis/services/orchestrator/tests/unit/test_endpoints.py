@@ -25,7 +25,7 @@ def test_create_task_and_list():
     try:
         if not db.query(User).filter(User.username == "testuser").first():
             user = User(
-                username="testuser", email="test@example.com", password_hash=pwd_context.hash("password")
+                username="testuser", email="test@example.com", password_hash=pwd_context.hash("pass123")
             )
             db.add(user)
             db.commit()
@@ -33,7 +33,7 @@ def test_create_task_and_list():
         db.close()
 
     login = client.post(
-        "/auth/login", json={"username": "testuser", "password": "password"}
+        "/auth/login", json={"username": "testuser", "password": "pass123"}
     )
     assert login.status_code == 200
     token = login.json()["access_token"]

@@ -118,9 +118,9 @@ try:
     from .models import User
     from .app.core.config import settings
 except Exception:  # Fallback when running module directly in container
-    from database import get_db  # type: ignore
-    from models import User  # type: ignore
-    from app.core.config import settings  # type: ignore
+    from .database import get_db  # type: ignore
+    from .models import User  # type: ignore
+    from .app.core.config import settings  # type: ignore
 
 # Use centralized configuration from settings
 SECRET_KEY = settings.SECRET_KEY

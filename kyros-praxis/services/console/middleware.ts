@@ -114,10 +114,11 @@ export async function middleware(request: NextRequest) {
     const token = await getToken({
       req: request,
       secret: process.env.NEXTAUTH_SECRET,
+      // Note: Algorithm validation is handled in NextAuth configuration
     });
 
-    const userId = token?.sub || token?.id || undefined;
-    const userEmail = token?.email || undefined;
+    const userId = (token?.sub || token?.id || undefined) as string | undefined;
+    const userEmail = token?.email as string | undefined;
     const isAuthenticated = !!token;
 
     // Check if accessing protected path
