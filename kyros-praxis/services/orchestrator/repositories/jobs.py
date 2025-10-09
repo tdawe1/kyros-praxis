@@ -3,7 +3,7 @@ from typing import List
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from models import Event, Job
+from ..models import Event, Job
 
 
 async def get_jobs(session: AsyncSession) -> List[Job]:

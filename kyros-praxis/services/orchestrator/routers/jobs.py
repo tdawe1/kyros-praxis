@@ -8,9 +8,9 @@ with proper authentication and ETag support for caching.
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from database import get_db_session
-from models import Job
-from utils.validation import JobCreate, validate_job_input
+from ..database import get_db_session
+from ..models import Job
+from ..utils.validation import JobCreate, validate_job_input
 
 
 # Lazy wrapper to avoid importing database/session machinery unless endpoints are invoked
@@ -21,8 +21,8 @@ async def get_db_session_wrapper():
         yield s
 
 
-from auth import User, get_current_user
-from utils import generate_etag
+from ..auth import User, get_current_user
+from ..utils import generate_etag
 
 
 async def _create_job(session: AsyncSession, title: str):
@@ -101,7 +101,7 @@ async def get_jobs_endpoint(
     current_user: User = Depends(get_current_user),
     response: Response = None,
 ):
-    from repositories.jobs import get_jobs as _get_jobs
+    from ..repositories.jobs import get_jobs as _get_jobs
 
     jobs = await _get_jobs(session)
     items = [{"id": str(j.id), "name": j.name, "status": j.status} for j in jobs]
