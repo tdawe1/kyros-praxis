@@ -19,7 +19,8 @@ from security_middleware import (
     SecurityConfig,
     RateLimiter,
     CSRFProtection,
-    JWTAuthentication
+    JWTAuthentication,
+    SecurityMiddleware
 )
 
 
@@ -276,6 +277,97 @@ class TestJWTAuthentication:
         assert auth.verify_token("invalid.token.here") is None
         assert auth.verify_token("") is None
         assert auth.verify_token("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.invalid") is None
+
+
+class TestSecurityMiddleware:
+    """Test security middleware functionality"""
+    
+    def test_csp_production_detection(self):
+        """Test that CSP correctly detects production environments"""
+        class MockApp:
+            pass
+        
+        # Test cases: (environment, should_be_hardened)
+        test_cases = [
+            ('local', False),
+            ('development', False), 
+            ('dev', False),
+            ('test', False),
+            ('', False),  # Empty string
+            ('staging', True),
+            ('STAGING', True),  # Case insensitive
+            ('Staging', True),
+            ('production', True),
+            ('PRODUCTION', True),  # Case insensitive
+            ('Production', True),
+            ('prod', True),
+            ('PROD', True),  # Case insensitive
+            ('Prod', True),
+        ]
+        
+        for environment, should_be_hardened in test_cases:
+            config = SecurityConfig(
+                jwt_secret="test-secret",
+                csrf_secret="test-csrf",
+                environment=environment
+            )
+            
+            middleware = SecurityMiddleware(MockApp(), config)
+            csp_header = middleware.get_csp_header()
+            
+            has_unsafe_inline = "'unsafe-inline'" in csp_header
+            has_unsafe_eval = "'unsafe-eval'" in csp_header
+            is_hardened = not (has_unsafe_inline or has_unsafe_eval)
+            
+            assert is_hardened == should_be_hardened, (
+                f"Environment '{environment}' should {'have hardened' if should_be_hardened else 'allow unsafe'} "
+                f"CSP, but got: {csp_header}"
+            )
+    
+    def test_csp_production_content(self):
+        """Test that production CSP contains correct directives"""
+        class MockApp:
+            pass
+        
+        config = SecurityConfig(
+            jwt_secret="test-secret",
+            csrf_secret="test-csrf", 
+            environment="production"
+        )
+        
+        middleware = SecurityMiddleware(MockApp(), config)
+        csp_header = middleware.get_csp_header()
+        
+        # Should contain hardened directives
+        assert "script-src 'self'" in csp_header
+        assert "style-src 'self'" in csp_header
+        assert "object-src 'none'" in csp_header
+        assert "upgrade-insecure-requests" in csp_header
+        
+        # Should NOT contain unsafe directives
+        assert "'unsafe-inline'" not in csp_header
+        assert "'unsafe-eval'" not in csp_header
+    
+    def test_csp_development_content(self):
+        """Test that development CSP allows unsafe directives for dev tools"""
+        class MockApp:
+            pass
+        
+        config = SecurityConfig(
+            jwt_secret="test-secret",
+            csrf_secret="test-csrf",
+            environment="local"
+        )
+        
+        middleware = SecurityMiddleware(MockApp(), config)
+        csp_header = middleware.get_csp_header()
+        
+        # Should contain unsafe directives for development
+        assert "'unsafe-inline'" in csp_header
+        assert "'unsafe-eval'" in csp_header
+        
+        # Should NOT contain production-only directives
+        assert "upgrade-insecure-requests" not in csp_header
 
 
 class TestSecurityIntegration:

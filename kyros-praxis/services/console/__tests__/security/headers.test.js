@@ -99,7 +99,32 @@ describe('Security Headers Configuration', () => {
     } else {
       // Production should be more restrictive
       expect(cspHeader.value).not.toMatch(/'unsafe-eval'/);
+      expect(cspHeader.value).not.toMatch(/'unsafe-inline'/);
       expect(cspHeader.value).toMatch(/upgrade-insecure-requests/);
+    }
+  });
+
+  test('CSP production mode should be hardened against XSS', () => {
+    // Force production environment for this test
+    const originalEnv = process.env.NODE_ENV;
+    process.env.NODE_ENV = 'production';
+    
+    try {
+      const isDevelopment = process.env.NODE_ENV === 'development';
+      const productionScriptSrc = isDevelopment 
+        ? "script-src 'self' 'unsafe-eval'" 
+        : "script-src 'self'";
+      const productionStyleSrc = isDevelopment
+        ? "style-src 'self' 'unsafe-inline'"
+        : "style-src 'self'";
+
+      // Production CSP should not contain unsafe directives
+      expect(productionScriptSrc).toBe("script-src 'self'");
+      expect(productionStyleSrc).toBe("style-src 'self'");
+      expect(productionScriptSrc).not.toMatch(/'unsafe-eval'/);
+      expect(productionStyleSrc).not.toMatch(/'unsafe-inline'/);
+    } finally {
+      process.env.NODE_ENV = originalEnv;
     }
   });
 });
