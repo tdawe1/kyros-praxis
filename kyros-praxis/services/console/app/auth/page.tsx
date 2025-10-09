@@ -72,11 +72,9 @@ export default function AuthPage() {
         return;
       }
 
-      // Load session and persist token for API fallback
+      // Load session and get user info for logging
       const session = await getSession();
-      if (session?.accessToken) {
-        try { localStorage.setItem('token', String(session.accessToken)); } catch {}
-      }
+      // No need to store token in localStorage - NextAuth handles secure storage
 
       // Log successful login
       await auditAuth(

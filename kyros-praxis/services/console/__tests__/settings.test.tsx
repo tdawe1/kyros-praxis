@@ -1,16 +1,20 @@
  import { render, screen, waitFor } from "@testing-library/react";
  import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
- import { useAuth } from "@/lib/auth";
  import SettingsPage from "../app/settings/page";
 
- jest.mock("@/lib/auth");
+ // Mock next-auth/react module
+ jest.mock("next-auth/react", () => ({
+   useSession: jest.fn(),
+ }));
 
- const mockUseAuth = useAuth as jest.MockedFunction<typeof useAuth>;
- mockUseAuth.mockReturnValue({
-   user: { id: "1", email: "test@example.com", name: "Test User" },
-   token: "mock-token",
-   login: jest.fn(),
-   logout: jest.fn(),
+ const mockUseSession = require("next-auth/react").useSession;
+ mockUseSession.mockReturnValue({
+   data: {
+     user: { id: "1", email: "test@example.com", name: "Test User" },
+     accessToken: "mock-token",
+   },
+   status: "authenticated",
+   update: jest.fn(),
  });
 
  describe("SettingsPage", () => {
@@ -20,6 +24,15 @@
 
    beforeEach(() => {
      queryClient.clear();
+     // Setup default mock for useSession
+     mockUseSession.mockReturnValue({
+       data: {
+         user: { id: "1", email: "test@example.com", name: "Test User" },
+         accessToken: "mock-token",
+       },
+       status: "authenticated",
+       update: jest.fn(),
+     });
    });
 
    it("renders loading state", () => {
