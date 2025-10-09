@@ -1,6 +1,107 @@
 /** @type {import('next').NextConfig} */
 const isDevelopment = process.env.NODE_ENV === 'development';
 
+// Enhanced security configuration with validation
+function getSecureConfig() {
+  try {
+    // Try to use secure configuration system if available
+    if (!isDevelopment) {
+      // In production, we require secure configuration to be properly initialized
+      const { nextjsConfig, isConfigurationInitialized } = require('./app/lib/config');
+      
+      if (isConfigurationInitialized()) {
+        return {
+          headers: nextjsConfig.getSecurityHeaders(isDevelopment),
+          redirects: nextjsConfig.getSecureRedirects(isDevelopment),
+          env: nextjsConfig.getSecureEnvVars(),
+        };
+      }
+    }
+  } catch (error) {
+    console.warn('⚠️  Secure configuration not available, using fallback configuration:', error.message);
+  }
+  
+  // Fallback configuration (original implementation)
+  return {
+    headers: [
+      {
+        key: 'Content-Security-Policy', 
+        value: isDevelopment
+          ? [
+              "default-src 'self'",
+              "script-src 'self' 'unsafe-eval'", // Required for Next.js dev
+              "style-src 'self' 'unsafe-inline'", // Required for Carbon
+              "img-src 'self' data: blob: https:",
+              "font-src 'self' data:",
+              "connect-src 'self' http://localhost:* ws://localhost:*",
+              "frame-ancestors 'none'",
+              "base-uri 'self'",
+              "form-action 'self'",
+            ].join('; ')
+          : [
+              "default-src 'self'",
+              "script-src 'self'",
+              "style-src 'self'",
+              "img-src 'self' data: https:",
+              "font-src 'self' data:",
+              "connect-src 'self' https://*.kyros-praxis.com wss://*.kyros-praxis.com",
+              "frame-ancestors 'none'",
+              "base-uri 'self'",
+              "form-action 'self'",
+              "upgrade-insecure-requests",
+            ].join('; '),
+      },
+      {
+        key: 'X-DNS-Prefetch-Control',
+        value: 'on',
+      },
+      {
+        key: 'Strict-Transport-Security',
+        value: 'max-age=63072000; includeSubDomains; preload',
+      },
+      {
+        key: 'X-Frame-Options',
+        value: 'SAMEORIGIN',
+      },
+      {
+        key: 'X-Content-Type-Options',
+        value: 'nosniff',
+      },
+      {
+        key: 'X-XSS-Protection',
+        value: '1; mode=block',
+      },
+      {
+        key: 'Referrer-Policy',
+        value: 'strict-origin-when-cross-origin',
+      },
+      {
+        key: 'Permissions-Policy',
+        value: 'camera=(), microphone=(), geolocation=()',
+      },
+    ],
+    redirects: isDevelopment ? [] : [
+      {
+        source: '/:path*',
+        has: [
+          {
+            type: 'header',
+            key: 'x-forwarded-proto',
+            value: 'http',
+          },
+        ],
+        destination: 'https://:host/:path*',
+        permanent: true,
+      },
+    ],
+    env: {
+      NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL || 'https://kyros-praxis.com',
+    },
+  };
+}
+
+const secureConfig = getSecureConfig();
+
 const nextConfig = {
   // Security headers
   async headers() {
@@ -74,29 +175,12 @@ const nextConfig = {
   poweredByHeader: false,
   compress: true,
   
-  // Environment variables validation
-  env: {
-    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL || 'https://kyros-praxis.com',
-  },
+  // Environment variables (validated in secure config)
+  env: secureConfig.env,
   
   // Redirect HTTP to HTTPS in production
   async redirects() {
-    return isDevelopment
-      ? []
-      : [
-          {
-            source: '/:path*',
-            has: [
-              {
-                type: 'header',
-                key: 'x-forwarded-proto',
-                value: 'http',
-              },
-            ],
-            destination: 'https://:host/:path*',
-            permanent: true,
-          },
-        ];
+    return secureConfig.redirects;
   },
 };
 
