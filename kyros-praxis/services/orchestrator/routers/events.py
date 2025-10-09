@@ -44,8 +44,8 @@ try:
 except ImportError:
     # Fallbacks when running module directly from the service directory
     try:
-        from auth import get_current_user  # type: ignore
-        from app.core.logging import log_orchestrator_event  # type: ignore
+        from .auth import get_current_user  # type: ignore
+        from .app.core.logging import log_orchestrator_event  # type: ignore
     except Exception:  # pragma: no cover
         # Fallback when running from repo root
         from services.orchestrator.auth import get_current_user  # type: ignore
