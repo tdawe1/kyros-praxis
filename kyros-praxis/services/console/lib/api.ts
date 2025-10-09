@@ -11,12 +11,13 @@ class ApiClient {
     let token: string | null = null;
     if (typeof window !== 'undefined') {
       try {
-        // Prefer NextAuth session token
+        // Only use NextAuth session token - no localStorage fallback for security
         const { getSession } = await import('next-auth/react');
         const session: any = await getSession();
-        token = session?.accessToken || localStorage.getItem('token');
+        token = session?.accessToken;
       } catch {
-        token = localStorage.getItem('token');
+        // No fallback to localStorage - rely on NextAuth for secure token storage
+        token = null;
       }
     }
     

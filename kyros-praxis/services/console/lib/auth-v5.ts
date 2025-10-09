@@ -9,6 +9,14 @@ declare module "next-auth" {
   }
 }
 
+// Define proper types for authentication
+type AuthUser = {
+  id: string;
+  name: string;
+  email: string;
+  accessToken: string;
+};
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
     Credentials({
@@ -27,6 +35,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           const rawApi = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
           const authBase = process.env.NEXT_PUBLIC_AUTH_URL || rawApi.replace(/\/api\/v1\/?$/, '');
 
+          
           // Dev bypass: authenticate with orchestrator in dev mode
           if (
             process.env.NEXT_PUBLIC_ALLOW_DEV_LOGIN === 'true' ||
@@ -62,7 +71,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               name: devCredentials.username,
               email: devCredentials.username,
               accessToken: data.access_token
-            } as any;
+            } as AuthUser;
           }
 
           const res = await fetch(`${authBase}/auth/login`, {
@@ -91,7 +100,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             name: credentials.email, 
             email: credentials.email,
             accessToken: data.access_token
-          } as any;
+          } as AuthUser;
         } catch (error) {
           console.error("Authentication error:", error);
           return null;
@@ -115,12 +124,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.accessToken = (user as any).accessToken;
+        token.accessToken = (user as AuthUser).accessToken;
       }
       return token;
     },
     async session({ session, token }) {
-      session.accessToken = token.accessToken as string;
+      (session as any).accessToken = token.accessToken as string;
       return session;
     },
   },
