@@ -108,7 +108,6 @@ from fastapi import (
     FastAPI,
     HTTPException,
     Request,
-    Response,
     WebSocket,
     status,
     WebSocketDisconnect,
@@ -129,7 +128,6 @@ except ImportError:
     RateLimitExceeded = Exception
     SlowAPIMiddleware = None
     HAVE_SLOWAPI = False
-from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import (
     AsyncSession,  # noqa: F401 (placeholder for future async endpoints)
