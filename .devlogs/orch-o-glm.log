@@ -224,3 +224,6 @@
 {"timestamp": "2025-10-09T04:39:27.662109", "level": "INFO", "logger": "httpx", "message": "HTTP Request: GET http://testserver/api/v1/utils/health-check \"HTTP/1.1 200 OK\"", "service": "Kyros Praxis", "environment": "local", "version": "0.1.0"}
 {"timestamp": "2025-10-09T04:39:27.663924", "level": "INFO", "logger": "httpx", "message": "HTTP Request: GET http://testserver/jobs/ \"HTTP/1.1 404 Not Found\"", "service": "Kyros Praxis", "environment": "local", "version": "0.1.0"}
 {"timestamp": "2025-10-09T04:39:27.665569", "level": "INFO", "logger": "httpx", "message": "HTTP Request: GET http://testserver/collab/tasks \"HTTP/1.1 404 Not Found\"", "service": "Kyros Praxis", "environment": "local", "version": "0.1.0"}
+{"timestamp": "2025-10-09T06:32:34.461407", "level": "INFO", "logger": "app.core.logging", "message": "Logging configured", "service": "Kyros Praxis", "environment": "local", "version": "0.1.0"}
+{"timestamp": "2025-10-09T06:32:34.461633", "level": "INFO", "logger": "app.core.logging", "message": "Orchestrator event logging configured for o-glm -> .devlogs/orch-o-glm.log", "service": "Kyros Praxis", "environment": "local", "version": "0.1.0"}
+{"timestamp": "2025-10-09T06:32:34.461725", "level": "INFO", "logger": "main", "message": "Orchestrator starting with ORCH_ID: o-glm", "service": "Kyros Praxis", "environment": "local", "version": "0.1.0"}
