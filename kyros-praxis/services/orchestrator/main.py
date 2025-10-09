@@ -108,7 +108,6 @@ from fastapi import (
     FastAPI,
     HTTPException,
     Request,
-    Response,
     WebSocket,
     status,
     WebSocketDisconnect,
@@ -129,7 +128,6 @@ except ImportError:
     RateLimitExceeded = Exception
     SlowAPIMiddleware = None
     HAVE_SLOWAPI = False
-from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import (
     AsyncSession,  # noqa: F401 (placeholder for future async endpoints)
@@ -352,17 +350,17 @@ except Exception:  # Fallback when running module directly
 
 # API v1 routers (mount once at /api/v1; routers define their own paths)
 # Mount all API routers with appropriate tags for OpenAPI documentation
-app.include_router(jobs.router, prefix=f"{API_V1_STR}", tags=["jobs"])
-app.include_router(tasks.router, prefix=f"{API_V1_STR}", tags=["collab"])
-app.include_router(events.router, prefix=f"{API_V1_STR}", tags=["events"])
-app.include_router(agents.router, prefix=f"{API_V1_STR}", tags=["agents"])
+app.include_router(jobs.router, prefix=f"{API_V1_STR}")
+app.include_router(tasks.router, prefix=f"{API_V1_STR}")
+app.include_router(events.router, prefix=f"{API_V1_STR}")
+app.include_router(agents.router, prefix=f"{API_V1_STR}")
 
 # Include utils router for utility functions
 try:
     from .routers import utils as _utils
 except Exception:  # Fallback when running module directly
     from .routers import utils as _utils  # type: ignore
-app.include_router(_utils.router, prefix=f"{API_V1_STR}", tags=["utils"])
+app.include_router(_utils.router, prefix=f"{API_V1_STR}")
 
 # Include security and monitoring routers
 try:

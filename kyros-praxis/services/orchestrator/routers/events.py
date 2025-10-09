@@ -52,7 +52,7 @@ except ImportError:
         from services.orchestrator.app.core.logging import log_orchestrator_event  # type: ignore
 
 # Create the API router for event endpoints
-router = APIRouter()
+router = APIRouter(prefix="/events", tags=["events"])
 
 
 class EventCreate(BaseModel):
@@ -68,7 +68,7 @@ class EventCreate(BaseModel):
     details: dict = {}
 
 
-@router.post("/events", summary="Append a new event", description="Append a new event to the events log and return success confirmation")
+@router.post("/", summary="Append a new event", description="Append a new event to the events log and return success confirmation")
 def append_event(
     event: EventCreate,
     response: Response,
@@ -129,7 +129,7 @@ def append_event(
     return {"ok": True}
 
 
-@router.get("/events/tail", summary="Stream events as Server-Sent Events", description="Stream events as Server-Sent Events for real-time monitoring")
+@router.get("/tail", summary="Stream events as Server-Sent Events", description="Stream events as Server-Sent Events for real-time monitoring")
 async def events_tail(
     request: Request,
     once: bool = False,
