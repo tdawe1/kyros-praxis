@@ -260,6 +260,15 @@ security_config = SecurityConfig(
     environment=settings.ENVIRONMENT,
     redis_url=getattr(settings, 'redis_url', None),
     csrf_enabled=settings.ENVIRONMENT != "local",  # Disable CSRF for local/test environment
+    # Rate limiting configuration
+    rate_limit_enabled=settings.RATE_LIMIT_ENABLED,
+    rate_limit_requests=settings.RATE_LIMIT_REQUESTS,
+    rate_limit_window=settings.RATE_LIMIT_WINDOW,
+    rate_limit_burst=settings.RATE_LIMIT_BURST,
+    # Production-specific rate limiting
+    production_rate_limit_requests=settings.PRODUCTION_RATE_LIMIT_REQUESTS,
+    production_rate_limit_window=settings.PRODUCTION_RATE_LIMIT_WINDOW,
+    production_rate_limit_burst=settings.PRODUCTION_RATE_LIMIT_BURST,
 )
 
 # Apply security middleware to the FastAPI application
