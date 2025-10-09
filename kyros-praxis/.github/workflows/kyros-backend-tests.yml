@@ -26,13 +26,13 @@ jobs:
            pip install -r packages/service-registry/requirements.txt
            pip install ruff
            pip install bandit safety
-       - name: Lint with ruff
-         run: ruff check .
-       - name: Security scan with bandit
-         run: bandit -r services/orchestrator packages/service-registry -f json -o bandit-report.json
-       - name: Check for vulnerable dependencies with safety
-         run: safety check --full-report
-       - name: Run pytest with coverage
+      - name: Lint with ruff
+        run: ruff check .
+      - name: Security scan with bandit
+        run: bandit -r services/orchestrator packages/service-registry -f json -o bandit-report.json
+      - name: Check for vulnerable dependencies with safety
+        run: safety check --full-report
+      - name: Run pytest with coverage
         run: |
           pytest services/orchestrator/tests/ packages/service-registry/tests/ \
             --cov=services/orchestrator --cov=packages/service-registry \
