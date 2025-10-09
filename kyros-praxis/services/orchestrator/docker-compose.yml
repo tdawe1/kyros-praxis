@@ -3,10 +3,12 @@ version: '3.13'
 services:
   postgres:
     image: postgres:16
+    env_file:
+      - .env.example
     environment:
-      POSTGRES_DB: orchestrator
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ${POSTGRES_DB:-orchestrator}
+      POSTGRES_USER: ${POSTGRES_USER:-user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Please set POSTGRES_PASSWORD in .env file}
     ports:
       - "5432:5432"
     volumes:
@@ -14,6 +16,10 @@ services:
 
   redis:
     image: redis:7
+    env_file:
+      - .env.example
+    command: >
+      sh -c 'if [ -n "${REDIS_PASSWORD:-}" ]; then exec redis-server --appendonly yes --requirepass "$REDIS_PASSWORD"; else exec redis-server --appendonly yes; fi'
     ports:
       - "6379:6379"
 

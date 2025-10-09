@@ -5,6 +5,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
+    env_file:
+      - .env.test.example
     environment:
       - NODE_ENV=production
       - NEXT_PUBLIC_API_BASE_URL=http://orchestrator:8000
@@ -17,11 +19,13 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8000:8000"
+    env_file:
+      - .env.test.example
     environment:
-      - DATABASE_URL=postgresql://postgres:password@postgres:5432/kyros_test
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:?Please set POSTGRES_PASSWORD in .env.test.example}@postgres:5432/${POSTGRES_DB:-kyros_test}
       - QDRANT_URL=http://qdrant:6333
-      - QDRANT_API_KEY=test_key
-      - REDIS_URL=redis://redis:6379
+      - QDRANT_API_KEY=${QDRANT_API_KEY:?Please set QDRANT_API_KEY in .env.test.example}
+      - REDIS_URL=redis://:${REDIS_PASSWORD:-}@redis:6379
     depends_on:
       - postgres
       - qdrant
@@ -33,15 +37,19 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8787:8787"
+    env_file:
+      - .env.test.example
     environment:
       - NODE_ENV=production
 
   postgres:
     image: postgres:15
+    env_file:
+      - .env.test.example
     environment:
-      - POSTGRES_DB=kyros_test
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=${POSTGRES_DB:-kyros_test}
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?Please set POSTGRES_PASSWORD in .env.test.example}
     ports:
       - "5432:5432"
     volumes:
@@ -51,8 +59,10 @@ services:
     image: qdrant/qdrant:latest
     ports:
       - "6333:6333"
+    env_file:
+      - .env.test.example
     environment:
-      - QDRANT__SERVICE__API_KEY=test_key
+      - QDRANT__SERVICE__API_KEY=${QDRANT_API_KEY:?Please set QDRANT_API_KEY in .env.test.example}
     volumes:
       - qdrant_data:/qdrant/storage
 
@@ -60,6 +70,10 @@ services:
     image: redis:7-alpine
     ports:
       - "6379:6379"
+    env_file:
+      - .env.test.example
+    command: >
+      sh -c 'if [ -n "${REDIS_PASSWORD:-}" ]; then exec redis-server --appendonly yes --requirepass "$REDIS_PASSWORD"; else exec redis-server --appendonly yes; fi'
     volumes:
       - redis_data:/data
 

@@ -10,10 +10,12 @@ services:
       retries: 5
       start_period: 30s
       timeout: 10s
+    env_file:
+      - ../.env
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-kyros}
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Please set POSTGRES_PASSWORD in .env file}
     ports:
       - "${POSTGRES_PORT:-5432}:5432"
     volumes:
@@ -28,6 +30,10 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
+    env_file:
+      - ../.env
+    command: >
+      sh -c 'if [ -n "${REDIS_PASSWORD:-}" ]; then exec redis-server --appendonly yes --requirepass "$REDIS_PASSWORD"; else exec redis-server --appendonly yes; fi'
     ports:
       - "${REDIS_PORT:-6379}:6379"
     volumes:
@@ -42,16 +48,18 @@ services:
       timeout: 5s
       retries: 5
       start_period: 30s
+    env_file:
+      - ../.env
     ports:
       - "3001:3000"
     volumes:
       - ./kyros-praxis/services/console/.env:/app/.env:ro
     environment:
-      - DATABASE_URL=postgresql://postgres:password@kyros-praxis-postgres:5432/kyros
-      - REDIS_URL=redis://kyros-praxis-redis:6379
-      - NEXTAUTH_URL=http://localhost:3001
-      - NEXTAUTH_SECRET=your-nextauth-secret
-      - API_URL=http://kyros-praxis-orchestrator:8000
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:?Please set POSTGRES_PASSWORD in .env file}@kyros-praxis-postgres:5432/${POSTGRES_DB:-kyros}
+      - REDIS_URL=redis://:${REDIS_PASSWORD:-}@kyros-praxis-redis:6379
+      - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3001}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET:?Please set NEXTAUTH_SECRET in .env file}
+      - API_URL=${API_URL:-http://kyros-praxis-orchestrator:8000}
     depends_on:
       - kyros-praxis-postgres
       - kyros-praxis-redis
@@ -62,12 +70,14 @@ services:
     build: ./services/orchestrator
     container_name: kyros-praxis-prestart
     restart: "no"
+    env_file:
+      - ../.env
     environment:
       - POSTGRES_SERVER=kyros-praxis-postgres
       - POSTGRES_PORT=5432
       - POSTGRES_DB=${POSTGRES_DB:-kyros}
       - POSTGRES_USER=${POSTGRES_USER:-postgres}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-password}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?Please set POSTGRES_PASSWORD in .env file}
       - FIRST_SUPERUSER=${FIRST_SUPERUSER:-}
       - FIRST_SUPERUSER_PASSWORD=${FIRST_SUPERUSER_PASSWORD:-}
       - ENABLE_SEED=${ENABLE_SEED:-false}
@@ -86,6 +96,8 @@ services:
       timeout: 5s
       retries: 5
       start_period: 30s
+    env_file:
+      - ../.env
     ports:
       - "8000:8000"
     volumes:
@@ -95,15 +107,15 @@ services:
       - POSTGRES_PORT=5432
       - POSTGRES_DB=${POSTGRES_DB:-kyros}
       - POSTGRES_USER=${POSTGRES_USER:-postgres}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-password}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?Please set POSTGRES_PASSWORD in .env file}
       - DB_HOST=kyros-praxis-postgres
       - DB_PORT=5432
       - DB_NAME=${POSTGRES_DB:-kyros}
       - DB_USER=${POSTGRES_USER:-postgres}
-      - DB_PASSWORD=${POSTGRES_PASSWORD:-password}
+      - DB_PASSWORD=${POSTGRES_PASSWORD:?Please set POSTGRES_PASSWORD in .env file}
       - REDIS_HOST=kyros-praxis-redis
       - REDIS_PORT=6379
-      - SECRET_KEY=${SECRET_KEY:-your-secret-key-change-in-prod}
+      - SECRET_KEY=${SECRET_KEY:?Please set SECRET_KEY in .env file}
       - BACKEND_CORS_ORIGINS=${BACKEND_CORS_ORIGINS:-}
       - FRONTEND_HOST=${FRONTEND_HOST:-http://localhost:3001}
     depends_on:
@@ -116,6 +128,8 @@ services:
   kyros-praxis-service-registry:
     build: ./kyros-praxis/packages/service-registry
     container_name: kyros-praxis-service-registry
+    env_file:
+      - ../.env
     ports:
       - "9000:9000"
     volumes:
@@ -123,10 +137,10 @@ services:
     environment:
       - DB_HOST=kyros-praxis-postgres
       - DB_PORT=5432
-      - DB_NAME=kyros
-      - DB_USER=postgres
-      - DB_PASSWORD=password
-      - SECRET_KEY=your-secret-key-change-in-prod
+      - DB_NAME=${POSTGRES_DB:-kyros}
+      - DB_USER=${POSTGRES_USER:-postgres}
+      - DB_PASSWORD=${POSTGRES_PASSWORD:?Please set POSTGRES_PASSWORD in .env file}
+      - SECRET_KEY=${SECRET_KEY:?Please set SECRET_KEY in .env file}
     depends_on:
       - kyros-praxis-postgres
     command: uvicorn main:app --host 0.0.0.0 --port 9000
