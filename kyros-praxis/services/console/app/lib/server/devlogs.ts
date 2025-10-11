@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
 import { devlogsDir } from './repoRoot';
+import { validateFilename } from './pathSecurity';
 
 export interface PacketEntry {
   id: string;
@@ -22,7 +23,8 @@ export interface AuditEntry {
 }
 
 function filePath(name: string): string {
-  return path.join(devlogsDir(), name);
+  const safeName = validateFilename(name);
+  return path.join(devlogsDir(), safeName);
 }
 
 function ensureFile(file: string, initial: string): void {
