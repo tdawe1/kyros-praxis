@@ -5,16 +5,18 @@ services:
   postgres:
     image: postgres:15-alpine
     container_name: kyros-postgres-local
+    env_file:
+      - .env.local.example
     environment:
-      POSTGRES_DB: kyros
-      POSTGRES_USER: kyros_user
-      POSTGRES_PASSWORD: localpass123
+      POSTGRES_DB: ${POSTGRES_DB:-kyros}
+      POSTGRES_USER: ${POSTGRES_USER:-kyros_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Please set POSTGRES_PASSWORD in .env.local.example}
     volumes:
       - postgres_local_data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U kyros_user"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-kyros_user}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -23,11 +25,14 @@ services:
   redis:
     image: redis:7-alpine
     container_name: kyros-redis-local
-    command: redis-server --appendonly yes
+    env_file:
+      - .env.local.example
+    command: >
+      sh -c 'if [ -n "${REDIS_PASSWORD:-}" ]; then exec redis-server --appendonly yes --requirepass "$REDIS_PASSWORD"; else exec redis-server --appendonly yes; fi'
     volumes:
       - redis_local_data:/data
     ports:
-      - "6379:6379"
+      - "${REDIS_PORT:-6379}:6379"
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s

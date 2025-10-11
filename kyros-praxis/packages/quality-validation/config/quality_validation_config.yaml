@@ -1,10 +1,10 @@
 # Quality Validation System Configuration
 
 # Database Configuration
-database_url: "postgresql://postgres:password@localhost:5432/quality_validation"
+database_url: "postgresql://postgres:${POSTGRES_PASSWORD:?Please set POSTGRES_PASSWORD in .env file}@localhost:5432/quality_validation"
 
 # Redis Configuration for caching and real-time monitoring
-redis_url: "redis://localhost:6379"
+redis_url: "redis://:${REDIS_PASSWORD:-}@localhost:6379"
 
 # Monitoring Configuration
 monitoring:
