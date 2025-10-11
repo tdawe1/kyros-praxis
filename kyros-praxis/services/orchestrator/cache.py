@@ -93,7 +93,7 @@ class CacheManager:
         try:
             serialized_value = json.dumps(value, default=str)
             return self.redis_client.setex(key, ttl, serialized_value)
-        except (redis.RedisError, json.JSONEncodeError):
+        except (redis.RedisError, TypeError, ValueError):
             return False
     
     def delete(self, key: str) -> bool:
