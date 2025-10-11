@@ -38,18 +38,15 @@ ENDPOINTS:
 5. DELETE /jobs/{job_id} - Delete a job
 """
 
-import hashlib
-import json
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from typing import List, Optional
-from uuid import uuid4
 
-from fastapi import APIRouter, Body, Depends, HTTPException, Query, Response, BackgroundTasks, Header
+from fastapi import APIRouter, Depends, HTTPException, Response, BackgroundTasks, Header
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, update, delete
+from sqlalchemy import select, delete
 
 # When running as a package
 from ..database import get_db_session
@@ -108,7 +105,6 @@ async def get_current_user_async(
         HTTPException: If token is missing, invalid, or user not found (401 Unauthorized)
     """
     from ..auth import JWT_ISSUER, JWT_AUDIENCE, SECRET_KEY, ALGORITHM
-    from ..models import User
     from fastapi import HTTPException, status
     from jose import JWTError
 
@@ -169,7 +165,7 @@ async def _create_job(session: AsyncSession, title: str):
         task_id=str(job.id),
         title=job.name,
         status="created",
-        timestamp=datetime.utcnow().isoformat()
+        timestamp=datetime.now(timezone.utc).isoformat()
     )
     
     return job
@@ -186,24 +182,6 @@ class JobStatus(str, Enum):
     COMPLETED = "completed"
     FAILED = "failed"
     CANCELLED = "cancelled"
-
-
-class JobCreate(BaseModel):
-    """
-    Data model for creating a new job.
-    
-    This model defines the required parameters for creating a new job
-    in the orchestrator system. The title should be a brief descriptive
-    name that clearly indicates the purpose of the job.
-    """
-
-    title: str = Field(
-        ...,
-        min_length=1,
-        max_length=255,
-        description="Brief descriptive name for the job",
-        examples=["Analyze user feedback data"],
-    )
 
 
 class JobResponse(BaseModel):

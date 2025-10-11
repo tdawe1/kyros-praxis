@@ -7,10 +7,9 @@ from typing import Optional, List, Dict, Any
 from datetime import datetime
 import logging
 from contextlib import contextmanager
-from sqlalchemy import create_engine, text, MetaData, Table
+from sqlalchemy import create_engine, text, MetaData
 from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.sql import select, insert, update, delete
 import bcrypt
 import secrets
 import hashlib

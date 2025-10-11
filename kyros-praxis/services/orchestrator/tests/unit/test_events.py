@@ -2,12 +2,9 @@ import pytest
 from fastapi.testclient import TestClient
 
 from services.orchestrator.auth import pwd_context
-from services.orchestrator.database import get_db, SessionLocal
+from services.orchestrator.database import get_db
 from services.orchestrator.main import app
-from services.orchestrator.models import Base, User
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.pool import StaticPool
+from services.orchestrator.models import User
 
 
 @pytest.fixture

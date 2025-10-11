@@ -3,7 +3,6 @@ from logging.config import fileConfig
 
 from alembic import context
 from sqlalchemy import engine_from_config, pool
-from sqlalchemy.ext.asyncio import AsyncEngine
 from sqlalchemy.engine import Connection
 
 # this is the Alembic Config object, which provides

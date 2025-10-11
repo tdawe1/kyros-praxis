@@ -28,7 +28,7 @@ import json
 import logging
 import logging.config
 import sys
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, Any, Optional
 from collections import defaultdict
@@ -340,16 +340,6 @@ def setup_orchestrator_logging(orch_id: str, log_file: str) -> None:
     log_path.parent.mkdir(parents=True, exist_ok=True)
 
     # Create the file handler for orchestrator events
-    handler_name = f'orchestrator_events_file_{orch_id}'
-    handler_config = {
-        'class': 'logging.handlers.RotatingFileHandler',
-        'formatter': 'orchestrator_events',
-        'filename': str(log_path),
-        'maxBytes': 10 * 1024 * 1024,  # 10MB
-        'backupCount': 5,
-        'level': 'INFO',
-    }
-
     # Create and configure the file handler
     handler = logging.handlers.RotatingFileHandler(
         filename=str(log_path),
@@ -445,7 +435,7 @@ def log_orchestrator_event(event: str, task_id: Optional[str] = None, run_id: Op
         event_data = {
             'id': str(uuid.uuid4()),
             'event': event,
-            'timestamp': datetime.utcnow().isoformat(),
+            'timestamp': datetime.now(timezone.utc).isoformat(),
             'task_id': task_id,
             'run_id': run_id,
             **extra_fields

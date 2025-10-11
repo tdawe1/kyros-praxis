@@ -10,4 +10,4 @@ Modules:
     validation: Provides input validation utilities for task and job creation
 """
 
-from .etag import generate_etag
+from .etag import generate_etag as generate_etag

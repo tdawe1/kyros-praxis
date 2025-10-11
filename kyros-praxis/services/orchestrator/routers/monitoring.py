@@ -34,9 +34,9 @@ ENDPOINTS:
 import time
 import psutil
 import logging
-from typing import Dict, Any, List
-from datetime import datetime, timedelta
-from fastapi import APIRouter, Request, HTTPException, status, Depends
+from typing import Dict, Any
+from datetime import datetime, timezone
+from fastapi import APIRouter, HTTPException, status, Depends
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -189,7 +189,7 @@ async def health_check():
         # Basic health checks
         checks = {
             "status": "healthy",
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "service": settings.PROJECT_NAME,
             "version": getattr(settings, 'VERSION', 'unknown'),
             "environment": getattr(settings, 'ENVIRONMENT', 'unknown'),
@@ -254,7 +254,7 @@ async def system_metrics():
     """
     try:
         metrics = {
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "system": {
                 "cpu_usage": SystemMetrics.get_cpu_usage(),
                 "memory": SystemMetrics.get_memory_usage(),
@@ -326,7 +326,7 @@ async def database_health_check(db: AsyncSession = Depends(get_db) if get_db els
             "status": "healthy" if test_value == 1 else "unhealthy",
             "latency_ms": round(latency * 1000, 2),
             "database_info": db_info,
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
         }
 
     except Exception as e:
@@ -334,7 +334,7 @@ async def database_health_check(db: AsyncSession = Depends(get_db) if get_db els
         return {
             "status": "unhealthy",
             "error": str(e),
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
         }
 
 
@@ -363,7 +363,7 @@ async def recent_logs(lines: int = 50):
     return {
         "message": "Log retrieval not implemented",
         "note": "Use proper log aggregation system (ELK, Loki, etc.) for production",
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
     }
 
 
@@ -405,7 +405,7 @@ async def performance_metrics():
             "percentage": 0,
             "total_errors": 0,
         },
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         "note": "Implement proper APM/metrics collection for production use",
     }
 
@@ -456,7 +456,7 @@ async def dependency_check():
 
     return {
         "dependencies": dependencies,
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
     }
 
 
@@ -499,14 +499,14 @@ async def get_cache_health():
                 "status": "not_configured",
                 "message": "Cache manager not available"
             },
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
         }
     
     cache_health = cache_manager.health_check()
     
     return {
         "cache_health": cache_health,
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
     }
 
 
@@ -569,7 +569,7 @@ async def get_database_performance(db: AsyncSession = Depends(get_db)):
         
         return {
             "database_performance": performance_metrics,
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
         }
         
     except Exception as e:

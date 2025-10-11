@@ -31,8 +31,6 @@ ENDPOINTS:
 2. GET /orchestrator/events - Get orchestrator events for a specific task or run
 """
 
-import asyncio
-import json
 from typing import Optional
 
 from fastapi import APIRouter, Depends, Request

@@ -66,7 +66,7 @@ def test_db():
         # Clean up the temporary file
         try:
             os.unlink(db_file.name)
-        except:
+        except (OSError, FileNotFoundError):
             pass
     app.dependency_overrides.clear()
 

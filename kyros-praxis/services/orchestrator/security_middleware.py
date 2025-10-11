@@ -154,13 +154,13 @@ import secrets
 import hashlib
 import hmac
 import base64
-from typing import Optional, Dict, Any, Callable
-from datetime import datetime, timedelta
+from typing import Optional, Dict, Any
+from datetime import datetime, timedelta, timezone
 from collections import defaultdict
 import logging
 
-from fastapi import Request, Response, HTTPException, status
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi import Request, status
+from fastapi.security import HTTPBearer
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import JSONResponse
@@ -937,8 +937,8 @@ class JWTAuthentication:
         payload = {
             "sub": user_id,
             "role": role,
-            "exp": datetime.utcnow() + timedelta(hours=self.expiration_hours),
-            "iat": datetime.utcnow(),
+            "exp": datetime.now(timezone.utc) + timedelta(hours=self.expiration_hours),
+            "iat": datetime.now(timezone.utc),
             "jti": secrets.token_hex(16)  # JWT ID for revocation
         }
         
