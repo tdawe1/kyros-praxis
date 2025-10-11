@@ -3,7 +3,7 @@
 channels:
   - name: "slack_alerts"
     type: "slack"
-    webhook_url: "https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK"
+    webhook_url: "${SLACK_WEBHOOK_URL:?Please set SLACK_WEBHOOK_URL in .env file}"
     channel: "#quality-alerts"
   
   - name: "email_alerts"
@@ -11,8 +11,8 @@ channels:
     smtp_config:
       host: "smtp.gmail.com"
       port: 587
-      username: "your-email@gmail.com"
-      password: "your-app-password"
+      username: "${SMTP_USERNAME:?Please set SMTP_USERNAME in .env file}"
+      password: "${SMTP_PASSWORD:?Please set SMTP_PASSWORD in .env file}"
       use_tls: true
       from_address: "quality-system@yourcompany.com"
       to_addresses:
@@ -22,13 +22,13 @@ channels:
   
   - name: "webhook_alerts"
     type: "webhook"
-    webhook_url: "https://your-monitoring-system.com/api/alerts"
+    webhook_url: "${WEBHOOK_ALERTS_URL:?Please set WEBHOOK_ALERTS_URL in .env file}"
     headers:
-      Authorization: "Bearer YOUR_API_TOKEN"
+      Authorization: "Bearer ${WEBHOOK_API_TOKEN:?Please set WEBHOOK_API_TOKEN in .env file}"
       Content-Type: "application/json"
   
   - name: "pagerduty_alerts"
     type: "webhook"
-    webhook_url: "https://events.pagerduty.com/v2/enqueue/YOUR_INTEGRATION_KEY"
+    webhook_url: "https://events.pagerduty.com/v2/enqueue/${PAGERDUTY_INTEGRATION_KEY:?Please set PAGERDUTY_INTEGRATION_KEY in .env file}"
     headers:
       Content-Type: "application/json"

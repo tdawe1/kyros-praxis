@@ -1,6 +1,5 @@
 import fs from 'fs';
 import path from 'path';
-import { sanitizeAndJoinPaths } from './pathSecurity';
 
 /**
  * Resolve the repository root by walking upward until a marker is found.

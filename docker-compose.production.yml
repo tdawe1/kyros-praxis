@@ -179,8 +179,10 @@ services:
     image: grafana/grafana:latest
     container_name: kyros-grafana
     restart: unless-stopped
+    env_file:
+      - .env
     environment:
-      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:?Please set GRAFANA_PASSWORD in .env file}
       GF_INSTALL_PLUGINS: grafana-piechart-panel
     volumes:
       - grafana_data:/var/lib/grafana
