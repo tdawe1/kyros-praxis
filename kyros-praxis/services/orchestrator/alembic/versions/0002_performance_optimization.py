@@ -20,14 +20,8 @@ def upgrade():
     """Add performance optimization indexes."""
     
     # Performance optimization indexes for Jobs table (skip if table doesn't exist)
-    try:
-        op.create_index('ix_jobs_status_priority', 'jobs', ['status', 'priority'])
-    except Exception:
-        pass
-    try:
-        op.create_index('ix_jobs_status_created_at', 'jobs', ['status', 'created_at'])
-    except Exception:
-        pass
+    op.create_index('ix_jobs_status_priority', 'jobs', ['status', 'priority'])
+    op.create_index('ix_jobs_status_created_at', 'jobs', ['status', 'created_at'])
     try:
         op.create_index('ix_jobs_priority_created_at', 'jobs', ['priority', 'created_at'])
     except Exception:
@@ -40,7 +34,7 @@ def upgrade():
         op.create_index('ix_jobs_completed_at', 'jobs', ['completed_at'])
     except Exception:
         pass
-    
+
     # Performance optimization indexes for Events table
     try:
         op.create_index('ix_events_type', 'events', ['type'])
@@ -50,13 +44,13 @@ def upgrade():
         op.create_index('ix_events_type_created_at', 'events', ['type', 'created_at'])
     except Exception:
         pass
-    
+
     # Performance optimization indexes for Tasks table  
     try:
         op.create_index('ix_tasks_title', 'tasks', ['title'])
     except Exception:
         pass
-    
+
     # Performance optimization indexes for Users table
     try:
         op.create_index('ix_users_role', 'users', ['role'])
