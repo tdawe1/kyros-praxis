@@ -1,6 +1,12 @@
 # Hierarchical Role-Based Access Control
 
-This document describes the hierarchical role-based access control system implemented to resolve the issue where elevated roles were denied access to endpoints requiring lower roles.
+This document describes the hierarchical role-based access control system that resolves the issue "Denying elevated roles in role-based dependency" where elevated roles (moderator, admin) were incorrectly denied access to endpoints requiring lower roles (user).
+
+## Issue Resolution
+
+**Original Problem:** The `require_role` dependency was only granting access when the user's role exactly matched the required role OR when the user was an admin. This meant higher roles (e.g., moderator) were blocked from endpoints that required lower roles (e.g., `Role.USER`), breaking the hierarchical role model.
+
+**Solution Implemented:** The system now uses a proper hierarchical role-based access control where higher privilege roles can access endpoints that require lower privilege roles, while maintaining strict security boundaries.
 
 ## Overview
 
