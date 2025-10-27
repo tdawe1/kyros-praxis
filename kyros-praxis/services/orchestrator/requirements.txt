@@ -20,6 +20,6 @@ asgi-lifespan==2.1.0
 
 # Rate limiting
 slowapi==0.1.9
-redis==6.4.0
+redis==7.0.0
 aiosqlite==0.21.0
 psutil==7.1.0
