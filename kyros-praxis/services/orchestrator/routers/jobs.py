@@ -157,7 +157,7 @@ async def _create_job(session: AsyncSession, title: str):
     await session.refresh(job)
     
     # Invalidate job cache since we created a new job
-    if cache_manager and getattr(cache_manager, "enabled", True):
+    if cache_manager and getattr(cache_manager, "enabled", False):
         cache_manager.invalidate_job_cache(status='pending')
     # Log orchestrator event
     log_orchestrator_event(
