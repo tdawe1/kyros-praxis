@@ -1,7 +1,7 @@
 """Add performance optimization indexes
 
-Revision ID: 0002_performance_optimization
-Revises: 0001_initial
+Revision ID: 0003_performance_optimization
+Revises: 0002
 Create Date: 2024-09-28 08:53:25.000000
 
 """
@@ -9,8 +9,8 @@ from alembic import op
 
 
 # revision identifiers, used by Alembic.
-revision = '0002_performance_optimization'
-down_revision = '0001_initial'
+revision = '0003_performance_optimization'
+down_revision = '0002'
 branch_labels = None
 depends_on = None
 

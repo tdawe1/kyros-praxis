@@ -32,6 +32,11 @@ build/
 # Misc
 coverage/
 
+# Log files and dev logs
+*.log
+.devlogs/
+**/.devlogs/
+
 # Local canonicalization symlink + backups
 services/_deprecated/
 packages/_deprecated/
