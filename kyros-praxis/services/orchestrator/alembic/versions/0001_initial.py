@@ -1,4 +1,11 @@
-"""Initial migration for events table."""
+"""Initial migration for events table.
+
+Note: Uses generic JSON type instead of PostgreSQL-specific JSONB for database
+agnosticism. While JSONB offers better indexing and query performance for PostgreSQL,
+the JSON type ensures compatibility across different database backends (SQLite, MySQL, etc.).
+For PostgreSQL-specific deployments, consider using conditional column types based on
+the database backend to leverage JSONB's performance benefits.
+"""
 
 import sqlalchemy as sa
 from alembic import op
