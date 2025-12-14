@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Test</title>
+</head>
+<body>
+    <h1>Kyros Praxis API Test</h1>
+    
+    <h2>Test Results:</h2>
+    <pre id="results"></pre>
+    
+    <script>
+        const results = document.getElementById('results');
+        
+        async function runTests() {
+            const log = (msg) => {
+                results.textContent += msg + '\n';
+                console.log(msg);
+            };
+            
+            log('Starting API tests...\n');
+            
+            // Test 1: Health check
+            log('1. Testing /api/health...');
+            try {
+                const res = await fetch('/api/health');
+                const data = await res.json();
+                log(`   ✅ Status: ${res.status}`);
+                log(`   Response: ${JSON.stringify(data)}\n`);
+            } catch (err) {
+                log(`   ❌ Error: ${err.message}\n`);
+            }
+            
+            // Test 2: Auth me (should be 401 or error without login)
+            log('2. Testing /api/auth/me (unauthenticated)...');
+            try {
+                const res = await fetch('/api/auth/me', {
+                    credentials: 'include'
+                });
+                log(`   Status: ${res.status}`);
+                const data = await res.json();
+                log(`   Response: ${JSON.stringify(data)}\n`);
+            } catch (err) {
+                log(`   ❌ Error: ${err.message}\n`);
+            }
+            
+            // Test 3: Login
+            log('3. Testing login...');
+            try {
+                const res = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        email: 'admin@example.com',
+                        password: 'Admin123!'
+                    })
+                });
+                log(`   Status: ${res.status}`);
+                const data = await res.json();
+                log(`   Response: ${JSON.stringify(data).substring(0, 100)}...\n`);
+                
+                if (res.ok) {
+                    // Test 4: Auth me after login
+                    log('4. Testing /api/auth/me (authenticated)...');
+                    const meRes = await fetch('/api/auth/me', {
+                        credentials: 'include'
+                    });
+                    log(`   Status: ${meRes.status}`);
+                    const meData = await meRes.json();
+                    log(`   Response: ${JSON.stringify(meData)}\n`);
+                }
+            } catch (err) {
+                log(`   ❌ Error: ${err.message}\n`);
+            }
+            
+            log('\nTests complete!');
+        }
+        
+        runTests();
+    </script>
+</body>
+</html>

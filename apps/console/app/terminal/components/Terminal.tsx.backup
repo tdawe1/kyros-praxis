@@ -1,0 +1,317 @@
+'use client';
+
+import { useEffect, useRef, useState } from 'react';
+import { Terminal as XTerm, type IDisposable } from '@xterm/xterm';
+import { FitAddon } from '@xterm/addon-fit';
+import { WebLinksAddon } from '@xterm/addon-web-links';
+import { SearchAddon } from '@xterm/addon-search';
+import '@xterm/xterm/css/xterm.css';
+
+import {
+  ACCESS_TOKEN_STORAGE_KEY,
+  TERMINAL_WS_URL,
+  withTokenQuery,
+} from '@/app/lib/api';
+
+export interface TerminalProps {
+  onData?: (data: string) => void;
+  onResize?: (cols: number, rows: number) => void;
+  className?: string;
+}
+
+const textDecoder = new TextDecoder();
+
+export function Terminal({ onData, onResize, className }: TerminalProps) {
+  const terminalRef = useRef<HTMLDivElement>(null);
+  const wsRef = useRef<WebSocket | null>(null);
+  const pendingMessagesRef = useRef<string[]>([]);
+  const termRef = useRef<XTerm | null>(null);
+  const fitAddonRef = useRef<FitAddon | null>(null);
+  const onDataRef = useRef(onData);
+  const onResizeRef = useRef(onResize);
+  const isAuthenticatedRef = useRef(false);
+
+  const [connectionStatus, setConnectionStatus] = useState<
+    'connecting' | 'connected' | 'error'
+  >('connecting');
+
+  useEffect(() => {
+    onDataRef.current = onData;
+    onResizeRef.current = onResize;
+  }, [onData, onResize]);
+
+  useEffect(() => {
+    if (!terminalRef.current) {
+      return;
+    }
+
+    const term = new XTerm({
+      cursorBlink: true,
+      fontSize: 14,
+      fontFamily: 'Menlo, Monaco, "Courier New", monospace',
+      theme: {
+        background: '#0a0d13',
+        foreground: '#e2e8f0',
+        cursor: '#7ddfff',
+        cursorAccent: '#020305',
+        selectionBackground: 'rgba(125, 223, 255, 0.25)',
+      },
+      allowProposedApi: true,
+      scrollback: 10000,
+      fastScrollModifier: 'shift',
+    });
+
+    termRef.current = term;
+
+    const fitAddon = new FitAddon();
+    fitAddonRef.current = fitAddon;
+    const webLinksAddon = new WebLinksAddon();
+    const searchAddon = new SearchAddon();
+
+    term.loadAddon(fitAddon);
+    term.loadAddon(webLinksAddon);
+    term.loadAddon(searchAddon);
+
+    term.open(terminalRef.current);
+
+    setTimeout(() => {
+      try {
+        fitAddon.fit();
+        term.focus();
+      } catch (err) {
+        console.error('Failed to fit terminal on mount', err);
+      }
+    }, 0);
+
+    pendingMessagesRef.current = [];
+
+    // Note: With httpOnly cookies, we can't access the token directly
+    // Instead, we'll attempt to connect and let the backend verify the cookie
+    // The WebSocket connection will include cookies automatically
+    
+    // Check if user is authenticated (cookie-based)
+    const checkAuth = async () => {
+      try {
+        const response = await fetch(`${API_BASE}/auth/me`, {
+          credentials: 'include',
+        });
+        return response.ok;
+      } catch {
+        return false;
+      }
+    };
+
+    checkAuth().then((isAuth) => {
+      if (!isAuth) {
+        term.writeln('❌ Error: Not authenticated.');
+        term.writeln('Please log in to access the terminal.');
+        setConnectionStatus('error');
+        return;
+      }
+
+      // Authenticated - connect to WebSocket
+      connectWebSocket(term);
+    });
+
+    const connectWebSocket = (term: XTerm) => {
+      // Note: WebSocket doesn't support credentials: 'include' directly
+      // We need to use a different authentication method for WebSocket
+      // For now, we'll connect without token and rely on same-origin policy
+      const wsUrl = TERMINAL_WS_URL;
+        term.dispose();
+      };
+    }
+
+    const sendMessage = (payload: string) => {
+      const ws = wsRef.current;
+      if (ws && ws.readyState === WebSocket.OPEN && isAuthenticatedRef.current) {
+        ws.send(payload);
+      } else {
+        pendingMessagesRef.current.push(payload);
+      }
+    };
+
+    const flushPending = () => {
+      const ws = wsRef.current;
+      if (!ws || ws.readyState !== WebSocket.OPEN || !isAuthenticatedRef.current) {
+        return;
+      }
+      while (pendingMessagesRef.current.length > 0) {
+        const value = pendingMessagesRef.current.shift();
+        if (value !== undefined) {
+          ws.send(value);
+        }
+      }
+    };
+
+    const wsUrl = withTokenQuery(TERMINAL_WS_URL, token);
+    const ws = new WebSocket(wsUrl);
+    ws.binaryType = 'arraybuffer';
+    wsRef.current = ws;
+
+    term.writeln('🔗 Connecting to terminal …');
+    setConnectionStatus('connecting');
+
+    ws.onopen = () => {
+      isAuthenticatedRef.current = true;
+      setConnectionStatus('connected');
+      term.writeln('✅ Connected\n');
+      flushPending();
+    };
+
+    ws.onmessage = (event) => {
+      if (typeof event.data === 'string') {
+        try {
+          const message = JSON.parse(event.data);
+
+          if (message?.type === 'auth_success') {
+            isAuthenticatedRef.current = true;
+            setConnectionStatus('connected');
+            term.writeln(`✅ Authenticated as ${message.user?.username || 'operator'}\n`);
+            flushPending();
+            return;
+          }
+
+          if (message?.type === 'error') {
+            term.writeln(`❌ ${message.message ?? 'Authentication error'}\n`);
+            setConnectionStatus('error');
+            return;
+          }
+        } catch {
+          // fall through
+        }
+        term.write(event.data);
+        return;
+      }
+
+      if (event.data instanceof ArrayBuffer) {
+        term.write(textDecoder.decode(event.data));
+        return;
+      }
+
+      if (event.data instanceof Blob) {
+        event.data
+          .arrayBuffer()
+          .then((buffer) => term.write(textDecoder.decode(buffer)))
+          .catch((err) => console.error('Failed to decode terminal blob payload', err));
+      }
+    };
+
+    ws.onerror = (error) => {
+      console.error('Terminal WebSocket error', error);
+      term.writeln('\n❌ Connection error. Please retry.');
+      setConnectionStatus('error');
+    };
+
+    ws.onclose = (event) => {
+      setConnectionStatus('error');
+      if (event.code === 1008) {
+        term.writeln('\n❌ Connection closed: Authentication failed. Please log in again.');
+      } else if (event.code === 1000) {
+        term.writeln('\nConnection closed.');
+      } else {
+        term.writeln(`\nConnection closed (code: ${event.code}).`);
+      }
+    };
+
+    const disposables: IDisposable[] = [];
+
+    const dataDisposable = term.onData((data) => {
+      sendMessage(data);
+      onDataRef.current?.(data);
+    });
+    disposables.push(dataDisposable);
+
+    const resizeDisposable = term.onResize(({ cols, rows }) => {
+      sendMessage(JSON.stringify({ type: 'resize', cols, rows }));
+      onResizeRef.current?.(cols, rows);
+    });
+    disposables.push(resizeDisposable);
+
+    let resizeTimeout: NodeJS.Timeout | null = null;
+    const handleResize = () => {
+      if (resizeTimeout) {
+        clearTimeout(resizeTimeout);
+      }
+      resizeTimeout = setTimeout(() => {
+        try {
+          fitAddon.fit();
+          sendMessage(JSON.stringify({ type: 'resize', cols: term.cols, rows: term.rows }));
+        } catch (err) {
+          console.error('Error handling resize', err);
+        }
+      }, 100);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    const exposeTerminal = () => {
+      (window as any).__terminal = {
+        write: (data: string) => term.write(data),
+        writeln: (data: string) => term.writeln(data),
+        clear: () => term.clear(),
+        fit: () => {
+          try {
+            fitAddon.fit();
+          } catch (err) {
+            console.error('Error fitting terminal', err);
+          }
+        },
+        send: (data: string) => sendMessage(data),
+        isConnected: () => wsRef.current?.readyState === WebSocket.OPEN,
+      };
+    };
+    exposeTerminal();
+
+    return () => {
+      if (resizeTimeout) {
+        clearTimeout(resizeTimeout);
+      }
+      window.removeEventListener('resize', handleResize);
+      disposables.forEach((disposable) => disposable.dispose());
+
+      const wsInstance = wsRef.current;
+      if (wsInstance && wsInstance.readyState === WebSocket.OPEN) {
+        try {
+          wsInstance.close(1000, 'Terminal unmounted');
+        } catch (error) {
+          console.error('Error closing terminal socket', error);
+        }
+      }
+      wsRef.current = null;
+      pendingMessagesRef.current = [];
+      isAuthenticatedRef.current = false;
+
+      term.dispose();
+      termRef.current = null;
+      fitAddonRef.current = null;
+      delete (window as any).__terminal;
+    };
+  }, []);
+
+  return (
+    <div className="relative h-full">
+      <div className="absolute top-2 right-2 z-10 flex items-center gap-2 bg-black/50 px-3 py-1 rounded-md">
+        <div
+          className={`h-2 w-2 rounded-full ${
+            connectionStatus === 'connected'
+              ? 'bg-green-500'
+              : connectionStatus === 'connecting'
+                ? 'bg-yellow-500 animate-pulse'
+                : 'bg-red-500'
+          }`}
+        />
+        <span className="text-xs text-gray-300">
+          {connectionStatus === 'connected'
+            ? 'Connected'
+            : connectionStatus === 'connecting'
+              ? 'Connecting…'
+              : 'Disconnected'}
+        </span>
+      </div>
+
+      <div ref={terminalRef} className={className || 'h-full'} />
+    </div>
+  );
+}
+

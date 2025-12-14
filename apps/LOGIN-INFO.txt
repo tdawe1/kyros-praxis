@@ -1,0 +1,22 @@
+========================================
+KYROS PRAXIS - LOGIN CREDENTIALS
+========================================
+
+Console URL: http://localhost:3000/login
+
+Email:    admin@example.com
+Password: Admin123!
+
+========================================
+
+Quick Test (terminal):
+curl -X POST http://localhost:8001/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"admin@example.com","password":"Admin123!"}'
+
+========================================
+
+API Docs: http://localhost:8001/docs
+Health: http://localhost:8001/health
+
+========================================
