@@ -9,7 +9,7 @@ import sys
 from datetime import datetime
 from typing import Dict, List
 
-API_BASE = "http://localhost:8000"
+API_BASE = "http://localhost:8001"
 COLORS = {
     'GREEN': '\033[92m',
     'RED': '\033[91m',
@@ -44,6 +44,8 @@ class E2ETest:
         self.batch_id = None
         self.errors = []
         self.warnings = []
+        self.token = None
+        self.headers = {}
     
     async def setup(self):
         """Setup test session."""
@@ -55,6 +57,57 @@ class E2ETest:
         if self.session:
             await self.session.close()
         info("Test session closed")
+    
+    async def authenticate(self) -> bool:
+        """Register/login a test user and get JWT token."""
+        info("Authenticating test user...")
+        
+        import random
+        rand_id = random.randint(1000,9999)
+        test_username = f"e2e_test_{rand_id}"
+        test_email = f"e2e_test_{rand_id}@example.com"
+        test_password = "TestPassword123!"
+        
+        # Try to register first
+        try:
+            async with self.session.post(
+                f"{API_BASE}/auth/register",
+                json={
+                    "username": test_username,
+                    "email": test_email,
+                    "password": test_password
+                }
+            ) as resp:
+                if resp.status in [200, 201]:
+                    success(f"Test user registered: {test_email}")
+                elif resp.status == 400:
+                    # User might already exist, continue to login
+                    info("User may already exist, trying login...")
+                else:
+                    text = await resp.text()
+                    warning(f"Registration returned {resp.status}: {text}")
+        except Exception as e:
+            warning(f"Registration failed: {e}")
+        
+        # Now login to get token
+        try:
+            async with self.session.post(
+                f"{API_BASE}/auth/login",
+                json={"email": test_email, "password": test_password}
+            ) as resp:
+                if resp.status == 200:
+                    data = await resp.json()
+                    self.token = data.get("access_token")
+                    self.headers = {"Authorization": f"Bearer {self.token}"}
+                    success("Login successful")
+                    return True
+                else:
+                    text = await resp.text()
+                    error(f"Login failed: {resp.status} - {text}")
+                    return False
+        except Exception as e:
+            error(f"Authentication failed: {e}")
+            return False
     
     async def check_health(self) -> bool:
         """Check API health."""
@@ -81,7 +134,8 @@ class E2ETest:
                 json={
                     "name": f"E2E Test - {datetime.now().isoformat()}",
                     "description": "Automated end-to-end workflow test"
-                }
+                },
+                headers=self.headers
             ) as resp:
                 if resp.status in [200, 201]:
                     project = await resp.json()
@@ -123,7 +177,8 @@ class E2ETest:
             try:
                 async with self.session.post(
                     f"{API_BASE}/projects/{self.project_id}/tasks",
-                    json=task_data
+                    json=task_data,
+                    headers=self.headers
                 ) as resp:
                     if resp.status in [200, 201]:
                         task = await resp.json()
@@ -153,7 +208,8 @@ class E2ETest:
         try:
             # Get existing tasks
             async with self.session.get(
-                f"{API_BASE}/projects/{self.project_id}/tasks"
+                f"{API_BASE}/projects/{self.project_id}/tasks",
+                headers=self.headers
             ) as resp:
                 if resp.status == 200:
                     tasks = await resp.json()
@@ -191,7 +247,8 @@ class E2ETest:
             
             try:
                 async with self.session.get(
-                    f"{API_BASE}/projects/{self.project_id}/dashboard"
+                    f"{API_BASE}/projects/{self.project_id}/dashboard",
+                    headers=self.headers
                 ) as resp:
                     if resp.status == 200:
                         dashboard = await resp.json()
@@ -232,7 +289,8 @@ class E2ETest:
         # Timeout - get final status
         try:
             async with self.session.get(
-                f"{API_BASE}/projects/{self.project_id}/dashboard"
+                f"{API_BASE}/projects/{self.project_id}/dashboard",
+                headers=self.headers
             ) as resp:
                 if resp.status == 200:
                     return await resp.json()
@@ -349,12 +407,17 @@ class E2ETest:
                 error("API health check failed - aborting")
                 return False
             
-            # Step 2: Create project
+            # Step 2: Authenticate
+            if not await self.authenticate():
+                error("Authentication failed - aborting")
+                return False
+            
+            # Step 3: Create project
             if not await self.create_project():
                 error("Project creation failed - aborting")
                 return False
             
-            # Step 3: Create tasks
+            # Step 4: Create tasks
             if not await self.create_tasks():
                 error("Task creation failed - aborting")
                 return False

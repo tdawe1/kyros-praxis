@@ -19,6 +19,23 @@ class Settings(BaseSettings):
     
     MODEL_PROVIDER: str = Field(default="openrouter")
     MODEL_NAME: str = Field(default="gpt-4o-mini")
+    
+    # Google Vertex AI
+    GOOGLE_PROJECT_ID: str | None = Field(default=None, description="Google Cloud project ID for Vertex AI")
+    GOOGLE_LOCATION: str = Field(default="us-central1", description="Google Cloud region for Vertex AI")
+    GOOGLE_APPLICATION_CREDENTIALS: str | None = Field(default=None, description="Path to service account JSON")
+    
+    # Amazon Bedrock
+    AWS_REGION: str = Field(default="us-east-1", description="AWS region for Bedrock")
+    AWS_ACCESS_KEY_ID: str | None = Field(default=None, description="AWS access key (optional if using IAM role)")
+    AWS_SECRET_ACCESS_KEY: str | None = Field(default=None, description="AWS secret key")
+    AWS_BEDROCK_RUNTIME_ENDPOINT: str | None = Field(default=None, description="Custom Bedrock endpoint URL")
+    
+    # Microsoft Azure OpenAI
+    AZURE_OPENAI_API_KEY: str | None = Field(default=None, description="Azure OpenAI API key")
+    AZURE_OPENAI_ENDPOINT: str | None = Field(default=None, description="Azure OpenAI endpoint URL")
+    AZURE_OPENAI_API_VERSION: str = Field(default="2024-02-15-preview", description="Azure OpenAI API version")
+    AZURE_OPENAI_DEPLOYMENT: str | None = Field(default=None, description="Azure OpenAI deployment name")
 
     # CORS / Console integration
     CORS_ALLOW_ORIGINS: List[str] = Field(default_factory=lambda: ["http://localhost:3000"])

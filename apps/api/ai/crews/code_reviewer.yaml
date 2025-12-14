@@ -1,0 +1,30 @@
+name: code_reviewer
+description: Review code artifacts for correctness, quality, security, and completeness
+model:
+  provider: ${MODEL_PROVIDER:-openrouter}
+  name: ${MODEL_NAME:-gpt-4o-mini}
+  # Provider-specific model overrides (used when provider matches)
+  vertex_model: gemini-1.5-pro
+  bedrock_model: anthropic.claude-3-sonnet-20240229-v1:0
+  azure_model: gpt-4o
+inputs:
+  - name: artifacts
+    required: true
+    description: List of code artifacts to review
+  - name: criteria
+    required: false
+    description: Custom review criteria
+roles:
+  - name: senior_reviewer
+    goal: Review code for correctness, quality, and security issues
+    prompt: code_reviewer.md
+  - name: qa_engineer
+    goal: Verify test coverage and edge case handling
+    prompt: code_reviewer.md
+output:
+  format: json
+  schema:
+    approved: boolean
+    feedback: string
+    issues: array
+    suggestions: array

@@ -74,35 +74,27 @@ async def simulate_run(run_id: str, manifest: Dict[str, Any], payload: Dict[str,
 
 
 def _configure_provider_env(manifest: Dict[str, Any]) -> tuple[str | None, str | None]:
+    """
+    Configure environment variables for the LLM provider specified in the manifest.
+    
+    Supports: openrouter, openai, vertex, bedrock, azure
+    """
+    from .llm_providers import get_provider_config, configure_environment
+    
     model_cfg = manifest.get("model", {}) or {}
     provider = str(model_cfg.get("provider", settings.MODEL_PROVIDER or "openrouter")).lower()
-    model_name = str(model_cfg.get("name", settings.MODEL_NAME or "openrouter/openai/gpt-4o-mini"))
-
-    openrouter_key = os.getenv("OPENROUTER_API_KEY") or settings.OPENROUTER_API_KEY
-    openai_key = os.getenv("OPENAI_API_KEY") or settings.OPENAI_API_KEY
-
-    if provider in ("openrouter", "openai-compatible"):
-        # Mirror to OpenAI-compatible env vars used by many SDKs
-        if openrouter_key:
-            os.environ["OPENROUTER_API_KEY"] = openrouter_key
-            os.environ["OPENAI_API_KEY"] = openrouter_key
-        base = os.getenv("OPENROUTER_BASE_URL") or settings.OPENROUTER_BASE_URL
-        os.environ["OPENAI_BASE_URL"] = base
-        os.environ["OPENAI_API_BASE"] = base
-    elif provider == "openai":
-        if openai_key:
-            os.environ["OPENAI_API_KEY"] = openai_key
-    else:
-        # Future providers: set their specific env vars here
-        pass
-
-    # Hint some wrappers about model selection
-    os.environ["OPENAI_MODEL_NAME"] = model_name
-    if provider == "openrouter":
-        # CrewAI uses litellm; specify provider/model pairs
-        os.environ.setdefault("LITELLM_PROVIDER", "openrouter")
-
-    return provider, model_name
+    model_name = str(model_cfg.get("name", settings.MODEL_NAME or "gpt-4o-mini"))
+    
+    # Use provider-specific model if specified in manifest
+    provider_model_key = f"{provider}_model"
+    if provider_model_key in model_cfg:
+        model_name = model_cfg[provider_model_key]
+    
+    # Get and apply provider configuration
+    config = get_provider_config(provider, model_name)
+    configure_environment(config)
+    
+    return provider, config.model_name
 
 
 async def run_with_crewai(run_id: str, manifest: Dict[str, Any], payload: Dict[str, Any]) -> bool:

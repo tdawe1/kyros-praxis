@@ -189,6 +189,24 @@ async def get_jobs():
     return {"jobs": get_job_status()}
 
 
+@app.get("/admin/providers", response_class=ORJSONResponse)
+async def get_providers():
+    """Get status of configured LLM providers."""
+    from .llm_providers import list_available_providers, validate_provider_config
+    
+    providers = list_available_providers()
+    current = settings.MODEL_PROVIDER
+    current_validation = validate_provider_config(current)
+    
+    return {
+        "current_provider": current,
+        "current_model": settings.MODEL_NAME,
+        "current_valid": current_validation["valid"],
+        "current_missing": current_validation["missing"],
+        "providers": providers
+    }
+
+
 @app.post("/crews/runs", response_model=Run, response_class=ORJSONResponse)
 async def create_run(
     req: RunCreate,

@@ -1,0 +1,156 @@
+{
+  "_comment": "MCP Server Configuration Template for Kyros Praxis",
+  "_warning": "Copy this file to mcp.json and update with your actual API keys and configurations",
+
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "."],
+      "env": {
+        "FILESYSTEM_ROOT": "."
+      }
+    },
+
+    "git": {
+      "command": "uvx",
+      "args": ["mcp-server-git", "--repository", "."],
+      "env": {
+        "GIT_REPOSITORY_PATH": ".",
+        "GIT_ENABLE_COMMIT": "true",
+        "GIT_ENABLE_DIFF": "true",
+        "GIT_ENABLE_LOG": "true"
+      }
+    },
+
+    "time": {
+      "command": "uvx",
+      "args": ["mcp-server-time"],
+      "env": {
+        "TIME_FORMAT": "iso8601",
+        "TIME_ZONE": "UTC"
+      }
+    },
+
+    "redis": {
+      "command": "uvx",
+      "args": ["mcp-server-redis"],
+      "env": {
+        "REDIS_HOST": "localhost",
+        "REDIS_PORT": "6379",
+        "REDIS_PASSWORD": "${REDIS_PASSWORD}",
+        "REDIS_DB": "0"
+      }
+    },
+
+    "postgres": {
+      "command": "uvx",
+      "args": ["mcp-server-postgres"],
+      "env": {
+        "POSTGRES_HOST": "localhost",
+        "POSTGRES_PORT": "5432",
+        "POSTGRES_USER": "postgres",
+        "POSTGRES_PASSWORD": "${POSTGRES_PASSWORD}",
+        "POSTGRES_DB": "kyros",
+        "POSTGRES_SCHEMA": "public"
+      }
+    },
+
+    "brave-search": {
+      "command": "uvx",
+      "args": ["mcp-server-brave-search"],
+      "env": {
+        "BRAVE_API_KEY": "${BRAVE_API_KEY}"
+      }
+    },
+
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_TOKEN": "${GITHUB_TOKEN}",
+        "GITHUB_REPOSITORY": "${GITHUB_REPOSITORY:-tdawe1/kyros-praxis}"
+      }
+    },
+
+    "slack": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-slack"],
+      "env": {
+        "SLACK_BOT_TOKEN": "${SLACK_BOT_TOKEN}",
+        "SLACK_SIGNING_SECRET": "${SLACK_SIGNING_SECRET}"
+      }
+    },
+
+    "weather": {
+      "command": "uvx",
+      "args": ["mcp-server-weather"],
+      "env": {
+        "OPENWEATHER_API_KEY": "${OPENWEATHER_API_KEY}",
+        "WEATHER_UNITS": "metric",
+        "WEATHER_LANGUAGE": "en"
+      }
+    },
+
+    "qdrant": {
+      "command": "uvx",
+      "args": ["mcp-server-qdrant"],
+      "env": {
+        "QDRANT_URL": "${QDRANT_URL:-http://localhost:6333}",
+        "QDRANT_API_KEY": "${QDRANT_API_KEY}",
+        "QDRANT_COLLECTION": "kyros-vectors"
+      }
+    },
+
+    "puppeteer": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-puppeteer"],
+      "env": {
+        "PUPPETEER_HEADLESS": "true",
+        "PUPPETEER_TIMEOUT": "30000"
+      }
+    },
+
+    "sqlite": {
+      "command": "uvx",
+      "args": ["mcp-server-sqlite", "/path/to/database.db"],
+      "env": {
+        "SQLITE_DB_PATH": "./orchestrator.db",
+        "SQLITE_READONLY": "false"
+      }
+    },
+
+    "web": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-web"],
+      "env": {
+        "WEB_TIMEOUT": "30000",
+        "WEB_USER_AGENT": "Kyros-Praxis-MCP/1.0"
+      }
+    },
+
+    "zen": {
+      "command": "python",
+      "args": ["-m", "zen_mcp_server"],
+      "env": {
+        "ZEN_CONFIG_PATH": "./zen-config.json",
+        "ZEN_LOG_LEVEL": "INFO"
+      }
+    }
+  },
+
+  "_notes": {
+    "environment_variables": "Replace ${VAR_NAME} placeholders with actual values or set them in your environment",
+    "optional_servers": "Comment out any servers you don't need to improve startup time",
+    "api_keys": "Most external service servers require API keys that must be obtained from the respective service providers",
+    "security": "Never commit API keys or secrets to version control"
+  },
+
+  "_configuration_tips": {
+    "filesystem": "Set FILESYSTEM_ROOT to limit access to specific directories",
+    "git": "Ensure the directory is a git repository before enabling",
+    "redis": "Redis must be running and accessible before starting the MCP server",
+    "postgres": "PostgreSQL must be running and the database must exist",
+    "ai_services": "AI service API keys are typically obtained from the service's developer portal",
+    "external_apis": "Rate limits may apply to external API services"
+  }
+}

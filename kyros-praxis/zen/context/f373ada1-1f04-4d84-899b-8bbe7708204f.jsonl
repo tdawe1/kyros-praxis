@@ -1,0 +1,3 @@
+{"ts": 1757904242309, "role": "user", "provider": "cli", "content": "Ready for code review and security analysis"}
+{"ts": 1757904453227, "role": "system", "provider": "cli", "content": "Authentication configured: opencode auth with ZAI_API_KEY credential"}
+{"ts": 1757904486898, "role": "system", "provider": "cli", "content": "Model configured: GLM 4.5 via opencode provider"}

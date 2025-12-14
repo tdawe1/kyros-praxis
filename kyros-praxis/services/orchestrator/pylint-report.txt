@@ -1,0 +1,664 @@
+************* Module /home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/.pylintrc
+.pylintrc:1:0: F0011: error while parsing the configuration: While reading from '/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/.pylintrc' [line 59]: option 'max-attributes' in section 'DESIGN' already exists (config-parse-error)
+************* Module services.orchestrator.main
+main.py:376:0: C0301: Line too long (108/100) (line-too-long)
+main.py:389:0: C0301: Line too long (112/100) (line-too-long)
+main.py:402:0: C0301: Line too long (150/100) (line-too-long)
+main.py:426:0: C0301: Line too long (113/100) (line-too-long)
+main.py:491:0: C0301: Line too long (106/100) (line-too-long)
+main.py:516:0: C0301: Line too long (110/100) (line-too-long)
+main.py:90:0: C0103: Constant name "orch_id" doesn't conform to UPPER_CASE naming style (invalid-name)
+main.py:104:0: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+main.py:106:0: C0413: Import "from fastapi import Depends, FastAPI, HTTPException, Request, Response, WebSocket, status, WebSocketDisconnect" should be placed at the top of the module (wrong-import-position)
+main.py:116:0: C0413: Import "from fastapi.responses import JSONResponse" should be placed at the top of the module (wrong-import-position)
+main.py:132:0: C0413: Import "from fastapi.security import OAuth2PasswordRequestForm" should be placed at the top of the module (wrong-import-position)
+main.py:133:0: C0413: Import "from sqlalchemy import text" should be placed at the top of the module (wrong-import-position)
+main.py:134:0: C0413: Import "from sqlalchemy.ext.asyncio import AsyncSession" should be placed at the top of the module (wrong-import-position)
+main.py:152:7: W0718: Catching too general exception Exception (broad-exception-caught)
+main.py:162:4: R0402: Use 'from routers import events' instead (consider-using-from-import)
+main.py:163:4: R0402: Use 'from routers import jobs' instead (consider-using-from-import)
+main.py:164:4: R0402: Use 'from routers import tasks' instead (consider-using-from-import)
+main.py:165:4: R0402: Use 'from routers import agents' instead (consider-using-from-import)
+main.py:220:15: W0718: Catching too general exception Exception (broad-exception-caught)
+main.py:209:16: C0415: Import outside toplevel (jose.jwt) (import-outside-toplevel)
+main.py:300:4: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+main.py:328:7: W0718: Catching too general exception Exception (broad-exception-caught)
+main.py:326:4: E0611: No name 'logging' in module 'services.orchestrator.middleware' (no-name-in-module)
+main.py:346:7: W0718: Catching too general exception Exception (broad-exception-caught)
+main.py:353:7: W0718: Catching too general exception Exception (broad-exception-caught)
+main.py:354:4: R0402: Use 'from routers import security' instead (consider-using-from-import)
+main.py:355:4: R0402: Use 'from routers import monitoring' instead (consider-using-from-import)
+main.py:362:7: W0718: Catching too general exception Exception (broad-exception-caught)
+main.py:363:4: R0402: Use 'from routers import orchestrator_events' instead (consider-using-from-import)
+main.py:369:7: W0718: Catching too general exception Exception (broad-exception-caught)
+main.py:370:4: R0402: Use 'from routers import openai' instead (consider-using-from-import)
+main.py:423:8: W0707: Consider explicitly re-raising using 'except Exception as exc' and 'raise HTTPException(status_code=500, detail='DB unavailable') from exc' (raise-missing-from)
+main.py:515:11: W0718: Catching too general exception Exception (broad-exception-caught)
+main.py:496:8: C0415: Import outside toplevel (jose.jwt) (import-outside-toplevel)
+main.py:562:11: W0718: Catching too general exception Exception (broad-exception-caught)
+main.py:564:8: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+main.py:75:0: C0411: standard import "os" should be placed before third party import "dotenv.load_dotenv" (wrong-import-order)
+main.py:76:0: C0411: standard import "logging" should be placed before third party import "dotenv.load_dotenv" (wrong-import-order)
+main.py:132:0: C0412: Imports from package fastapi are not grouped (ungrouped-imports)
+main.py:166:4: C0412: Imports from package app are not grouped (ungrouped-imports)
+main.py:347:4: C0412: Imports from package routers are not grouped (ungrouped-imports)
+main.py:106:0: W0611: Unused Response imported from fastapi (unused-import)
+main.py:132:0: W0611: Unused OAuth2PasswordRequestForm imported from fastapi.security (unused-import)
+main.py:134:0: W0611: Unused AsyncSession imported from sqlalchemy.ext.asyncio (unused-import)
+main.py:140:4: W0611: Unused User imported from auth (unused-import)
+main.py:140:4: W0611: Unused get_current_user imported from auth (unused-import)
+************* Module services.orchestrator.models
+models.py:173:0: C0303: Trailing whitespace (trailing-whitespace)
+models.py:176:0: C0303: Trailing whitespace (trailing-whitespace)
+models.py:179:0: C0303: Trailing whitespace (trailing-whitespace)
+models.py:182:0: C0303: Trailing whitespace (trailing-whitespace)
+models.py:185:0: C0303: Trailing whitespace (trailing-whitespace)
+models.py:188:0: C0303: Trailing whitespace (trailing-whitespace)
+models.py:191:0: C0303: Trailing whitespace (trailing-whitespace)
+models.py:194:0: C0303: Trailing whitespace (trailing-whitespace)
+models.py:197:0: C0303: Trailing whitespace (trailing-whitespace)
+models.py:200:0: C0303: Trailing whitespace (trailing-whitespace)
+models.py:243:0: C0303: Trailing whitespace (trailing-whitespace)
+models.py:246:0: C0303: Trailing whitespace (trailing-whitespace)
+models.py:249:0: C0303: Trailing whitespace (trailing-whitespace)
+models.py:252:0: C0303: Trailing whitespace (trailing-whitespace)
+models.py:286:0: C0303: Trailing whitespace (trailing-whitespace)
+models.py:289:0: C0303: Trailing whitespace (trailing-whitespace)
+models.py:292:0: C0303: Trailing whitespace (trailing-whitespace)
+models.py:295:0: C0303: Trailing whitespace (trailing-whitespace)
+models.py:298:0: C0303: Trailing whitespace (trailing-whitespace)
+models.py:353:0: C0303: Trailing whitespace (trailing-whitespace)
+models.py:356:0: C0303: Trailing whitespace (trailing-whitespace)
+models.py:359:0: C0303: Trailing whitespace (trailing-whitespace)
+models.py:362:0: C0303: Trailing whitespace (trailing-whitespace)
+models.py:365:0: C0303: Trailing whitespace (trailing-whitespace)
+models.py:369:0: C0303: Trailing whitespace (trailing-whitespace)
+models.py:120:0: E0611: No name 'AsyncAttrs' in module 'sqlalchemy.ext.asyncio' (no-name-in-module)
+models.py:121:0: E0611: No name 'DeclarativeBase' in module 'sqlalchemy.orm' (no-name-in-module)
+models.py:134:4: W0107: Unnecessary pass statement (unnecessary-pass)
+models.py:124:0: R0903: Too few public methods (0/2) (too-few-public-methods)
+models.py:137:0: R0903: Too few public methods (0/2) (too-few-public-methods)
+models.py:209:0: R0903: Too few public methods (0/2) (too-few-public-methods)
+models.py:257:0: R0903: Too few public methods (0/2) (too-few-public-methods)
+models.py:303:0: R0903: Too few public methods (0/2) (too-few-public-methods)
+************* Module services.orchestrator.database
+database.py:68:0: C0301: Line too long (105/100) (line-too-long)
+database.py:82:0: E0611: No name 'async_sessionmaker' in module 'sqlalchemy.ext.asyncio' (no-name-in-module)
+database.py:114:7: W0718: Catching too general exception Exception (broad-exception-caught)
+************* Module services.orchestrator.auth
+auth.py:309:0: C0301: Line too long (108/100) (line-too-long)
+auth.py:120:7: W0718: Catching too general exception Exception (broad-exception-caught)
+auth.py:252:4: C0415: Import outside toplevel (sqlalchemy.select) (import-outside-toplevel)
+auth.py:390:8: W0707: Consider explicitly re-raising using 'except JWTError as exc' and 'raise credentials_exception from exc' (raise-missing-from)
+auth.py:104:0: W0611: Unused import os (unused-import)
+************* Module services.orchestrator.middleware
+middleware.py:102:7: W0718: Catching too general exception Exception (broad-exception-caught)
+middleware.py:98:4: E0401: Unable to import 'slowapi' (import-error)
+middleware.py:99:4: E0401: Unable to import 'slowapi.errors' (import-error)
+middleware.py:103:4: C0103: Constant name "Limiter" doesn't conform to UPPER_CASE naming style (invalid-name)
+middleware.py:228:11: W0718: Catching too general exception Exception (broad-exception-caught)
+middleware.py:227:12: W0719: Raising too general exception: Exception (broad-exception-raised)
+middleware.py:194:22: W0613: Unused argument 'api_key' (unused-argument)
+middleware.py:106:0: C0411: standard import "os" should be placed before third party import "fastapi.Depends" (wrong-import-order)
+************* Module services.orchestrator.routers.agents
+routers/agents.py:22:0: C0301: Line too long (106/100) (line-too-long)
+routers/agents.py:99:0: C0305: Trailing newlines (trailing-newlines)
+routers/agents.py:40:4: C0415: Import outside toplevel (fastapi.status) (import-outside-toplevel)
+routers/agents.py:63:8: W0707: Consider explicitly re-raising using 'except JWTError as exc' and 'raise credentials_exception from exc' (raise-missing-from)
+routers/agents.py:33:4: W0613: Unused argument 'session' (unused-argument)
+routers/agents.py:69:0: C0115: Missing class docstring (missing-class-docstring)
+routers/agents.py:81:0: C0115: Missing class docstring (missing-class-docstring)
+routers/agents.py:91:4: C0103: Argument name "pageSize" doesn't conform to snake_case naming style (invalid-name)
+routers/agents.py:93:4: C0103: Argument name "sortBy" doesn't conform to snake_case naming style (invalid-name)
+routers/agents.py:94:4: C0103: Argument name "sortOrder" doesn't conform to snake_case naming style (invalid-name)
+routers/agents.py:89:0: R0913: Too many arguments (6/5) (too-many-arguments)
+routers/agents.py:89:0: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
+routers/agents.py:92:4: W0613: Unused argument 'status' (unused-argument)
+routers/agents.py:93:4: W0613: Unused argument 'sortBy' (unused-argument)
+routers/agents.py:94:4: W0613: Unused argument 'sortOrder' (unused-argument)
+routers/agents.py:95:4: W0613: Unused argument 'current_user' (unused-argument)
+************* Module services.orchestrator.routers.escalation
+routers/escalation.py:89:0: C0301: Line too long (102/100) (line-too-long)
+routers/escalation.py:174:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/escalation.py:181:0: C0301: Line too long (106/100) (line-too-long)
+routers/escalation.py:185:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/escalation.py:188:0: C0301: Line too long (101/100) (line-too-long)
+routers/escalation.py:206:0: C0301: Line too long (108/100) (line-too-long)
+routers/escalation.py:225:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/escalation.py:228:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/escalation.py:235:0: C0301: Line too long (101/100) (line-too-long)
+routers/escalation.py:236:0: C0301: Line too long (109/100) (line-too-long)
+routers/escalation.py:243:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/escalation.py:261:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/escalation.py:268:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/escalation.py:286:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/escalation.py:295:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/escalation.py:303:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/escalation.py:312:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/escalation.py:334:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/escalation.py:343:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/escalation.py:365:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/escalation.py:384:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/escalation.py:387:0: C0301: Line too long (102/100) (line-too-long)
+routers/escalation.py:404:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/escalation.py:411:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/escalation.py:413:0: C0301: Line too long (114/100) (line-too-long)
+routers/escalation.py:414:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/escalation.py:425:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/escalation.py:441:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/escalation.py:444:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/escalation.py:450:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/escalation.py:455:0: C0304: Final newline missing (missing-final-newline)
+routers/escalation.py:34:0: E0401: Unable to import 'services.orchestrator.routers.escalation_triggers' (import-error)
+routers/escalation.py:39:0: E0401: Unable to import 'services.orchestrator.routers.context_analysis' (import-error)
+routers/escalation.py:44:0: E0401: Unable to import 'services.orchestrator.routers.escalation_workflow' (import-error)
+routers/escalation.py:50:0: E0401: Unable to import 'services.orchestrator.routers.trigger_validation' (import-error)
+routers/escalation.py:55:0: E0401: Unable to import 'services.orchestrator.routers.database' (import-error)
+routers/escalation.py:63:0: C0115: Missing class docstring (missing-class-docstring)
+routers/escalation.py:74:0: C0115: Missing class docstring (missing-class-docstring)
+routers/escalation.py:85:0: C0115: Missing class docstring (missing-class-docstring)
+routers/escalation.py:92:0: C0115: Missing class docstring (missing-class-docstring)
+routers/escalation.py:101:0: C0115: Missing class docstring (missing-class-docstring)
+routers/escalation.py:108:0: C0115: Missing class docstring (missing-class-docstring)
+routers/escalation.py:183:20: W1309: Using an f-string that does not have any interpolated variables (f-string-without-interpolation)
+routers/escalation.py:187:8: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+routers/escalation.py:188:8: W0707: Consider explicitly re-raising using 'raise HTTPException(status_code=500, detail=f'Failed to submit escalation request: {str(e)}') from e' (raise-missing-from)
+routers/escalation.py:247:8: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+routers/escalation.py:248:8: W0707: Consider explicitly re-raising using 'raise HTTPException(status_code=500, detail=f'Failed to get workflow status: {str(e)}') from e' (raise-missing-from)
+routers/escalation.py:270:8: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+routers/escalation.py:271:8: W0707: Consider explicitly re-raising using 'raise HTTPException(status_code=500, detail=f'Failed to get system statistics: {str(e)}') from e' (raise-missing-from)
+routers/escalation.py:275:0: E0102: function already defined line 50 (function-redefined)
+routers/escalation.py:285:8: E0401: Unable to import 'services.orchestrator.routers.escalation_triggers' (import-error)
+routers/escalation.py:285:8: C0415: Import outside toplevel (escalation_triggers.EscalationTrigger, escalation_triggers.EscalationReason) (import-outside-toplevel)
+routers/escalation.py:297:28: E1123: Unexpected keyword argument 'trigger' in function call (unexpected-keyword-arg)
+routers/escalation.py:297:28: E1123: Unexpected keyword argument 'context' in function call (unexpected-keyword-arg)
+routers/escalation.py:297:28: E1123: Unexpected keyword argument 'assessment_data' in function call (unexpected-keyword-arg)
+routers/escalation.py:297:28: E1123: Unexpected keyword argument 'context_analysis_data' in function call (unexpected-keyword-arg)
+routers/escalation.py:297:28: E1120: No value for argument 'request' in function call (no-value-for-parameter)
+routers/escalation.py:314:8: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+routers/escalation.py:315:8: W0707: Consider explicitly re-raising using 'raise HTTPException(status_code=500, detail=f'Failed to validate trigger: {str(e)}') from e' (raise-missing-from)
+routers/escalation.py:319:0: E0102: function already defined line 39 (function-redefined)
+routers/escalation.py:328:27: E1123: Unexpected keyword argument 'task_description' in function call (unexpected-keyword-arg)
+routers/escalation.py:328:27: E1123: Unexpected keyword argument 'files_to_modify' in function call (unexpected-keyword-arg)
+routers/escalation.py:328:27: E1123: Unexpected keyword argument 'file_contents' in function call (unexpected-keyword-arg)
+routers/escalation.py:328:27: E1123: Unexpected keyword argument 'task_type' in function call (unexpected-keyword-arg)
+routers/escalation.py:328:27: E1120: No value for argument 'request' in function call (no-value-for-parameter)
+routers/escalation.py:345:8: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+routers/escalation.py:346:8: W0707: Consider explicitly re-raising using 'raise HTTPException(status_code=500, detail=f'Failed to analyze task context: {str(e)}') from e' (raise-missing-from)
+routers/escalation.py:386:8: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+routers/escalation.py:387:8: W0707: Consider explicitly re-raising using 'raise HTTPException(status_code=500, detail=f'Failed to detect escalation triggers: {str(e)}') from e' (raise-missing-from)
+routers/escalation.py:402:15: W0718: Catching too general exception Exception (broad-exception-caught)
+routers/escalation.py:409:15: W0718: Catching too general exception Exception (broad-exception-caught)
+routers/escalation.py:427:8: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+routers/escalation.py:428:8: W0707: Consider explicitly re-raising using 'raise HTTPException(status_code=500, detail=f'Failed to perform health check: {str(e)}') from e' (raise-missing-from)
+routers/escalation.py:400:12: W0612: Unused variable 'stats' (unused-variable)
+routers/escalation.py:407:12: W0612: Unused variable 'val_stats' (unused-variable)
+routers/escalation.py:439:17: E0602: Undefined variable 'get_escalation_engine' (undefined-variable)
+routers/escalation.py:454:8: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+routers/escalation.py:455:8: W0707: Consider explicitly re-raising using 'raise HTTPException(status_code=500, detail=f'Failed to cancel workflow: {str(e)}') from e' (raise-missing-from)
+routers/escalation.py:31:0: W0611: Unused Depends imported from fastapi (unused-import)
+routers/escalation.py:34:0: W0611: Unused EscalationDetector imported from escalation_triggers (unused-import)
+routers/escalation.py:34:0: W0611: Unused EscalationAssessment imported from escalation_triggers (unused-import)
+routers/escalation.py:39:0: W0611: Unused ContextAnalyzer imported from context_analysis (unused-import)
+routers/escalation.py:39:0: W0611: Unused ContextAnalysisResult imported from context_analysis (unused-import)
+routers/escalation.py:44:0: W0611: Unused EscalationEngine imported from escalation_workflow (unused-import)
+routers/escalation.py:50:0: W0611: Unused TriggerValidator imported from trigger_validation (unused-import)
+routers/escalation.py:55:0: W0611: Unused get_db imported from database (unused-import)
+************* Module services.orchestrator.routers.events
+routers/events.py:71:0: C0301: Line too long (137/100) (line-too-long)
+routers/events.py:98:0: C0301: Line too long (115/100) (line-too-long)
+routers/events.py:102:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/events.py:110:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/events.py:113:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/events.py:119:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/events.py:128:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/events.py:132:0: C0301: Line too long (150/100) (line-too-long)
+routers/events.py:149:0: C0301: Line too long (105/100) (line-too-long)
+routers/events.py:159:0: C0301: Line too long (115/100) (line-too-long)
+routers/events.py:197:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/events.py:205:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/events.py:49:11: W0718: Catching too general exception Exception (broad-exception-caught)
+routers/events.py:111:9: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+routers/events.py:163:13: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+routers/events.py:176:27: W0718: Catching too general exception Exception (broad-exception-caught)
+routers/events.py:134:4: W0613: Unused argument 'request' (unused-argument)
+************* Module services.orchestrator.routers.jobs
+routers/jobs.py:48:0: C0301: Line too long (101/100) (line-too-long)
+routers/jobs.py:161:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/jobs.py:170:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/jobs.py:220:0: C0301: Line too long (191/100) (line-too-long)
+routers/jobs.py:249:0: C0301: Line too long (108/100) (line-too-long)
+routers/jobs.py:261:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/jobs.py:264:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/jobs.py:273:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/jobs.py:288:0: C0301: Line too long (157/100) (line-too-long)
+routers/jobs.py:319:0: C0301: Line too long (108/100) (line-too-long)
+routers/jobs.py:332:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/jobs.py:335:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/jobs.py:343:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/jobs.py:374:0: C0301: Line too long (146/100) (line-too-long)
+routers/jobs.py:401:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/jobs.py:409:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/jobs.py:411:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/jobs.py:420:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/jobs.py:430:0: C0301: Line too long (169/100) (line-too-long)
+routers/jobs.py:460:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/jobs.py:469:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/jobs.py:471:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/jobs.py:477:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/jobs.py:487:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/jobs.py:497:0: C0301: Line too long (118/100) (line-too-long)
+routers/jobs.py:524:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/jobs.py:532:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/jobs.py:534:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/jobs.py:537:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/jobs.py:541:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/jobs.py:549:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/jobs.py:550:0: C0304: Final newline missing (missing-final-newline)
+routers/jobs.py:84:4: W0621: Redefining name 'select' from outer scope (line 52) (redefined-outer-name)
+routers/jobs.py:84:4: W0404: Reimport 'select' (imported line 52) (reimported)
+routers/jobs.py:84:4: C0415: Import outside toplevel (sqlalchemy.select) (import-outside-toplevel)
+routers/jobs.py:110:4: W0621: Redefining name 'User' from outer scope (line 56) (redefined-outer-name)
+routers/jobs.py:111:4: W0621: Redefining name 'HTTPException' from outer scope (line 48) (redefined-outer-name)
+routers/jobs.py:109:4: C0415: Import outside toplevel (auth.JWT_ISSUER, auth.JWT_AUDIENCE, auth.SECRET_KEY, auth.ALGORITHM) (import-outside-toplevel)
+routers/jobs.py:110:4: C0415: Import outside toplevel (models.User) (import-outside-toplevel)
+routers/jobs.py:111:4: W0404: Reimport 'HTTPException' (imported line 48) (reimported)
+routers/jobs.py:111:4: C0415: Import outside toplevel (fastapi.HTTPException, fastapi.status) (import-outside-toplevel)
+routers/jobs.py:112:4: C0415: Import outside toplevel (jose.JWTError) (import-outside-toplevel)
+routers/jobs.py:134:8: W0707: Consider explicitly re-raising using 'except JWTError as exc' and 'raise credentials_exception from exc' (raise-missing-from)
+routers/jobs.py:110:4: W0611: Unused User imported from models (unused-import)
+routers/jobs.py:187:0: E0102: class already defined line 57 (function-redefined)
+routers/jobs.py:223:4: W0613: Unused argument 'background_tasks' (unused-argument)
+routers/jobs.py:289:0: R0913: Too many arguments (7/5) (too-many-arguments)
+routers/jobs.py:289:0: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
+routers/jobs.py:61:0: C0411: third party import "jose.jwt" should be placed before local imports "database.get_db_session", "models.Job", "utils.validation.JobCreate", "utils.generate_etag", "app.core.logging.log_orchestrator_event" (wrong-import-order)
+routers/jobs.py:41:0: W0611: Unused import hashlib (unused-import)
+routers/jobs.py:42:0: W0611: Unused import json (unused-import)
+routers/jobs.py:46:0: W0611: Unused uuid4 imported from uuid (unused-import)
+routers/jobs.py:48:0: W0611: Unused Body imported from fastapi (unused-import)
+routers/jobs.py:48:0: W0611: Unused Query imported from fastapi (unused-import)
+routers/jobs.py:52:0: W0611: Unused update imported from sqlalchemy (unused-import)
+************* Module services.orchestrator.routers.monitoring
+routers/monitoring.py:4:0: C0301: Line too long (110/100) (line-too-long)
+routers/monitoring.py:5:0: C0301: Line too long (109/100) (line-too-long)
+routers/monitoring.py:6:0: C0301: Line too long (111/100) (line-too-long)
+routers/monitoring.py:7:0: C0301: Line too long (109/100) (line-too-long)
+routers/monitoring.py:164:0: C0301: Line too long (180/100) (line-too-long)
+routers/monitoring.py:231:0: C0301: Line too long (123/100) (line-too-long)
+routers/monitoring.py:265:0: C0301: Line too long (115/100) (line-too-long)
+routers/monitoring.py:279:0: C0301: Line too long (137/100) (line-too-long)
+routers/monitoring.py:338:0: C0301: Line too long (150/100) (line-too-long)
+routers/monitoring.py:367:0: C0301: Line too long (178/100) (line-too-long)
+routers/monitoring.py:410:0: C0301: Line too long (144/100) (line-too-long)
+routers/monitoring.py:457:0: C0304: Final newline missing (missing-final-newline)
+routers/monitoring.py:53:8: C0115: Missing class docstring (missing-class-docstring)
+routers/monitoring.py:53:8: R0903: Too few public methods (0/2) (too-few-public-methods)
+routers/monitoring.py:58:8: C0103: Constant name "get_db" doesn't conform to UPPER_CASE naming style (invalid-name)
+routers/monitoring.py:202:15: W0718: Catching too general exception Exception (broad-exception-caught)
+routers/monitoring.py:218:15: W0718: Catching too general exception Exception (broad-exception-caught)
+routers/monitoring.py:224:8: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+routers/monitoring.py:225:8: W0707: Consider explicitly re-raising using 'raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=f'Health check failed: {str(e)}') from e' (raise-missing-from)
+routers/monitoring.py:272:8: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+routers/monitoring.py:273:8: W0707: Consider explicitly re-raising using 'raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f'Metrics collection failed: {str(e)}') from e' (raise-missing-from)
+routers/monitoring.py:329:11: W0718: Catching too general exception Exception (broad-exception-caught)
+routers/monitoring.py:319:15: W0718: Catching too general exception Exception (broad-exception-caught)
+routers/monitoring.py:330:8: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+routers/monitoring.py:339:22: W0613: Unused argument 'lines' (unused-argument)
+routers/monitoring.py:440:11: W0718: Catching too general exception Exception (broad-exception-caught)
+routers/monitoring.py:451:11: W0718: Catching too general exception Exception (broad-exception-caught)
+routers/monitoring.py:36:0: C0411: standard import "logging" should be placed before third party import "psutil" (wrong-import-order)
+routers/monitoring.py:37:0: C0411: standard import "typing.Dict" should be placed before third party import "psutil" (wrong-import-order)
+routers/monitoring.py:38:0: C0411: standard import "datetime.datetime" should be placed before third party import "psutil" (wrong-import-order)
+routers/monitoring.py:37:0: W0611: Unused List imported from typing (unused-import)
+routers/monitoring.py:38:0: W0611: Unused timedelta imported from datetime (unused-import)
+routers/monitoring.py:39:0: W0611: Unused Request imported from fastapi (unused-import)
+************* Module services.orchestrator.routers.openai
+routers/openai.py:57:0: C0301: Line too long (116/100) (line-too-long)
+routers/openai.py:76:0: C0304: Final newline missing (missing-final-newline)
+routers/openai.py:11:0: E0401: Unable to import 'app.core.openai_agent' (import-error)
+routers/openai.py:16:0: C0115: Missing class docstring (missing-class-docstring)
+routers/openai.py:22:0: C0115: Missing class docstring (missing-class-docstring)
+routers/openai.py:27:0: C0115: Missing class docstring (missing-class-docstring)
+routers/openai.py:52:8: W0707: Consider explicitly re-raising using 'raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f'Error communicating with OpenAI: {str(e)}') from e' (raise-missing-from)
+routers/openai.py:38:4: W0613: Unused argument 'current_user' (unused-argument)
+routers/openai.py:73:8: W0707: Consider explicitly re-raising using 'raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f'Error communicating with OpenAI: {str(e)}') from e' (raise-missing-from)
+routers/openai.py:60:4: W0613: Unused argument 'current_user' (unused-argument)
+routers/openai.py:11:0: W0611: Unused async_agent imported from app.core.openai_agent (unused-import)
+************* Module services.orchestrator.routers.orchestrator_events
+routers/orchestrator_events.py:4:0: C0301: Line too long (126/100) (line-too-long)
+routers/orchestrator_events.py:5:0: C0301: Line too long (120/100) (line-too-long)
+routers/orchestrator_events.py:6:0: C0301: Line too long (121/100) (line-too-long)
+routers/orchestrator_events.py:61:0: C0301: Line too long (211/100) (line-too-long)
+routers/orchestrator_events.py:78:0: C0301: Line too long (101/100) (line-too-long)
+routers/orchestrator_events.py:93:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/orchestrator_events.py:107:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/orchestrator_events.py:111:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/orchestrator_events.py:117:0: C0301: Line too long (179/100) (line-too-long)
+routers/orchestrator_events.py:131:0: C0301: Line too long (101/100) (line-too-long)
+routers/orchestrator_events.py:142:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/orchestrator_events.py:145:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/orchestrator_events.py:147:0: C0304: Final newline missing (missing-final-newline)
+routers/orchestrator_events.py:66:4: W0613: Unused argument 'current_user' (unused-argument)
+routers/orchestrator_events.py:141:4: C0415: Import outside toplevel (app.core.logging.get_orchestrator_events) (import-outside-toplevel)
+routers/orchestrator_events.py:121:4: W0613: Unused argument 'current_user' (unused-argument)
+routers/orchestrator_events.py:34:0: W0611: Unused import asyncio (unused-import)
+routers/orchestrator_events.py:35:0: W0611: Unused import json (unused-import)
+************* Module services.orchestrator.routers.security
+routers/security.py:4:0: C0301: Line too long (115/100) (line-too-long)
+routers/security.py:5:0: C0301: Line too long (110/100) (line-too-long)
+routers/security.py:6:0: C0301: Line too long (112/100) (line-too-long)
+routers/security.py:7:0: C0301: Line too long (113/100) (line-too-long)
+routers/security.py:85:0: C0301: Line too long (155/100) (line-too-long)
+routers/security.py:138:0: C0301: Line too long (163/100) (line-too-long)
+routers/security.py:165:0: C0301: Line too long (189/100) (line-too-long)
+routers/security.py:204:0: C0301: Line too long (111/100) (line-too-long)
+routers/security.py:208:0: C0304: Final newline missing (missing-final-newline)
+routers/security.py:131:8: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+routers/security.py:132:8: W0707: Consider explicitly re-raising using 'raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail='Failed to process CSP report') from e' (raise-missing-from)
+routers/security.py:187:8: C0415: Import outside toplevel (app.core.config.settings) (import-outside-toplevel)
+routers/security.py:37:0: W0611: Unused Dict imported from typing (unused-import)
+routers/security.py:37:0: W0611: Unused Any imported from typing (unused-import)
+************* Module services.orchestrator.routers.tasks
+routers/tasks.py:4:0: C0301: Line too long (110/100) (line-too-long)
+routers/tasks.py:6:0: C0301: Line too long (106/100) (line-too-long)
+routers/tasks.py:61:0: C0301: Line too long (102/100) (line-too-long)
+routers/tasks.py:68:0: C0301: Line too long (185/100) (line-too-long)
+routers/tasks.py:100:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/tasks.py:108:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/tasks.py:117:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/tasks.py:127:0: C0301: Line too long (179/100) (line-too-long)
+routers/tasks.py:166:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/tasks.py:173:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/tasks.py:190:0: C0301: Line too long (186/100) (line-too-long)
+routers/tasks.py:221:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/tasks.py:229:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/tasks.py:231:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/tasks.py:239:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/tasks.py:247:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/tasks.py:264:0: C0301: Line too long (191/100) (line-too-long)
+routers/tasks.py:295:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/tasks.py:303:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/tasks.py:305:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/tasks.py:309:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/tasks.py:317:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/tasks.py:325:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/tasks.py:336:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/tasks.py:344:0: C0301: Line too long (158/100) (line-too-long)
+routers/tasks.py:372:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/tasks.py:380:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/tasks.py:382:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/tasks.py:385:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/tasks.py:389:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/tasks.py:397:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/tasks.py:400:0: C0304: Final newline missing (missing-final-newline)
+routers/tasks.py:43:0: W0611: Unused datetime imported from datetime (unused-import)
+************* Module services.orchestrator.routers.utils
+routers/utils.py:45:0: C0301: Line too long (174/100) (line-too-long)
+routers/utils.py:75:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/utils.py:84:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/utils.py:95:0: C0303: Trailing whitespace (trailing-whitespace)
+routers/utils.py:99:0: C0301: Line too long (130/100) (line-too-long)
+routers/utils.py:129:0: C0304: Final newline missing (missing-final-newline)
+routers/utils.py:81:11: W0718: Catching too general exception Exception (broad-exception-caught)
+routers/utils.py:92:15: W0718: Catching too general exception Exception (broad-exception-caught)
+routers/utils.py:88:12: C0415: Import outside toplevel (redis) (import-outside-toplevel)
+routers/utils.py:88:12: E0401: Unable to import 'redis' (import-error)
+routers/utils.py:1:0: R0801: Similar lines in 2 files
+==services.orchestrator.auth:[368:387]
+==services.orchestrator.routers.jobs:[113:132]
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        # Check if credentials are provided
+        if credentials is None or not getattr(credentials, "credentials", None):
+            raise credentials_exception
+        payload = jwt.decode(
+            credentials.credentials,
+            SECRET_KEY,
+            algorithms=[ALGORITHM],
+            audience=JWT_AUDIENCE,
+            issuer=JWT_ISSUER,
+        )
+        username: str = payload.get("sub")
+        if username is None:
+            raise credentials_exception (duplicate-code)
+routers/utils.py:1:0: R0801: Similar lines in 2 files
+==services.orchestrator.auth:[377:385]
+==services.orchestrator.routers.agents:[51:59]
+        payload = jwt.decode(
+            credentials.credentials,
+            SECRET_KEY,
+            algorithms=[ALGORITHM],
+            audience=JWT_AUDIENCE,
+            issuer=JWT_ISSUER,
+        )
+        username: str = payload.get("sub") (duplicate-code)
+
+
+Report
+======
+1054 statements analysed.
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |16     |NC         |NC         |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |27     |NC         |NC         |55.56       |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|method   |4      |NC         |NC         |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|function |62     |NC         |NC         |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+
+
+
+External dependencies
+---------------------
+::
+
+    dotenv (services.orchestrator.main)
+    fastapi (services.orchestrator.auth,services.orchestrator.main,services.orchestrator.middleware,services.orchestrator.routers.agents,services.orchestrator.routers.escalation,services.orchestrator.routers.events,services.orchestrator.routers.jobs,services.orchestrator.routers.monitoring,services.orchestrator.routers.openai,services.orchestrator.routers.orchestrator_events,services.orchestrator.routers.security,services.orchestrator.routers.tasks,services.orchestrator.routers.utils)
+      \-responses (services.orchestrator.main,services.orchestrator.routers.orchestrator_events)
+      \-security (services.orchestrator.auth,services.orchestrator.main,services.orchestrator.routers.agents,services.orchestrator.routers.jobs)
+    jose (services.orchestrator.auth,services.orchestrator.routers.agents,services.orchestrator.routers.jobs)
+      \-jwt (services.orchestrator.auth,services.orchestrator.main,services.orchestrator.routers.agents,services.orchestrator.routers.jobs)
+    passlib 
+      \-context (services.orchestrator.auth)
+    psutil (services.orchestrator.routers.monitoring)
+    pydantic (services.orchestrator.auth,services.orchestrator.routers.agents,services.orchestrator.routers.escalation,services.orchestrator.routers.events,services.orchestrator.routers.jobs,services.orchestrator.routers.openai,services.orchestrator.routers.security)
+    services 
+      \-orchestrator 
+        \-app 
+        | \-core 
+        |   \-config (services.orchestrator.routers.monitoring,services.orchestrator.routers.security,services.orchestrator.routers.utils)
+        |   \-logging (services.orchestrator.routers.events,services.orchestrator.routers.jobs,services.orchestrator.routers.orchestrator_events,services.orchestrator.routers.tasks)
+        \-auth (services.orchestrator.routers.agents,services.orchestrator.routers.events,services.orchestrator.routers.jobs,services.orchestrator.routers.openai,services.orchestrator.routers.orchestrator_events,services.orchestrator.routers.tasks)
+        \-database (services.orchestrator.routers.agents,services.orchestrator.routers.jobs,services.orchestrator.routers.monitoring,services.orchestrator.routers.tasks,services.orchestrator.routers.utils)
+        \-models (services.orchestrator.routers.agents,services.orchestrator.routers.jobs,services.orchestrator.routers.tasks)
+        \-utils (services.orchestrator.routers.jobs)
+          \-validation (services.orchestrator.routers.jobs,services.orchestrator.routers.tasks)
+    sqlalchemy (services.orchestrator.auth,services.orchestrator.database,services.orchestrator.main,services.orchestrator.models,services.orchestrator.routers.jobs,services.orchestrator.routers.monitoring,services.orchestrator.routers.utils)
+      \-ext 
+      | \-asyncio (services.orchestrator.auth,services.orchestrator.database,services.orchestrator.main,services.orchestrator.models,services.orchestrator.routers.agents,services.orchestrator.routers.jobs,services.orchestrator.routers.monitoring)
+      \-orm (services.orchestrator.auth,services.orchestrator.database,services.orchestrator.models,services.orchestrator.routers.tasks,services.orchestrator.routers.utils)
+    starlette 
+      \-responses (services.orchestrator.routers.events)
+
+
+
+4497 lines have been analyzed
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |1637   |36.40 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|docstring |2250   |50.03 |NC       |NC         |
++----------+-------+------+---------+-----------+
+|comment   |188    |4.18  |NC       |NC         |
++----------+-------+------+---------+-----------+
+|empty     |422    |9.38  |NC       |NC         |
++----------+-------+------+---------+-----------+
+
+
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |NC       |NC         |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |NC       |NC         |
++-------------------------+------+---------+-----------+
+
+
+
+Messages by category
+--------------------
+
++-----------+-------+---------+-----------+
+|type       |number |previous |difference |
++===========+=======+=========+===========+
+|convention |230    |NC       |NC         |
++-----------+-------+---------+-----------+
+|refactor   |20     |NC       |NC         |
++-----------+-------+---------+-----------+
+|warning    |112    |NC       |NC         |
++-----------+-------+---------+-----------+
+|error      |28     |NC       |NC         |
++-----------+-------+---------+-----------+
+
+
+
+% errors / warnings by module
+-----------------------------
+
++--------------------------------------------------+------+--------+---------+-----------+
+|module                                            |error |warning |refactor |convention |
++==================================================+======+========+=========+===========+
+|services.orchestrator.routers.escalation          |67.86 |25.89   |0.00     |16.52      |
++--------------------------------------------------+------+--------+---------+-----------+
+|services.orchestrator.middleware                  |7.14  |3.57    |0.00     |0.87       |
++--------------------------------------------------+------+--------+---------+-----------+
+|services.orchestrator.models                      |7.14  |0.89    |25.00    |10.87      |
++--------------------------------------------------+------+--------+---------+-----------+
+|services.orchestrator.main                        |3.57  |16.07   |40.00    |8.26       |
++--------------------------------------------------+------+--------+---------+-----------+
+|services.orchestrator.routers.jobs                |3.57  |12.50   |10.00    |16.52      |
++--------------------------------------------------+------+--------+---------+-----------+
+|services.orchestrator.routers.openai              |3.57  |4.46    |0.00     |2.17       |
++--------------------------------------------------+------+--------+---------+-----------+
+|services.orchestrator.routers.utils               |3.57  |1.79    |10.00    |3.04       |
++--------------------------------------------------+------+--------+---------+-----------+
+|services.orchestrator.database                    |3.57  |0.89    |0.00     |0.43       |
++--------------------------------------------------+------+--------+---------+-----------+
+|services.orchestrator.routers.monitoring          |0.00  |13.39   |5.00     |7.39       |
++--------------------------------------------------+------+--------+---------+-----------+
+|services.orchestrator.routers.agents              |0.00  |5.36    |10.00    |3.48       |
++--------------------------------------------------+------+--------+---------+-----------+
+|services.orchestrator.routers.events              |0.00  |4.46    |0.00     |5.22       |
++--------------------------------------------------+------+--------+---------+-----------+
+|services.orchestrator.routers.orchestrator_events |0.00  |3.57    |0.00     |6.09       |
++--------------------------------------------------+------+--------+---------+-----------+
+|services.orchestrator.routers.security            |0.00  |3.57    |0.00     |4.35       |
++--------------------------------------------------+------+--------+---------+-----------+
+|services.orchestrator.auth                        |0.00  |2.68    |0.00     |0.87       |
++--------------------------------------------------+------+--------+---------+-----------+
+|services.orchestrator.routers.tasks               |0.00  |0.89    |0.00     |13.91      |
++--------------------------------------------------+------+--------+---------+-----------+
+
+
+
+Messages
+--------
+
++-------------------------------+------------+
+|message id                     |occurrences |
++===============================+============+
+|trailing-whitespace            |108         |
++-------------------------------+------------+
+|line-too-long                  |67          |
++-------------------------------+------------+
+|unused-import                  |30          |
++-------------------------------+------------+
+|broad-exception-caught         |25          |
++-------------------------------+------------+
+|raise-missing-from             |17          |
++-------------------------------+------------+
+|logging-fstring-interpolation  |15          |
++-------------------------------+------------+
+|unused-argument                |13          |
++-------------------------------+------------+
+|import-outside-toplevel        |13          |
++-------------------------------+------------+
+|missing-class-docstring        |12          |
++-------------------------------+------------+
+|import-error                   |10          |
++-------------------------------+------------+
+|unexpected-keyword-arg         |8           |
++-------------------------------+------------+
+|missing-final-newline          |8           |
++-------------------------------+------------+
+|consider-using-from-import     |8           |
++-------------------------------+------------+
+|wrong-import-order             |7           |
++-------------------------------+------------+
+|too-few-public-methods         |6           |
++-------------------------------+------------+
+|invalid-name                   |6           |
++-------------------------------+------------+
+|wrong-import-position          |5           |
++-------------------------------+------------+
+|no-name-in-module              |4           |
++-------------------------------+------------+
+|ungrouped-imports              |3           |
++-------------------------------+------------+
+|redefined-outer-name           |3           |
++-------------------------------+------------+
+|function-redefined             |3           |
++-------------------------------+------------+
+|unused-variable                |2           |
++-------------------------------+------------+
+|unspecified-encoding           |2           |
++-------------------------------+------------+
+|too-many-positional-arguments  |2           |
++-------------------------------+------------+
+|too-many-arguments             |2           |
++-------------------------------+------------+
+|reimported                     |2           |
++-------------------------------+------------+
+|no-value-for-parameter         |2           |
++-------------------------------+------------+
+|duplicate-code                 |2           |
++-------------------------------+------------+
+|unnecessary-pass               |1           |
++-------------------------------+------------+
+|undefined-variable             |1           |
++-------------------------------+------------+
+|trailing-newlines              |1           |
++-------------------------------+------------+
+|f-string-without-interpolation |1           |
++-------------------------------+------------+
+|config-parse-error             |1           |
++-------------------------------+------------+
+|broad-exception-raised         |1           |
++-------------------------------+------------+
+
+
+
+
+-----------------------------------
+Your code has been rated at 5.24/10
+

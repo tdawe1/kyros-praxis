@@ -1,0 +1,946 @@
+{
+  "summary": {
+    "files_analyzed": 31,
+    "total_issues": 114,
+    "by_severity": {
+      "low": 110,
+      "medium": 4
+    },
+    "by_type": {
+      "print_statement": 81,
+      "long_line": 8,
+      "long_function": 3,
+      "missing_docstring": 21,
+      "long_class": 1
+    },
+    "by_file": {
+      "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_database.py": 29,
+      "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py": 54,
+      "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/middleware.py": 1,
+      "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/tests/test_auth.py": 4,
+      "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/tests/test_main.py": 4,
+      "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/routers/openai.py": 1,
+      "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/routers/events.py": 1,
+      "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/routers/tasks.py": 2,
+      "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/alembic/env.py": 1,
+      "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/utils/validation.py": 2,
+      "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/app/core/openai_agent.py": 11,
+      "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/alembic/versions/0001_initial.py": 2,
+      "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/tests/unit/test_auth.py": 2
+    }
+  },
+  "issues": [
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/alembic/env.py",
+      "line_number": 76,
+      "issue_type": "missing_docstring",
+      "severity": "low",
+      "message": "Function 'do_run_migrations' missing docstring",
+      "recommendation": "Add docstring describing function purpose"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/alembic/versions/0001_initial.py",
+      "line_number": 14,
+      "issue_type": "missing_docstring",
+      "severity": "low",
+      "message": "Function 'upgrade' missing docstring",
+      "recommendation": "Add docstring describing function purpose"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/alembic/versions/0001_initial.py",
+      "line_number": 27,
+      "issue_type": "missing_docstring",
+      "severity": "low",
+      "message": "Function 'downgrade' missing docstring",
+      "recommendation": "Add docstring describing function purpose"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/app/core/openai_agent.py",
+      "line_number": 324,
+      "issue_type": "missing_docstring",
+      "severity": "low",
+      "message": "Function 'get_sync_agent' missing docstring",
+      "recommendation": "Add docstring describing function purpose"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/app/core/openai_agent.py",
+      "line_number": 328,
+      "issue_type": "missing_docstring",
+      "severity": "low",
+      "message": "Function 'get_async_agent' missing docstring",
+      "recommendation": "Add docstring describing function purpose"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/app/core/openai_agent.py",
+      "line_number": 114,
+      "issue_type": "long_line",
+      "severity": "low",
+      "message": "Line too long (102 characters)",
+      "recommendation": "Break long lines or use line continuation"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/app/core/openai_agent.py",
+      "line_number": 153,
+      "issue_type": "long_line",
+      "severity": "low",
+      "message": "Line too long (103 characters)",
+      "recommendation": "Break long lines or use line continuation"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/app/core/openai_agent.py",
+      "line_number": 184,
+      "issue_type": "long_line",
+      "severity": "low",
+      "message": "Line too long (102 characters)",
+      "recommendation": "Break long lines or use line continuation"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/app/core/openai_agent.py",
+      "line_number": 243,
+      "issue_type": "long_line",
+      "severity": "low",
+      "message": "Line too long (102 characters)",
+      "recommendation": "Break long lines or use line continuation"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/app/core/openai_agent.py",
+      "line_number": 280,
+      "issue_type": "long_line",
+      "severity": "low",
+      "message": "Line too long (103 characters)",
+      "recommendation": "Break long lines or use line continuation"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/app/core/openai_agent.py",
+      "line_number": 305,
+      "issue_type": "long_line",
+      "severity": "low",
+      "message": "Line too long (102 characters)",
+      "recommendation": "Break long lines or use line continuation"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/middleware.py",
+      "line_number": 15,
+      "issue_type": "missing_docstring",
+      "severity": "low",
+      "message": "Function '_allowed_api_keys' missing docstring",
+      "recommendation": "Add docstring describing function purpose"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/routers/events.py",
+      "line_number": 23,
+      "issue_type": "missing_docstring",
+      "severity": "low",
+      "message": "Function 'append_event' missing docstring",
+      "recommendation": "Add docstring describing function purpose"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/routers/openai.py",
+      "line_number": 58,
+      "issue_type": "long_line",
+      "severity": "low",
+      "message": "Line too long (116 characters)",
+      "recommendation": "Break long lines or use line continuation"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/routers/tasks.py",
+      "line_number": 16,
+      "issue_type": "missing_docstring",
+      "severity": "low",
+      "message": "Function 'create_task' missing docstring",
+      "recommendation": "Add docstring describing function purpose"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/routers/tasks.py",
+      "line_number": 44,
+      "issue_type": "missing_docstring",
+      "severity": "low",
+      "message": "Function 'list_tasks' missing docstring",
+      "recommendation": "Add docstring describing function purpose"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py",
+      "line_number": 36,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py",
+      "line_number": 41,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py",
+      "line_number": 46,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py",
+      "line_number": 48,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py",
+      "line_number": 54,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py",
+      "line_number": 56,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py",
+      "line_number": 61,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py",
+      "line_number": 66,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py",
+      "line_number": 77,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py",
+      "line_number": 82,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py",
+      "line_number": 84,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py",
+      "line_number": 91,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py",
+      "line_number": 94,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py",
+      "line_number": 99,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py",
+      "line_number": 102,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py",
+      "line_number": 106,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py",
+      "line_number": 111,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py",
+      "line_number": 138,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py",
+      "line_number": 140,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py",
+      "line_number": 146,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py",
+      "line_number": 148,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py",
+      "line_number": 154,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py",
+      "line_number": 156,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py",
+      "line_number": 166,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py",
+      "line_number": 171,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py",
+      "line_number": 184,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py",
+      "line_number": 186,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py",
+      "line_number": 192,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py",
+      "line_number": 194,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py",
+      "line_number": 200,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py",
+      "line_number": 203,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py",
+      "line_number": 212,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py",
+      "line_number": 217,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py",
+      "line_number": 242,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py",
+      "line_number": 249,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py",
+      "line_number": 252,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py",
+      "line_number": 261,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py",
+      "line_number": 266,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py",
+      "line_number": 270,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py",
+      "line_number": 272,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py",
+      "line_number": 275,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py",
+      "line_number": 277,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py",
+      "line_number": 280,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py",
+      "line_number": 282,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py",
+      "line_number": 285,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py",
+      "line_number": 287,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py",
+      "line_number": 291,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py",
+      "line_number": 296,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py",
+      "line_number": 314,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py",
+      "line_number": 315,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py",
+      "line_number": 316,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py",
+      "line_number": 319,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py",
+      "line_number": 322,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_database.py",
+      "line_number": 22,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_database.py",
+      "line_number": 26,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_database.py",
+      "line_number": 29,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_database.py",
+      "line_number": 34,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_database.py",
+      "line_number": 37,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_database.py",
+      "line_number": 40,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_database.py",
+      "line_number": 45,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_database.py",
+      "line_number": 54,
+      "issue_type": "long_line",
+      "severity": "low",
+      "message": "Line too long (110 characters)",
+      "recommendation": "Break long lines or use line continuation"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_database.py",
+      "line_number": 66,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_database.py",
+      "line_number": 68,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_database.py",
+      "line_number": 78,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_database.py",
+      "line_number": 83,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_database.py",
+      "line_number": 104,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_database.py",
+      "line_number": 106,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_database.py",
+      "line_number": 116,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_database.py",
+      "line_number": 121,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_database.py",
+      "line_number": 139,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_database.py",
+      "line_number": 141,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_database.py",
+      "line_number": 151,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_database.py",
+      "line_number": 156,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_database.py",
+      "line_number": 161,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_database.py",
+      "line_number": 165,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_database.py",
+      "line_number": 168,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_database.py",
+      "line_number": 173,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_database.py",
+      "line_number": 191,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_database.py",
+      "line_number": 192,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_database.py",
+      "line_number": 193,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_database.py",
+      "line_number": 196,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_database.py",
+      "line_number": 199,
+      "issue_type": "print_statement",
+      "severity": "low",
+      "message": "Print statement found in code",
+      "recommendation": "Use proper logging instead"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/tests/test_auth.py",
+      "line_number": 20,
+      "issue_type": "missing_docstring",
+      "severity": "low",
+      "message": "Function 'override_get_db' missing docstring",
+      "recommendation": "Add docstring describing function purpose"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/tests/test_auth.py",
+      "line_number": 33,
+      "issue_type": "missing_docstring",
+      "severity": "low",
+      "message": "Function 'test_unauth_create' missing docstring",
+      "recommendation": "Add docstring describing function purpose"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/tests/test_auth.py",
+      "line_number": 45,
+      "issue_type": "missing_docstring",
+      "severity": "low",
+      "message": "Function 'test_login_invalid' missing docstring",
+      "recommendation": "Add docstring describing function purpose"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/tests/test_auth.py",
+      "line_number": 56,
+      "issue_type": "missing_docstring",
+      "severity": "low",
+      "message": "Function 'test_login_and_create' missing docstring",
+      "recommendation": "Add docstring describing function purpose"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/tests/test_main.py",
+      "line_number": 9,
+      "issue_type": "missing_docstring",
+      "severity": "low",
+      "message": "Function 'client' missing docstring",
+      "recommendation": "Add docstring describing function purpose"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/tests/test_main.py",
+      "line_number": 13,
+      "issue_type": "missing_docstring",
+      "severity": "low",
+      "message": "Function 'test_healthz' missing docstring",
+      "recommendation": "Add docstring describing function purpose"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/tests/test_main.py",
+      "line_number": 19,
+      "issue_type": "missing_docstring",
+      "severity": "low",
+      "message": "Function 'test_websocket_endpoint' missing docstring",
+      "recommendation": "Add docstring describing function purpose"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/tests/test_main.py",
+      "line_number": 27,
+      "issue_type": "missing_docstring",
+      "severity": "low",
+      "message": "Function 'test_secret_key_env' missing docstring",
+      "recommendation": "Add docstring describing function purpose"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/tests/unit/test_auth.py",
+      "line_number": 7,
+      "issue_type": "missing_docstring",
+      "severity": "low",
+      "message": "Function 'client' missing docstring",
+      "recommendation": "Add docstring describing function purpose"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/tests/unit/test_auth.py",
+      "line_number": 11,
+      "issue_type": "missing_docstring",
+      "severity": "low",
+      "message": "Function 'test_login_invalid_returns_401' missing docstring",
+      "recommendation": "Add docstring describing function purpose"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/utils/validation.py",
+      "line_number": 20,
+      "issue_type": "missing_docstring",
+      "severity": "low",
+      "message": "Function 'validate_task_input' missing docstring",
+      "recommendation": "Add docstring describing function purpose"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/utils/validation.py",
+      "line_number": 27,
+      "issue_type": "missing_docstring",
+      "severity": "low",
+      "message": "Function 'validate_job_input' missing docstring",
+      "recommendation": "Add docstring describing function purpose"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/app/core/openai_agent.py",
+      "line_number": 22,
+      "issue_type": "long_class",
+      "severity": "medium",
+      "message": "Class 'OpenAIAgent' is 296 lines long",
+      "recommendation": "Consider breaking into smaller classes"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/app/core/openai_agent.py",
+      "line_number": 61,
+      "issue_type": "long_function",
+      "severity": "medium",
+      "message": "Function 'send_prompt' is 66 lines long",
+      "recommendation": "Break down into smaller functions"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/app/core/openai_agent.py",
+      "line_number": 198,
+      "issue_type": "long_function",
+      "severity": "medium",
+      "message": "Function 'send_structured_prompt' is 58 lines long",
+      "recommendation": "Break down into smaller functions"
+    },
+    {
+      "file_path": "/home/thomas/kyros-praxis/kyros-praxis/services/orchestrator/test_auth.py",
+      "line_number": 109,
+      "issue_type": "long_function",
+      "severity": "medium",
+      "message": "Function 'test_user_authentication' is 59 lines long",
+      "recommendation": "Break down into smaller functions"
+    }
+  ]
+}

@@ -1,0 +1,94 @@
+{
+  "project": "Kyros Praxis",
+  "scope": ["TUI", "Security", "Testing", "CI", "DX"],
+  "generated_at": "2025-09-14T00:00:00Z",
+  "entries": [
+    {
+      "id": 1,
+      "role": "user",
+      "title": "Security Audit Summary",
+      "ts": "2025-09-14T00:00:00Z",
+      "summary": "Reported JWT mismatch, NextAuth issue, missing WS auth, inactive security middleware, weak CSRF, secrets in VCS, CSP/CORS gaps, and more."
+    },
+    {
+      "id": 2,
+      "role": "assistant",
+      "title": "Repo scan and plan",
+      "ts": "2025-09-14T00:00:00Z",
+      "summary": "Identified FastAPI orchestrator, Express server, client, terminal daemon. Planned fixes for JWT, CORS, CSRF, middleware, WS auth, secrets.",
+      "files": ["apps/adk-orchestrator/main.py", "server/index.ts", "client/src/*", "apps/terminal-daemon/server.js"]
+    },
+    {
+      "id": 3,
+      "role": "assistant",
+      "title": "Security hardening implemented",
+      "ts": "2025-09-14T00:00:00Z",
+      "summary": "Added CORS+headers and JWT in orchestrator; Helmet, CORS, rate limit, CSRF in server; client CSRF and secure WS URL; removed committed .env; updated .env.example.",
+      "files": ["apps/adk-orchestrator/main.py", "apps/adk-orchestrator/requirements.txt", "server/index.ts", "package.json", "client/src/lib/queryClient.ts", "client/src/components/dashboard/terminal-preview.tsx", "client/src/pages/terminal.tsx", ".env.example"]
+    },
+    {
+      "id": 4,
+      "role": "assistant",
+      "title": "Lifecycle logging ensured",
+      "ts": "2025-09-14T00:00:00Z",
+      "summary": "Emitted task_started/task_completed and run_started/run_completed; packet events.",
+      "files": ["apps/adk-orchestrator/main.py"]
+    },
+    {
+      "id": 5,
+      "role": "assistant",
+      "title": "TUI setup walkthrough provided",
+      "ts": "2025-09-14T00:00:00Z",
+      "summary": "Explained daemon WS endpoint, orchestrator, and web TUI dev run commands."
+    },
+    {
+      "id": 6,
+      "role": "assistant",
+      "title": "Live terminal wired",
+      "ts": "2025-09-14T00:00:00Z",
+      "summary": "Terminal page connects to daemon, spawns shell, streams output, handles input and resize; daemon optional HS512 JWT.",
+      "files": ["client/src/pages/terminal.tsx", "apps/terminal-daemon/server.js", "apps/terminal-daemon/package.json", "scripts/generate-jwt.cjs", "package.json"]
+    },
+    {
+      "id": 7,
+      "role": "assistant",
+      "title": "Secrets bootstrapped and token minted",
+      "ts": "2025-09-14T00:00:00Z",
+      "summary": "Generated shared JWT secret, wrote orchestrator and daemon .env files, created dev.jwt for browser.",
+      "files": ["apps/adk-orchestrator/.env", "apps/terminal-daemon/.env", "dev.jwt"]
+    },
+    {
+      "id": 8,
+      "role": "assistant",
+      "title": "Testing and CI added",
+      "ts": "2025-09-14T00:00:00Z",
+      "summary": "Playwright config and basic E2E; CI workflow runs build, Python tests, E2E, API validation, Semgrep and pip-audit.",
+      "files": ["playwright.config.ts", "e2e/basic.spec.ts", ".github/workflows/ci.yml", "README.md", "package.json"]
+    },
+    {
+      "id": 9,
+      "role": "assistant",
+      "title": "DX improvements",
+      "ts": "2025-09-14T00:00:00Z",
+      "summary": "Added bootstrap-env.sh, dev-all.sh, Makefile; README Quickstart and Troubleshooting.",
+      "files": ["scripts/bootstrap-env.sh", "scripts/dev-all.sh", "Makefile", "README.md"]
+    },
+    {
+      "id": 10,
+      "role": "assistant",
+      "title": "Summaries saved",
+      "ts": "2025-09-14T00:00:00Z",
+      "summary": "Saved summary-tui.md and chat-log.md with timeline and commands.",
+      "files": ["summary-tui.md", "reports/chat-log.md"]
+    },
+    {
+      "id": 11,
+      "role": "assistant",
+      "title": "TUI polish and tooltips",
+      "ts": "2025-09-14T00:00:00Z",
+      "summary": "Added keepalive pings, Ctrl+C/D, Clear/Copy/Respawn/Reconnect controls with tooltips; documented Terminal Controls.",
+      "files": ["client/src/pages/terminal.tsx", "README.md"]
+    }
+  ]
+}
+

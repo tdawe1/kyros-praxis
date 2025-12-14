@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "\ncommand: uvx": {
+      "command": "\nargs: [\n--from",
+      "args": [
+        "\ngit+https://github.com/BeehiveInnovations/zen-mcp-server.git",
+        "\nzen-mcp-server\n]",
+        "\nenv: \nHOME: /home/thomas\n",
+        "\nenv: \nLOGNAME: thomas\n",
+        "\nenv: \nPATH: /home/thomas/.npm/_npx/5a9d879542beca3a/node_modules/.bin:/home/thomas/kyros-praxis/kyros-praxis/packages/criteria-framework/node_modules/.bin:/home/thomas/kyros-praxis/kyros-praxis/packages/node_modules/.bin:/home/thomas/kyros-praxis/kyros-praxis/node_modules/.bin:/home/thomas/kyros-praxis/node_modules/.bin:/home/thomas/node_modules/.bin:/home/node_modules/.bin:/node_modules/.bin:/usr/lib/node_modules/npm/node_modules/@npmcli/run-script/lib/node-gyp-bin:/home/thomas/.spicetify:/home/thomas/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/bin:/opt/android-sdk/platform-tools:/usr/share/dotnet:/home/thomas/.dotnet/tools:/usr/lib/jvm/default/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/opt/rocm/bin:/home/thomas/.lmstudio/bin:/home/thomas/.lmstudio/bin:/home/thomas/.lmstudio/bin\n",
+        "\nenv: \nSHELL: /usr/bin/zsh\n",
+        "\nenv: \nTERM: xterm-kitty\n",
+        "\nenv: \nUSER: thomas\n\n"
+      ]
+    }
+  }
+}
