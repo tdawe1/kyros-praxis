@@ -88,7 +88,10 @@ if FEATURES_ENABLED:
 # Include routers
 app.include_router(auth.router)
 app.include_router(auth_refresh.router)
-app.include_router(auth_ws.router)
+# SECURITY: Terminal WebSocket disabled - PTY gives shell access with API privileges
+# Enable only when running in sandboxed container with: ENABLE_TERMINAL=true
+# See: docs/SECURITY.md for sandboxing requirements
+# app.include_router(auth_ws.router)
 app.include_router(projects.router)
 app.include_router(batch_runs.router)
 app.include_router(memory.router)

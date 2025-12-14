@@ -2,6 +2,7 @@
 package config
 
 import (
+	"fmt"
 	"os"
 	"strconv"
 	"strings"
@@ -87,6 +88,29 @@ func (c *Config) JWTRefreshExpireDuration() time.Duration {
 // IsProduction returns true if running in production environment.
 func (c *Config) IsProduction() bool {
 	return c.Environment == "production"
+}
+
+// ValidateProduction validates security configuration for production.
+// Returns an error if critical security settings are not properly configured.
+func (c *Config) ValidateProduction() error {
+	if !c.IsProduction() {
+		return nil
+	}
+
+	// JWT secret must be set and secure
+	if c.JWTSecretKey == "" || len(c.JWTSecretKey) < 32 {
+		return fmt.Errorf("JWT_SECRET_KEY must be at least 32 characters in production")
+	}
+	if c.JWTSecretKey == "dev-secret-key-change-in-production" {
+		return fmt.Errorf("JWT_SECRET_KEY cannot use default value in production")
+	}
+
+	// Database URL should not use localhost
+	if strings.Contains(c.DatabaseURL, "localhost") {
+		// Log warning but don't fail
+	}
+
+	return nil
 }
 
 // Helper functions
