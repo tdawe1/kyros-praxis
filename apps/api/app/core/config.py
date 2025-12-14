@@ -45,7 +45,7 @@ class Settings(BaseSettings):
     DB_ECHO: bool = Field(default=False)
 
     # JWT Authentication
-    JWT_SECRET_KEY: str = Field(default="")  # MUST be set in production
+    JWT_SECRET_KEY: str = Field(...)  # MUST be set in production
     JWT_ALGORITHM: str = Field(default="HS256")
     JWT_EXPIRE_MINUTES: int = Field(default=15)  # 15 minutes (short-lived)
     JWT_REFRESH_EXPIRE_DAYS: int = Field(default=7)  # 7 days for refresh tokens

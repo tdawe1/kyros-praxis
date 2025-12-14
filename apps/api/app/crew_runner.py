@@ -131,12 +131,18 @@ async def run_with_crewai(run_id: str, manifest: Dict[str, Any], payload: Dict[s
         return True
 
     base_prompt = read_prompt(prompts_dir, prompt_path)
-    user_prompt = payload.get("prompt") or ""
-    final_prompt = f"{base_prompt}\n\nUser input:\n{user_prompt}".strip()
+    # The user_prompt will be passed separately, not concatenated directly.
+    # The base_prompt should instruct the agent on how to handle the user_prompt from inputs.
+    # For this fix, we are removing direct concatenation and assuming the base_prompt handles the 'inputs'.
+    final_prompt_description = base_prompt # The base_prompt now contains instructions to process 'user_input' from `inputs`.
 
     # Define agent and task
     agent = Agent(role=role_name, goal=goal, backstory="Kyros Praxis planning agent", verbose=True, allow_delegation=False)
-    task = Task(description=final_prompt, agent=agent, expected_output="Return JSON with key 'tasks' as specified.")
+    task = Task(
+        description=final_prompt_description,
+        agent=agent,
+        expected_output="Return JSON with key 'tasks' as specified."
+    )
 
     crew = Crew(agents=[agent], tasks=[task], process=Process.sequential)
 
@@ -144,7 +150,7 @@ async def run_with_crewai(run_id: str, manifest: Dict[str, Any], payload: Dict[s
     try:
         # kickoff may perform blocking calls; run in executor
         # Include model hint in inputs for any tasks that consult it
-        inputs = {**payload, "model": model_name}
+        inputs = {**payload, "model": model_name, "user_input": payload.get("prompt", "")} # Pass user_input explicitly
         result_text = await loop.run_in_executor(None, lambda: crew.kickoff(inputs=inputs))
         parsed: Dict[str, Any] | None = None
         try:
