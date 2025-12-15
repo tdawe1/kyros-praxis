@@ -145,10 +145,10 @@ func (a *Auth) Middleware(next http.Handler) http.Handler {
 			return
 		}
 
-		// Validate token
-		claims, err := a.ValidateToken(tokenString)
+		// Validate token (enforces token type = "access")
+		claims, err := a.ValidateAccessToken(tokenString)
 		if err != nil {
-			// Token invalid, continue without user context
+			// Token invalid or wrong type, continue without user context
 			next.ServeHTTP(w, r)
 			return
 		}
