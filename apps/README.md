@@ -43,6 +43,8 @@ cd ../console && npm install && npm run dev
 
 ## 🏗️ Architecture
 
+![Kyros Agentic Workflow Overview](../images/kyros-agentic-workflow-overview.png)
+
 ```
 ┌─────────────────┐
 │ Console         │  Next.js 14 dashboard (port 3000)
