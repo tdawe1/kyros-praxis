@@ -41,7 +41,11 @@ class Settings(BaseSettings):
     CORS_ALLOW_ORIGINS: List[str] = Field(default_factory=lambda: ["http://localhost:3000"])
 
     # Database
-    DATABASE_URL: str = Field(default="postgresql+asyncpg://kyros:kyros@localhost:5432/kyros")
+    # In production, set DATABASE_URL with proper credentials via environment variable
+    DATABASE_URL: str = Field(
+        default="postgresql+asyncpg://localhost:5432/kyros",
+        description="Database connection URL - set via env var with credentials in production"
+    )
     DB_ECHO: bool = Field(default=False)
 
     # JWT Authentication

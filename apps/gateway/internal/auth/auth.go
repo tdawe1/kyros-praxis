@@ -23,8 +23,9 @@ const UserContextKey contextKey = "user"
 
 // Claims represents the JWT claims.
 type Claims struct {
-	UserID uuid.UUID `json:"user_id"`
-	Email  string    `json:"sub"`
+	UserID    uuid.UUID `json:"user_id"`
+	Email     string    `json:"sub"`
+	TokenType string    `json:"type"` // "access" or "refresh"
 	jwt.RegisteredClaims
 }
 
@@ -54,8 +55,9 @@ func CheckPassword(password, hash string) bool {
 // CreateAccessToken creates a new JWT access token.
 func (a *Auth) CreateAccessToken(user *models.User) (string, error) {
 	claims := Claims{
-		UserID: user.ID,
-		Email:  user.Email,
+		UserID:    user.ID,
+		Email:     user.Email,
+		TokenType: "access",
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(a.cfg.JWTExpireDuration())),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
@@ -70,8 +72,9 @@ func (a *Auth) CreateAccessToken(user *models.User) (string, error) {
 // CreateRefreshToken creates a new JWT refresh token.
 func (a *Auth) CreateRefreshToken(user *models.User) (string, error) {
 	claims := Claims{
-		UserID: user.ID,
-		Email:  user.Email,
+		UserID:    user.ID,
+		Email:     user.Email,
+		TokenType: "refresh",
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(a.cfg.JWTRefreshExpireDuration())),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
@@ -101,6 +104,21 @@ func (a *Auth) ValidateToken(tokenString string) (*Claims, error) {
 	}
 
 	return nil, errors.New("invalid token")
+}
+
+// ValidateAccessToken validates a JWT and ensures it's an access token.
+func (a *Auth) ValidateAccessToken(tokenString string) (*Claims, error) {
+	claims, err := a.ValidateToken(tokenString)
+	if err != nil {
+		return nil, err
+	}
+
+	// Enforce token type - only access tokens allowed for API endpoints
+	if claims.TokenType != "" && claims.TokenType != "access" {
+		return nil, errors.New("invalid token type: expected access token")
+	}
+
+	return claims, nil
 }
 
 // Middleware returns an HTTP middleware that authenticates requests.
